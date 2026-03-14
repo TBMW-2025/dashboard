@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companies List - Placement Monitor Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">MENU</div>
+            <nav class="sidebar-nav">
+                <a href="index.html">Dashboard</a>
+                <a href="students.html">Students</a>
+                <a href="companies.html" class="active">Companies</a>
+                <a href="placements.html">Placements</a>
+                <a href="reports.html">Reports</a>
+                <a href="settings.html">Settings</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">📋</div>
+                    <div class="header-title">
+                        <h1>Placement Monitor Dashboard</h1>
+                        <div class="header-subtitle">Future Leaders and Security Intelligence</div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <input type="text" class="search-bar" placeholder="Search for anything...">
+                    <div class="header-icons">
+                        <button class="icon-btn notification-toggle">
+                            🔔
+                            <span class="notification-badge">1</span>
+                        </button>
+                        <button class="icon-btn theme-toggle">🌙</button>
+                    </div>
+                    <div class="user-profile" onclick="window.location.href='login.html'">
+                        <div class="avatar">A</div>
+                        <div>
+                            <div class="user-name">Arsh.G</div>
+                            <div class="user-role">Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Section -->
+            <div class="content-header">
+                <div class="content-title">Companies List</div>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <input type="text" class="search-bar" placeholder="Search companies..." style="width: 250px;">
+                    <button class="btn-add">+ Add Company</button>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-container">
+                <div class="table-header companies-header">
+                    <div class="dropdown-header">S.No <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Company Name <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Role <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Contact Person <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Contact <span class="dropdown-icon">▼</span></div>
+                    <div>Actions</div>
+                </div>
+                <div class="table-body">
+                    <div class="table-row companies-row">
+                        <div class="sno">1</div>
+                        <div class="company-name">Google India</div>
+                        <div class="role">Software Engineer</div>
+                        <div class="contact-person">Rajesh Kumar</div>
+                        <div class="contact-phone">+91 9876543210</div>
+                        <button class="action-btn">⋯</button>
+                    </div>
+
+                    <div class="table-row companies-row">
+                        <div class="sno">2</div>
+                        <div class="company-name">Microsoft</div>
+                        <div class="role">Cloud Solutions Architect</div>
+                        <div class="contact-person">Priya Sharma</div>
+                        <div class="contact-phone">+91 8765432109</div>
+                        <button class="action-btn">⋯</button>
+                    </div>
+
+                    <div class="table-row companies-row">
+                        <div class="sno">3</div>
+                        <div class="company-name">Amazon</div>
+                        <div class="role">Product Manager</div>
+                        <div class="contact-person">Amit Singh</div>
+                        <div class="contact-phone">+91 7654321098</div>
+                        <button class="action-btn">⋯</button>
+                    </div>
+
+                    <div class="table-row companies-row">
+                        <div class="sno">4</div>
+                        <div class="company-name">Infosys</div>
+                        <div class="role">Data Analyst</div>
+                        <div class="contact-person">Neha Patel</div>
+                        <div class="contact-phone">+91 6543210987</div>
+                        <button class="action-btn">⋯</button>
+                    </div>
+
+                    <div class="table-row companies-row">
+                        <div class="sno">5</div>
+                        <div class="company-name">Cognizant</div>
+                        <div class="role">Java Developer</div>
+                        <div class="contact-person">Vikram Reddy</div>
+                        <div class="contact-phone">+91 5432109876</div>
+                        <button class="action-btn">⋯</button>
+                    </div>
+
+                    <div class="table-row companies-row">
+                        <div class="sno">6</div>
+                        <div class="company-name">TCS</div>
+                        <div class="role">Systems Engineer</div>
+                        <div class="contact-person">Deepak Verma</div>
+                        <div class="contact-phone">+91 4321098765</div>
+                        <button class="action-btn">⋯</button>
+                    </div>
+                </div>
+            </div>
+            <!-- ===================== FOOTER ===================== -->
+            <div class="footer">
+
+                <div>
+                    <h3>Rashtriya Raksha University</h3>
+                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
+                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
+                </div>
+
+                <div>
+                    <h3>Contact</h3>
+                    <p>Email: pulse-r24@rru.ac.in</p>
+                    <p>Phone: +91 79 XXXXXXXX</p>
+                    <p>Office:</p>
+                    <p>Web:</p>
+                </div>
+
+                <div>
+                    <h3>Follow</h3>
+                    <p>Instagram:</p>
+                    <p>LinkedIn:</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    </main>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

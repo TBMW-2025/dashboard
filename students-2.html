@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students List</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay"></div>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">MENU</div>
+            <nav class="sidebar-nav">
+                <a href="index.html">Dashboard</a>
+                <a href="students.html" class="active">Students</a>
+                <a href="companies.html">Companies</a>
+                <a href="placements.html">Placements</a>
+                <a href="reports.html">Reports</a>
+                <a href="settings.html">Settings</a>
+            </nav>
+        </div>
+
+        <!-- Main Content Area -->
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">📋</div>
+                    <div class="header-title">
+                        <h1>Placement Monitor Dashboard</h1>
+                        <div class="header-subtitle">Future Leaders and Security Intelligence</div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <input type="text" class="search-bar" placeholder="Search for anything...">
+                    <div class="header-icons">
+                        <button class="icon-btn notification-toggle">
+                            🔔
+                            <span class="notification-badge">1</span>
+                        </button>
+                        <button class="icon-btn theme-toggle">🌙</button>
+                    </div>
+                    <div class="user-profile" onclick="window.location.href='login.html'">
+                        <div class="avatar">A</div>
+                        <div>
+                            <div class="user-name">Arsh.G</div>
+                            <div class="user-role">Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Table Area -->
+            <div class="table-container-wrapper">
+                <div class="table-actions">
+                    <h2>Students List</h2>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <input type="text" id="localStudentSearch" class="search-bar" placeholder="Search from list..."
+                            style="width: 250px;">
+                        <button class="btn-add">Add Student</button>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Student Name <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Enrollment Number <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Email Address <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Student Email ID <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Mobile Number <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Department & Course <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Placement or Higher Studies <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Role / Area of Interest (For Placement) <svg class="filter-icon"
+                                        viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Planning for Higher Education? <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Company Name <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Attachment of CV <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Placed or Not <svg class="filter-icon" viewBox="0 0 24 24">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg></th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dummy Data Rows -->
+                            <tr>
+                                <td>John Doe</td>
+                                <td>ENR2023001</td>
+                                <td>john.doe@example.com</td>
+                                <td>johndoe.student@univ.edu</td>
+                                <td>+91 9876543210</td>
+                                <td>Computer Science, B.Tech</td>
+                                <td>Placement</td>
+                                <td>Software Development</td>
+                                <td>No</td>
+                                <td>zoho</td>
+                                <td><a href="#" class="download-link">john_cv.pdf</a></td>
+                                <td>
+                                    <select class="status-select">
+                                        <option value="Not Placed" selected>Not Placed</option>
+                                        <option value="Placed">Placed</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn-remove">Remove</button></td>
+                            </tr>
+                            <tr>
+                                <td>Jane Smith</td>
+                                <td>ENR2023002</td>
+                                <td>jane.smith@example.com</td>
+                                <td>janesmith.student@univ.edu</td>
+                                <td>+91 9876543211</td>
+                                <td>Information Technology, B.Tech</td>
+                                <td>internship</td>
+                                <td>Data Science</td>
+                                <td>Yes</td>
+                                <td>tcs</td>
+                                <td><a href="#" class="download-link">jane_cv.pdf</a></td>
+                                <td>
+                                    <select class="status-select">
+                                        <option value="Not Placed" selected>Not Placed</option>
+                                        <option value="Placed">Placed</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn-remove">Remove</button></td>
+                            </tr>
+                            <!-- More rows to fill space -->
+                            <tr>
+                                <td>Alex Jones</td>
+                                <td>ENR2023003</td>
+                                <td>alex.jones@example.com</td>
+                                <td>alexjones.student@univ.edu</td>
+                                <td>+91 9876543212</td>
+                                <td>Electronics, B.Tech</td>
+                                <td>internship</td>
+                                <td>VLSI Design</td>
+                                <td>No</td>
+                                <td>4ai</td>
+                                <td><a href="#" class="download-link">alex_cv.pdf</a></td>
+                                <td>
+                                    <select class="status-select">
+                                        <option value="Not Placed" selected>Not Placed</option>
+                                        <option value="Placed">Placed</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn-remove">Remove</button></td>
+                            </tr>
+                            <tr>
+                                <td>Sam Wilson</td>
+                                <td>ENR2023004</td>
+                                <td>sam.wilson@example.com</td>
+                                <td>samwilson.student@univ.edu</td>
+                                <td>+91 9876543213</td>
+                                <td>Mechanical, B.Tech</td>
+                                <td>Placement</td>
+                                <td>Automotive Design</td>
+                                <td>No</td>
+                                <td>sutherland</td>
+                                <td><a href="#" class="download-link">sam_cv.pdf</a></td>
+                                <td>
+                                    <select class="status-select">
+                                        <option value="Not Placed" selected>Not Placed</option>
+                                        <option value="Placed">Placed</option>
+                                    </select>
+                                </td>
+                                <td><button class="btn-remove">Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- ===================== FOOTER ===================== -->
+            <div class="footer">
+
+                <div>
+                    <h3>Rashtriya Raksha University</h3>
+                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
+                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
+                </div>
+
+                <div>
+                    <h3>Contact</h3>
+                    <p>Email: pulse-r24@rru.ac.in</p>
+                    <p>Phone: +91 79 XXXXXXXX</p>
+                    <p>Office:</p>
+                    <p>Web:</p>
+                </div>
+
+                <div>
+                    <h3>Follow</h3>
+                    <p>Instagram:</p>
+                    <p>LinkedIn:</p>
+                </div>
+
+            </div>
+            </main>
+        </div>
+        <!-- ================= ADD STUDENT MODAL ================= -->
+
+        <div id="addStudentModal" class="modal-overlay">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+                    <h2>Add New Student</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+
+                <form class="modal-form">
+
+                    <div class="form-group">
+                        <input type="email" required placeholder=" ">
+                        <label>Email Address</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" required placeholder=" ">
+                        <label>Student Name</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" required placeholder=" ">
+                        <label>Enrollment Number</label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" required placeholder=" ">
+                        <label>Company Name</label>
+                    </div>
+
+                    <div class="modal-buttons">
+                        <button type="submit" class="add-btn">Add Student</button>
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+        <script src="script.js"></script>
+        </main>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

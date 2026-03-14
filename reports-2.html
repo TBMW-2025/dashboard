@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Placement Monitor Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">MENU</div>
+            <nav class="sidebar-nav">
+                <a href="index.html">Dashboard</a>
+                <a href="students.html">Students</a>
+                <a href="companies.html">Companies</a>
+                <a href="placements.html">Placements</a>
+                <a href="reports.html" class="active">Reports</a>
+                <a href="settings.html">Settings</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content reports">
+            <!-- Top Header -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">📋</div>
+                    <div class="header-title">
+                        <h1>Placement Monitor Dashboard</h1>
+                        <div class="header-subtitle">Future Leaders and Security Intelligence</div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <input type="text" class="search-bar" placeholder="Search for anything...">
+                    <div class="header-icons">
+                        <button class="icon-btn notification-toggle">
+                            🔔
+                            <span class="notification-badge">1</span>
+                        </button>
+                        <button class="icon-btn theme-toggle">🌙</button>
+                    </div>
+                    <div class="user-profile" onclick="window.location.href='login.html'">
+                        <div class="avatar">A</div>
+                        <div>
+                            <div class="user-name">Arsh.G</div>
+                            <div class="user-role">Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Section -->
+            <div class="content-title">Statistical Reports</div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-label">Total Students</div>
+                    <div class="stat-value">1,245</div>
+                    <div class="stat-change">↑ 12% from last month</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">✓</div>
+                    <div class="stat-label">Total Placements</div>
+                    <div class="stat-value">987</div>
+                    <div class="stat-change">↑ 8% from last month</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">Placement Rate</div>
+                    <div class="stat-value">79.2%</div>
+                    <div class="stat-change">↑ 5% from last month</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Avg Salary (LPA)</div>
+                    <div class="stat-value">11.8</div>
+                    <div class="stat-change">↑ 3% from last month</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-title">Placement Status Distribution</div>
+                    <div class="chart-container">
+                        <canvas id="placementStatusChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Department-wise Placement</div>
+                    <div class="chart-container">
+                        <canvas id="deptPlacementChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Monthly Placement Trend</div>
+                    <div class="chart-container">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Salary Range Distribution</div>
+                    <div class="chart-container">
+                        <canvas id="salaryDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metrics Section -->
+            <div class="metrics-section">
+                <div class="metrics-card">
+                    <div class="metrics-title">Key Metrics</div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Highest Package</span>
+                        <span class="metric-value success">25 LPA</span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Lowest Package</span>
+                        <span class="metric-value">7.5 LPA</span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Median Salary</span>
+                        <span class="metric-value">11.2 LPA</span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Unplaced Students</span>
+                        <span class="metric-value">258</span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Multiple Offers</span>
+                        <span class="metric-value success">156</span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Campus Recruiting</span>
+                        <span class="metric-value">42</span>
+                    </div>
+                </div>
+
+                <div class="metrics-card">
+                    <div class="metrics-title">Department Distribution</div>
+
+                    <div class="dept-item">
+                        <span class="dept-name">Computer Science</span>
+                        <div class="dept-bar">
+                            <div class="dept-bar-fill" style="width: 95%"></div>
+                        </div>
+                        <span class="dept-count">234</span>
+                    </div>
+
+                    <div class="dept-item">
+                        <span class="dept-name">Information Technology</span>
+                        <div class="dept-bar">
+                            <div class="dept-bar-fill" style="width: 88%"></div>
+                        </div>
+                        <span class="dept-count">212</span>
+                    </div>
+
+                    <div class="dept-item">
+                        <span class="dept-name">Electronics</span>
+                        <div class="dept-bar">
+                            <div class="dept-bar-fill" style="width: 75%"></div>
+                        </div>
+                        <span class="dept-count">198</span>
+                    </div>
+
+                    <div class="dept-item">
+                        <span class="dept-name">Mechanical Engineering</span>
+                        <div class="dept-bar">
+                            <div class="dept-bar-fill" style="width: 68%"></div>
+                        </div>
+                        <span class="dept-count">165</span>
+                    </div>
+
+                    <div class="dept-item">
+                        <span class="dept-name">Civil Engineering</span>
+                        <div class="dept-bar">
+                            <div class="dept-bar-fill" style="width: 55%"></div>
+                        </div>
+                        <span class="dept-count">140</span>
+                    </div>
+
+                    <div class="dept-item">
+                        <span class="dept-name">B.Tech Other</span>
+                        <div class="dept-bar">
+                            <div class="dept-bar-fill" style="width: 42%"></div>
+                        </div>
+                        <span class="dept-count">105</span>
+                    </div>
+                </div>
+            </div>
+            <!-- ===================== FOOTER ===================== -->
+            <div class="footer">
+
+                <div>
+                    <h3>Rashtriya Raksha University</h3>
+                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
+                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
+                </div>
+
+                <div>
+                    <h3>Contact</h3>
+                    <p>Email: pulse-r24@rru.ac.in</p>
+                    <p>Phone: +91 79 XXXXXXXX</p>
+                    <p>Office:</p>
+                    <p>Web:</p>
+                </div>
+
+                <div>
+                    <h3>Follow</h3>
+                    <p>Instagram:</p>
+                    <p>LinkedIn:</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    </main>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+    <script src="charts.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

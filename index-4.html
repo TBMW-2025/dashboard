@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Replica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Sidebar Toggle Button -->
+    <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+
+    <!-- Sidebar Overlay (for mobile) -->
+    <div class="sidebar-overlay"></div>
+
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">MENU</div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="active">Dashboard</a>
+                <a href="students.html">Students</a>
+                <a href="companies.html">Companies</a>
+                <a href="placements.html">Placements</a>
+                <a href="reports.html">Reports</a>
+                <a href="settings.html">Settings</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <div class="header">
+                <div class="header-left">
+                    <div class="logo">📋</div>
+                    <div class="header-title">
+                        <h1>Placement Monitor Dashboard</h1>
+                        <div class="header-subtitle">Future Leaders and Security Intelligence</div>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <input type="text" class="search-bar" placeholder="Search for anything...">
+                    <div class="header-icons">
+                        <button class="icon-btn notification-toggle">
+                            🔔
+                            <span class="notification-badge">1</span>
+                        </button>
+                        <button class="icon-btn theme-toggle">🌙</button>
+                    </div>
+                    <div class="user-profile" onclick="window.location.href='login.html'">
+                        <div class="avatar">A</div>
+                        <div>
+                            <div class="user-name">Arsh.G</div>
+                            <div class="user-role">Admin</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Grid Area -->
+            <div class="dashboard-grid">
+                <!-- Map Widget -->
+                <div class="widget map-widget span-full">
+                    <div class="widget-header">
+                        <h3>Global Distribution</h3>
+                    </div>
+                    <div class="widget-content map-container" id="map-container">
+                    </div>
+                </div>
+
+                <!-- Left Column Widgets -->
+                <div class="widget-column left-column">
+                    <div class="widget stats-widget">
+                        <h4>Activity</h4>
+                        <div class="stat-value">84,392</div>
+                        <!-- mini chart -->
+                    </div>
+                    <div class="widget timeline-widget">
+                        <h4>Timeline</h4>
+                        <!-- timeline content -->
+                    </div>
+                </div>
+
+                <!-- Center/Main Column Widgets -->
+                <div class="widget-column center-column span-2">
+                    <div class="widget chart-widget line-chart-widget">
+                        <div class="widget-header">
+                            <h3>Revenue Trends</h3>
+                        </div>
+                        <div class="chart-container" style="position: relative; height: 250px; width: 100%;">
+                            <canvas id="mainChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="widget circular-stats-widget">
+                        <div class="circular-charts-container">
+                            <!-- 4 Circular Charts -->
+                            <div class="circle-chart-wrapper">
+                                <svg class="circular-chart" viewBox="0 0 36 36">
+                                    <path class="circle-bg" stroke-dasharray="100, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="circle" stroke-dasharray="64, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <text x="18" y="20.35" class="percentage">64%</text>
+                                </svg>
+                                <span>Sales</span>
+                            </div>
+                            <div class="circle-chart-wrapper">
+                                <svg class="circular-chart" viewBox="0 0 36 36">
+                                    <path class="circle-bg" stroke-dasharray="100, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="circle" stroke-dasharray="72, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <text x="18" y="20.35" class="percentage">72%</text>
+                                </svg>
+                                <span>Profit</span>
+                            </div>
+                            <div class="circle-chart-wrapper">
+                                <svg class="circular-chart" viewBox="0 0 36 36">
+                                    <path class="circle-bg" stroke-dasharray="100, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="circle" stroke-dasharray="50, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <text x="18" y="20.35" class="percentage">50%</text>
+                                </svg>
+                                <span>New Users</span>
+                            </div>
+                            <div class="circle-chart-wrapper">
+                                <svg class="circular-chart" viewBox="0 0 36 36">
+                                    <path class="circle-bg" stroke-dasharray="100, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path class="circle" stroke-dasharray="90, 100"
+                                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <text x="18" y="20.35" class="percentage">90%</text>
+                                </svg>
+                                <span>Uptime</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column Widgets -->
+                <div class="widget-column right-column">
+                    <div class="widget right-top-widget">
+                        <div class="widget-header">
+                            <h3>Analytics</h3>
+                        </div>
+                        <div class="chart-container" style="position: relative; height: 150px; width: 100%;">
+                            <canvas id="miniAreaChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="widget right-middle-widget">
+                        <div class="widget-header">
+                            <h3>Performance</h3>
+                        </div>
+                        <div class="progress-bars">
+                            <div class="bar-item">
+                                <div class="bar-info"><span class="label">Server load</span><span
+                                        class="value">82%</span></div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" style="width: 82%"></div>
+                                </div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar-info"><span class="label">Memory</span><span class="value">45%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill" style="width: 45%"></div>
+                                </div>
+                            </div>
+                            <div class="bar-item">
+                                <div class="bar-info"><span class="label">Storage</span><span class="value">95%</span>
+                                </div>
+                                <div class="bar-bg">
+                                    <div class="bar-fill critical" style="width: 95%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- ===================== FOOTER ===================== -->
+            <div class="footer">
+
+                <div>
+                    <h3>Rashtriya Raksha University</h3>
+                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
+                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
+                </div>
+
+                <div>
+                    <h3>Contact</h3>
+                    <p>Email: pulse-r24@rru.ac.in</p>
+                    <p>Phone: +91 79 XXXXXXXX</p>
+                    <p>Office:</p>
+                    <p>Web:</p>
+                </div>
+
+                <div>
+                    <h3>Follow</h3>
+                    <p>Instagram:</p>
+                    <p>LinkedIn:</p>
+                </div>
+
+            </div>
+            </main>
+        </div>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="script.js"></script>
+</body>
+
+</html>
