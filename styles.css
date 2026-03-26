@@ -32,28 +32,44 @@ body {
     letter-spacing: 1px;
 }
 
+
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 8px;
+    width: 100%;
+    padding: 0 10px;
 }
 
 .sidebar-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     color: #888;
     text-decoration: none;
-    font-size: 14px;
-    padding: 10px 0;
-    transition: color 0.3s;
+    font-size: 11px;
+    padding: 12px 5px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    gap: 6px;
+}
+
+.sidebar-nav a i {
+    font-size: 20px;
 }
 
 .sidebar-nav a.active {
-    color: #ff6b35;
-    font-weight: 600;
+    background-color: #242424;
+    color: #ffffff;
+    font-weight: 500;
 }
 
-.sidebar-nav a:hover {
-    color: #ff6b35;
+.sidebar-nav a:hover:not(.active) {
+    background-color: #1a1a1a;
+    color: #ffffff;
 }
+
 
 /* Main Content */
 .main-content {
@@ -215,6 +231,25 @@ body {
     background-color: #e55a25;
 }
 
+.btn-import {
+    background-color: transparent;
+    border: 1px solid #4ade80;
+    color: #4ade80;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+}
+
+.btn-import:hover {
+    background-color: rgba(74, 222, 128, 0.1);
+}
+
 /* Table Styles */
 .table-container {
     background-color: #1a1f3a;
@@ -225,12 +260,14 @@ body {
 
 .table-header {
     background: linear-gradient(135deg, #a94cf8 0%, #764ba2 100%);
-    padding: 15px 20px;
+    padding: 15px 10px;
     font-weight: 600;
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     display: grid;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .table-body {
@@ -239,12 +276,14 @@ body {
 }
 
 .table-row {
-    padding: 15px 20px;
+    padding: 15px 10px;
     border-bottom: 1px solid #2a2f4a;
     align-items: center;
     font-size: 13px;
     transition: background-color 0.3s;
     display: grid;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .table-row:hover {
@@ -357,20 +396,35 @@ body {
 
 /* Companies Page Grid */
 .companies-header {
-    grid-template-columns: 60px 200px 150px 180px 150px 150px;
+    grid-template-columns: 50px 2fr 1.5fr 1.5fr 1.5fr 100px;
+    min-width: unset;
 }
 
 .companies-row {
-    grid-template-columns: 60px 200px 150px 180px 150px 150px;
+    grid-template-columns: 50px 2fr 1.5fr 1.5fr 1.5fr 100px;
+    min-width: unset;
 }
 
 /* Placements Page Grid */
 .placements-header {
-    grid-template-columns: 60px 150px 150px 120px 130px 100px 100px 80px;
+    grid-template-columns: 50px 1.5fr 1.7fr 1.5fr 1fr 1fr 1fr 1fr 100px;
+    min-width: unset;
 }
 
 .placements-row {
-    grid-template-columns: 60px 150px 150px 120px 130px 100px 100px 80px;
+    grid-template-columns: 50px 1.5fr 1.7fr 1.5fr 1fr 1fr 1fr 1fr 100px;
+    min-width: unset;
+}
+
+/* Internships Page Grid */
+.internships-header {
+    grid-template-columns: 60px 80px 140px 120px 200px 80px 200px 200px 150px 80px;
+    min-width: 1310px;
+}
+
+.internships-row {
+    grid-template-columns: 60px 80px 140px 120px 200px 80px 200px 200px 150px 80px;
+    min-width: 1310px;
 }
 
 /* ===== REPORTS PAGE STYLES ===== */
@@ -564,7 +618,7 @@ body {
     height: fit-content;
 }
 
-.settings-nav-item {
+.settings-nav-item, .settings-option {
     padding: 12px 15px;
     cursor: pointer;
     color: #888;
@@ -574,12 +628,12 @@ body {
     margin-bottom: 8px;
 }
 
-.settings-nav-item:hover {
+.settings-nav-item:hover, .settings-option:hover {
     background-color: #252b4a;
     color: #ff6b35;
 }
 
-.settings-nav-item.active {
+.settings-nav-item.active, .settings-option.active {
     background-color: rgba(255, 107, 53, 0.1);
     color: #ff6b35;
     font-weight: 600;
@@ -592,7 +646,7 @@ body {
 }
 
 .settings-content.active {
-    display: block;
+    display: block !important;
 }
 
 /* Form Styles */
@@ -1150,6 +1204,17 @@ body {
     grid-column: span 2;
 }
 
+.charts-row {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+}
+
+.charts-row .widget {
+    flex: 1;
+    min-width: 0; /* Prevents flex items from overflowing */
+}
+
 .widget {
     background-color: var(--bg-panel);
     border-radius: 12px;
@@ -1574,11 +1639,14 @@ body {
 /* FORM INPUT */
 
 .modal-form .form-group {
-    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
     margin-bottom: 20px;
+    gap: 6px;
 }
 
-.modal-form .form-group input {
+.modal-form .form-group input,
+.modal-form .form-group select {
     width: 100%;
     padding: 12px;
     border: 2px solid #2a3550;
@@ -1587,34 +1655,27 @@ body {
     color: white;
     outline: none;
     transition: 0.3s;
+    appearance: auto;
 }
 
 .modal-form .form-group label {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
+    font-size: 13px;
     color: #9ca3af;
-    pointer-events: none;
+    pointer-events: auto;
     transition: 0.3s;
-    background: #0f172a;
-    padding: 0 5px;
 }
 
-/* FLOAT LABEL */
+/* RED FOCUS HIGHLIGHT */
 
-.modal-form .form-group input:focus+label,
-.modal-form .form-group input:not(:placeholder-shown)+label {
-    top: -8px;
-    font-size: 12px;
-    color: #ff3b3b;
-}
-
-/* RED FOCUS */
-
-.modal-form .form-group input:focus {
+.modal-form .form-group input:focus,
+.modal-form .form-group select:focus {
     border-color: #ff3b3b;
     box-shadow: 0 0 8px rgba(255, 59, 59, 0.6);
+}
+
+.modal-form .form-group input:focus+label,
+.modal-form .form-group select:focus+label {
+    color: #ff3b3b;
 }
 
 /* BUTTONS */
@@ -1654,4 +1715,217 @@ body {
         transform: scale(1);
         opacity: 1;
     }
+}
+
+
+
+
+/* Image Logo Override */
+.sidebar-img-logo {
+    width: 60px;
+    height: auto;
+    max-height: 60px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    object-fit: contain;
+    background-color: transparent !important;
+    padding: 0;
+    box-shadow: none !important;
+    transition: transform 0.3s ease;
+}
+
+
+
+/* Students Page Grid Re-injection */
+.students-header {
+    grid-template-columns: repeat(7, 1fr) 100px;
+    min-width: unset;
+    font-size: 11px;
+}
+
+.students-row {
+    grid-template-columns: repeat(7, 1fr) 100px;
+    min-width: unset;
+    font-size: 10px;
+}
+
+/* Ultimate Sidebar Overrides based on Screenshot */
+.sidebar {
+    position: sticky !important;
+    top: 0 !important;
+    height: 100vh !important;
+    box-sizing: border-box !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+
+    width: 90px !important;
+    background-color: #030303 !important;
+    border-right: 1px solid #141414 !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0 !important;
+}
+
+.sidebar-top {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.sidebar-bottom {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: auto;
+}
+
+.bottom-icons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.bottom-icons a {
+    color: #888;
+    font-size: 20px;
+    transition: color 0.3s;
+}
+
+.bottom-icons a:hover {
+    color: #fff;
+}
+
+.user-profile {
+    margin-top: 0 !important;
+    padding-top: 20px !important;
+    border-top: 1px solid #1f1f1f !important;
+    width: 100%;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    cursor: pointer;
+}
+
+.user-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+.avatar {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    background-color: #8b5cf6 !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+}
+
+.user-details {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    margin-left: 0 !important;
+}
+
+.user-name {
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+}
+
+.user-role {
+    font-size: 11px !important;
+    color: #888 !important;
+}
+
+
+/* Three Column Modal Grid */
+.modal-form.three-col {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.modal-form.three-col .modal-buttons {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+/* Ensure form group inside three-col adapts */
+.modal-form.three-col .form-group {
+    margin-bottom: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #000000;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #000000;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #000000;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #000000;
+}
+
+.glass-panel {
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Table row transitions */
+tbody tr {
+    transition: all 0.2s ease;
+}
+
+tbody tr:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }

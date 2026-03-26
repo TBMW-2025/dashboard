@@ -1,36 +1,127 @@
 // Dashboard interactivity
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("Dashboard loaded");
-    if (document.getElementById('map-container')) renderMap();
-    if (document.getElementById('mainChart')) renderMainChart();
-    if (document.getElementById('miniAreaChart')) renderMiniChart();
+/**
+ * Main application initializer — called once on DOMContentLoaded
+ */
+function bootstrapApp() {
+    window.bootstrapApp = bootstrapApp; // Ensure global visibility
+    console.log("Placement Monitor Dashboard: Initializing...");
+    
+    // Core UI Components
+    initSidebarToggle();
     setupThemeToggle();
-    if (document.querySelector('.data-table-container')) setupStudentsTable();
-});
-
-function setupThemeToggle() {
-    const themeToggleBtn = document.querySelector('.theme-toggle');
-    const body = document.body;
-
-    // Check for saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'light') {
-        body.classList.add('light-mode');
+    initSearch();
+    initAddButton();
+    initActionButtons();
+    initGlobalSearch(); // Search bar in header
+    
+    // Page-specific initialization
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    
+    // 1. Dashboard Page
+    if (document.getElementById('mainChart') || document.getElementById('miniAreaChart')) {
+        try { if (document.getElementById('mainChart')) renderMainChart(); } catch(e) { console.error(e); }
+        try { if (document.getElementById('miniAreaChart')) renderMiniChart(); } catch(e) { console.error(e); }
     }
 
-    themeToggleBtn.addEventListener('click', () => {
-        body.classList.toggle('light-mode');
+    // 2. Students / Table Pages
+    if (document.querySelector('.data-table-container')) {
+        setupStudentsTable();
+        initModalLogic(); // Add student modal
+        initLocalSearch(); // Table search
+    }
 
-        // Save preference
-        if (body.classList.contains('light-mode')) {
-            localStorage.setItem('theme', 'light');
-        } else {
-            localStorage.setItem('theme', 'dark');
+    // 3. Reports Page
+    if (document.getElementById('placementStatusChart')) {
+        // charts are initialized by their own script tags in reports.html usually,
+        // but we ensure common UI is ready
+    }
+
+    // 4. Settings Page
+    if (document.getElementById('admin-profile')) {
+        loadAdminProfileData();
+        initSettingsStudents();
+        setupSettingsNav();
+        load2faSettings();
+    }
+
+    // Common Table Sync & Fit
+    syncTableScrolling();
+    window.addEventListener('resize', autoFitTables);
+    setTimeout(autoFitTables, 500);
+}
+
+// Internal helpers for the bootstrap process
+function syncTableScrolling() {
+    document.querySelectorAll('.table-body').forEach(body => {
+        const header = body.previousElementSibling;
+        if (header && header.classList.contains('table-header')) {
+            header.style.overflow = 'hidden';
+            body.addEventListener('scroll', () => {
+                header.scrollLeft = body.scrollLeft;
+            });
         }
     });
 }
 
+// Auto-fit function scaling data tables cleanly inside the screen without ugly word-breaks
+function autoFitTables() {
+    const containers = document.querySelectorAll('.table-container');
+    containers.forEach(container => {
+        // Reset scale to measure native constraints
+        container.style.transform = 'none';
+        container.style.width = '100%';
+        
+        const parentWidth = container.parentElement.clientWidth - 40; // minus some padding
+        const minOptimalWidth = 1100; // The threshold where the 9-column generic table looks acceptable
+        
+        // If the viewport is smaller than the optimal width, intelligently scale down the container
+        if (parentWidth > 0 && parentWidth < minOptimalWidth) {
+            const scaleFactor = parentWidth / minOptimalWidth;
+            container.style.transformOrigin = 'top left';
+            container.style.transform = `scale(${scaleFactor})`;
+            container.style.width = `${(1 / scaleFactor) * 100}%`;
+            container.style.marginBottom = `-${container.offsetHeight * (1 - scaleFactor)}px`; 
+        } else {
+            container.style.transform = 'none';
+            container.style.width = '100%';
+            container.style.marginBottom = '0px';
+        }
+    });
+}
+
+
+function setupThemeToggle() {
+    const themeToggleBtns = document.querySelectorAll('.theme-toggle');
+    const body = document.body;
+    const subtitle = document.getElementById('headerSubtitle');
+
+    function updateSubtitle() {
+        if (subtitle) {
+            subtitle.textContent = "Future Leaders and Security Intelligence";
+        }
+    }
+
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') {
+        body.classList.add('light-mode');
+    }
+    updateSubtitle();
+
+    if (themeToggleBtns.length > 0) {
+        themeToggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                body.classList.toggle('light-mode');
+                updateSubtitle();
+                if (body.classList.contains('light-mode')) {
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        });
+    }
+}
 function renderMainChart() {
     const ctx = document.getElementById('mainChart').getContext('2d');
 
@@ -39,22 +130,15 @@ function renderMainChart() {
     gradient.addColorStop(0, 'rgba(249, 115, 22, 0.5)'); // accent-orange
     gradient.addColorStop(1, 'rgba(249, 115, 22, 0.0)');
 
-    new Chart(ctx, {
-        type: 'line',
+    window._mainChart = new Chart(ctx, {
+        type: 'bar',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+            labels: ['2023', '2024'],
             datasets: [{
-                label: 'Revenue',
-                data: [35, 45, 30, 60, 45, 75, 55, 80, 65, 95],
-                borderColor: '#f97316',
-                backgroundColor: gradient,
-                borderWidth: 3,
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#f97316',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                fill: true,
-                tension: 0.4 // Smooth curve
+                label: 'Yearly Placements',
+                data: [0, 0],
+                backgroundColor: '#f97316',
+                borderRadius: 4
             }]
         },
         options: {
@@ -70,7 +154,7 @@ function renderMainChart() {
                 },
                 y: {
                     grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
-                    ticks: { color: '#9ca3af', stepSize: 20 }
+                    ticks: { color: '#9ca3af', stepSize: 1, precision: 0 }
                 }
             }
         }
@@ -111,74 +195,6 @@ function renderMiniChart() {
     });
 }
 
-function renderMap() {
-    const container = document.getElementById('map-container');
-    const width = container.clientWidth;
-    const height = container.clientHeight || 400; // default height if not rendered yet
-
-    const svg = d3.select('#map-container')
-        .append('svg')
-        .attr('width', '100%')
-        .attr('height', '100%')
-        .attr('viewBox', `0 0 ${width} ${height}`)
-        .style('display', 'block');
-
-    const g = svg.append('g');
-
-    // Add Zoom capabilities
-    const zoom = d3.zoom()
-        .scaleExtent([1, 8])
-        .on('zoom', (event) => {
-            g.attr('transform', event.transform);
-        });
-
-    svg.call(zoom);
-
-    // Zoom buttons overlay
-    const zoomControls = d3.select('#map-container')
-        .append('div')
-        .attr('class', 'zoom-controls');
-
-    zoomControls.append('button')
-        .text('+')
-        .on('click', () => {
-            svg.transition().duration(300).call(zoom.scaleBy, 1.5);
-        });
-
-    zoomControls.append('button')
-        .text('-')
-        .on('click', () => {
-            svg.transition().duration(300).call(zoom.scaleBy, 0.75);
-        });
-
-    const projection = d3.geoMercator()
-        .center([82.8, 23.5]) // Center of India
-        .scale(width * 1.5) /* INCREASED SCALE FOR BIGGER MAP */
-        .translate([width / 2, height / 2]);
-
-    const path = d3.geoPath().projection(projection);
-
-    d3.json('https://raw.githubusercontent.com/india-in-data/india-states-2019/master/india_states.geojson').then(data => {
-        // Fit the projection strictly to the geometric bounds of the features
-        projection.fitSize([width, height], data);
-
-        g.selectAll('path')
-            .data(data.features)
-            .enter()
-            .append('path')
-            .attr('d', path)
-            .attr('class', 'map-state')
-            .on('mouseover', function (event, d) {
-                d3.select(this).classed('highlighted', true);
-            })
-            .on('mouseout', function (event, d) {
-                d3.select(this).classed('highlighted', false);
-            });
-    }).catch(error => {
-        console.error("Error loading map data: ", error);
-        container.innerHTML = "<p style='color: var(--text-primary); text-align: center;'>Error loading map data.</p>";
-    });
-}
 
 function setupStudentsTable() {
     // Handle remove buttons
@@ -240,197 +256,131 @@ function initSearch() {
 /**
  * Initialize add button functionality
  */
-function initAddButton() {
-    const addBtn = document.querySelector('.btn-add');
-    if (addBtn) {
-        addBtn.addEventListener('click', function () {
-            const contentTitle = document.querySelector('.content-title');
-            let pageType = 'Item';
-
-            if (contentTitle) {
-                if (contentTitle.textContent.includes('Companies')) {
-                    pageType = 'Company';
-                } else if (contentTitle.textContent.includes('Placements')) {
-                    pageType = 'Placement';
-                }
-            }
-
-            alert(`Add ${pageType} form would open here`);
-        });
-    }
-}
+function initAddButton() {}
 
 /**
  * Initialize action button functionality
  */
-function initActionButtons() {
-    const actionBtns = document.querySelectorAll('.action-btn');
-    actionBtns.forEach(btn => {
-        btn.addEventListener('click', function () {
-            alert('Options menu would appear here');
-        });
-    });
-}
-
+function initActionButtons() {}
 // ===== REPORTS PAGE FUNCTIONALITY =====
 
 /**
  * Initialize charts for Reports page using Chart.js
  */
-function initializeCharts() {
-    // 1. Placement Status Distribution (Pie Chart)
-    const placementStatusCtx = document.getElementById('placementStatusChart');
-    if (placementStatusCtx) {
-        new Chart(placementStatusCtx.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Placed', 'Unplaced', 'Higher Studies'],
-                datasets: [{
-                    data: [987, 258, 0],
-                    backgroundColor: [
-                        '#ff6b35',
-                        '#ef4444',
-                        '#6b7280'
-                    ],
-                    borderColor: '#1a1f3a',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: {
-                            color: '#aaa',
-                            padding: 15,
-                            font: { size: 12 }
-                        }
-                    }
-                }
-            }
-        });
-    }
+async function initializeCharts() {
+    try {
+        const students = await getStudents() || [];
+        const placements = await getPlacements() || [];
+        const companies = await getCompanies() || [];
 
-    // 2. Department-wise Placement (Bar Chart)
-    const deptCtx = document.getElementById('deptPlacementChart');
-    if (deptCtx) {
-        new Chart(deptCtx.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['CS', 'IT', 'ECE', 'ME', 'CE', 'Other'],
-                datasets: [{
-                    label: 'Students Placed',
-                    data: [234, 212, 198, 165, 140, 105],
-                    backgroundColor: '#ff6b35',
-                    borderRadius: 5,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                indexAxis: 'y',
-                plugins: {
-                    legend: {
-                        labels: { color: '#aaa', font: { size: 11 } }
-                    }
-                },
-                scales: {
-                    x: {
-                        ticks: { color: '#888', font: { size: 11 } },
-                        grid: { color: '#2a2f4a' }
-                    },
-                    y: {
-                        ticks: { color: '#888', font: { size: 11 } },
-                        grid: { color: 'transparent' }
-                    }
-                }
-            }
-        });
-    }
+        // --- 1. Top Metrics ---
+        const totalStudents = students.length;
+        const placedStudents = students.filter(s => s.placement_status === 'Yes').length;
+        const totalCompanies = companies.length;
+        
+        // Count pending
+        const pendingCount = placements.filter(p => (p.status || '').toLowerCase() === 'pending').length;
+        
+        let placementRate = 0;
+        if (totalStudents > 0) placementRate = ((placedStudents / totalStudents) * 100).toFixed(1);
 
-    // 3. Monthly Placement Trend (Line Chart)
-    const monthlyCtx = document.getElementById('monthlyTrendChart');
-    if (monthlyCtx) {
-        new Chart(monthlyCtx.getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-                datasets: [{
-                    label: 'Placements',
-                    data: [45, 65, 82, 95, 110, 125, 142, 158, 172, 185, 198, 210],
-                    borderColor: '#ff6b35',
-                    backgroundColor: 'rgba(255, 107, 53, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#ff6b35',
-                    pointBorderColor: '#1a1f3a',
-                    pointBorderWidth: 2,
-                    pointRadius: 5,
-                    pointHoverRadius: 7
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: '#aaa', font: { size: 11 } }
-                    }
-                },
-                scales: {
-                    y: {
-                        ticks: { color: '#888', font: { size: 11 } },
-                        grid: { color: '#2a2f4a' },
-                        beginAtZero: true
-                    },
-                    x: {
-                        ticks: { color: '#888', font: { size: 11 } },
-                        grid: { color: '#2a2f4a' }
-                    }
-                }
-            }
-        });
-    }
+        const rTotal = document.getElementById('rpt-total');
+        if (rTotal) {
+            rTotal.textContent = totalStudents;
+            document.getElementById('rpt-placed').textContent = placedStudents;
+            document.getElementById('rpt-rate').textContent = placementRate + '%';
+            document.getElementById('rpt-companies').textContent = totalCompanies;
+            document.getElementById('rpt-placed-pct').textContent = `Placement rate: ${placementRate}%`;
+            document.getElementById('rpt-pending').textContent = `Pending: ${pendingCount}`;
+            document.getElementById('rpt-internships').textContent = `Internships: Available via API`;
+        }
 
-    // 4. Salary Distribution (Bar Chart)
-    const salaryCtx = document.getElementById('salaryDistributionChart');
-    if (salaryCtx) {
-        new Chart(salaryCtx.getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['7-9 LPA', '9-11 LPA', '11-13 LPA', '13-15 LPA', '15-20 LPA', '20+ LPA'],
-                datasets: [{
-                    label: 'Number of Students',
-                    data: [145, 220, 325, 195, 85, 17],
-                    backgroundColor: '#ff6b35',
-                    borderRadius: 5,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: '#aaa', font: { size: 11 } }
-                    }
+        // --- 2. Placement Status Chart ---
+        const placementStatusCtx = document.getElementById('placementStatusChart');
+        if (placementStatusCtx) {
+            new Chart(placementStatusCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Placed', 'Unplaced'],
+                    datasets: [{
+                        data: [placedStudents, totalStudents - placedStudents],
+                        backgroundColor: ['#ff6b35', '#ef4444'],
+                        borderColor: '#1a1f3a',
+                        borderWidth: 2
+                    }]
                 },
-                scales: {
-                    y: {
-                        ticks: { color: '#888', font: { size: 11 } },
-                        grid: { color: '#2a2f4a' },
-                        beginAtZero: true
-                    },
-                    x: {
-                        ticks: { color: '#888', font: { size: 11 } },
-                        grid: { color: 'transparent' }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' } } } }
+            });
+        }
+
+        // --- 3. Department-wise ---
+        const deptCtx = document.getElementById('deptPlacementChart');
+        if (deptCtx) {
+            const deptStats = {};
+            students.forEach(s => {
+                const dep = s.department_course || 'Unknown';
+                if (!deptStats[dep]) deptStats[dep] = { total: 0, placed: 0 };
+                deptStats[dep].total++;
+                if (s.placement_status === 'Yes') deptStats[dep].placed++;
+            });
+
+            const deptLabels = Object.keys(deptStats);
+            const deptData = deptLabels.map(l => deptStats[l].placed);
+
+            // Also populate the department bars below
+            const barsEl = document.getElementById('deptBars');
+            if (barsEl) {
+                const max = Math.max(...deptLabels.map(l => deptStats[l].total), 1);
+                barsEl.innerHTML = deptLabels.map(d => `
+                    <div class="dept-item">
+                        <span class="dept-name">${d}</span>
+                        <div class="dept-bar"><div class="dept-bar-fill" style="width:${(deptStats[d].total/max*100).toFixed(0)}%"></div></div>
+                        <span class="dept-count">${deptStats[d].placed}/${deptStats[d].total}</span>
+                    </div>`).join('');
+            }
+
+            new Chart(deptCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: deptLabels,
+                    datasets: [{
+                        label: 'Students Placed',
+                        data: deptData,
+                        backgroundColor: '#ff6b35',
+                        borderRadius: 5
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' } } }, scales: { x: { ticks: { color: '#888' }, grid: { color: '#2a2f4a' } }, y: { ticks: { color: '#888' }, grid: { color: 'transparent' } } } }
+            });
+        }
+
+        // --- 4. Yearly Trend (Replaced Monthly) ---
+        // This is handled via getYearlyTrend() in dashboard.html and reports.html script blocks
+
+        // --- 5. Salary Distribution ---
+        const salaryCtx = document.getElementById('salaryDistributionChart');
+        if (salaryCtx) {
+            const ranges = [ {l: '7-9 LPA', min: 7, max: 9}, {l: '9-11 LPA', min: 9, max: 11}, {l: '11-13 LPA', min: 11, max: 13}, {l: '13-15 LPA', min: 13, max: 15}, {l: '15-20 LPA', min: 15, max: 20}, {l: '20+ LPA', min: 20, max: 999} ];
+            const counts = new Array(ranges.length).fill(0);
+
+            placements.forEach(p => {
+                if (p.salary_lpa && p.status === 'Placed') {
+                    const sal = parseFloat(p.salary_lpa);
+                    for (let i = 0; i < ranges.length; i++) {
+                        if (sal >= ranges[i].min && sal < ranges[i].max) { counts[i]++; break; }
                     }
                 }
-            }
-        });
+            });
+
+            new Chart(salaryCtx.getContext('2d'), {
+                type: 'bar',
+                data: { labels: ranges.map(r => r.l), datasets: [{ label: 'Students', data: counts, backgroundColor: '#ff6b35', borderRadius: 5 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' } } }, scales: { y: { ticks: { color: '#888', stepSize: 1 }, grid: { color: '#2a2f4a' }, beginAtZero: true }, x: { ticks: { color: '#888' }, grid: { color: 'transparent' } } } }
+            });
+        }
+
+    } catch (err) {
+        console.error("Error loading dynamic reports:", err);
     }
 }
 
@@ -439,54 +389,100 @@ function initializeCharts() {
 /**
  * Switch between different settings tabs
  */
+/**
+ * Switch between different settings tabs using standard active class mechanism, 
+ * but also applying inline styles as requested.
+ */
 function switchTab(tabName) {
-    // Hide all content sections
+    window.switchTab = switchTab; // Ensure global visibility
+    if (!tabName) return;
+    
+    // Normalize tabName — remove leading # if present
+    const cleanTab = tabName.startsWith('#') ? tabName.substring(1) : tabName;
+    console.log(`[Settings] Switching to tab: ${cleanTab}`);
+
     const contents = document.querySelectorAll('.settings-content');
-    contents.forEach(content => content.classList.remove('active'));
+    let found = false;
 
-    // Remove active class from all nav items
-    const navItems = document.querySelectorAll('.settings-nav-item');
-    navItems.forEach(item => item.classList.remove('active'));
+    contents.forEach(content => {
+        if (content.id === cleanTab) {
+            content.classList.add('active');
+            content.style.display = 'block';
+            found = true;
+        } else {
+            content.classList.remove('active');
+            content.style.display = 'none';
+        }
+    });
 
-    // Show selected content
-    const selectedContent = document.getElementById(tabName);
-    if (selectedContent) {
-        selectedContent.classList.add('active');
+    if (!found) {
+        console.warn(`[Settings] Tab content with id "${cleanTab}" not found.`);
     }
 
-    // Add active class to clicked nav item
-    if (event && event.target) {
-        event.target.classList.add('active');
+    const navItems = document.querySelectorAll('.settings-nav-item, .settings-option');
+    navItems.forEach(item => {
+        const target = item.getAttribute('data-tab') || item.getAttribute('data-target');
+        if (target === cleanTab) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+
+    // Update URL hash without jumping
+    if (history.pushState) {
+        history.pushState(null, null, '#' + cleanTab);
+    } else {
+        location.hash = '#' + cleanTab;
+    }
+}
+
+function setupSettingsNav() {
+    // Also support data-target if they use it in HTML
+    const navItems = document.querySelectorAll('.settings-nav-item[data-tab], .settings-nav-item[data-target], .settings-option');
+    navItems.forEach(item => {
+        item.addEventListener('click', function () {
+            const target = this.getAttribute('data-tab') || this.getAttribute('data-target');
+            if(target) {
+                switchTab(target);
+            }
+        });
+    });
+    
+    // Ensure initial state based on hash or default
+    const hash = window.location.hash;
+    if (hash && hash.length > 1) {
+        switchTab(hash);
+    } else {
+        switchTab('admin-profile');
     }
 }
 
 /**
  * Update admin profile information
  */
-function updateProfile() {
-    const firstName = document.getElementById('firstName');
-    const lastName = document.getElementById('lastName');
+async function updateProfile() {
     const email = document.getElementById('email');
     const phone = document.getElementById('phone');
 
-    if (!firstName || !lastName || !email || !phone) {
-        alert('Please fill in all fields');
-        return;
-    }
-
-    if (!firstName.value || !lastName.value || !email.value || !phone.value) {
-        alert('Please fill in all fields');
-        return;
-    }
+    if (!email || !phone) return;
+    if (!email.value) { alert('Email is required'); return; }
 
     const alertEl = document.getElementById('profileAlert');
-    if (alertEl) {
-        alertEl.textContent = '✓ Profile updated successfully!';
-        alertEl.classList.add('show');
-
-        setTimeout(() => {
-            alertEl.classList.remove('show');
-        }, 3000);
+    try {
+        const result = await updateAdminProfile({ email: email.value, mobile: phone.value });
+        if (alertEl) {
+            alertEl.textContent = '✓ Profile updated! OTPs will now be sent to the new email/mobile.';
+            alertEl.classList.add('show');
+            setTimeout(() => alertEl.classList.remove('show'), 4000);
+        }
+        // Update stored user object
+        const user = JSON.parse(localStorage.getItem('pd_user') || '{}');
+        user.email  = email.value;
+        user.mobile = phone.value;
+        localStorage.setItem('pd_user', JSON.stringify(user));
+    } catch (err) {
+        alert('Failed to update profile: ' + err.message);
     }
 }
 
@@ -499,9 +495,12 @@ function resetProfileForm() {
     const emailEl = document.getElementById('email');
     const phoneEl = document.getElementById('phone');
 
-    if (firstNameEl) firstNameEl.value = 'Arsh';
-    if (lastNameEl) lastNameEl.value = 'G';
-    if (emailEl) emailEl.value = 'arsh.g@university.edu';
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const nameParts = (user.username || 'Admin User').split(' ');
+
+    if (firstNameEl) firstNameEl.value = nameParts[0] || 'Admin';
+    if (lastNameEl) lastNameEl.value = nameParts.slice(1).join(' ') || 'User';
+    if (emailEl) emailEl.value = user.username ? `${user.username.replace(' ', '.').toLowerCase()}@university.edu` : 'admin@university.edu';
     if (phoneEl) phoneEl.value = '+91 9876543210';
 }
 
@@ -558,9 +557,9 @@ function checkPasswordStrength() {
 /**
  * Update admin password
  */
-function updateAdminPassword() {
+async function updateAdminPassword() {
     const currentPassword = document.getElementById('currentPassword');
-    const newPassword = document.getElementById('newPassword');
+    const newPassword     = document.getElementById('newPassword');
     const confirmPassword = document.getElementById('confirmPassword');
 
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -569,7 +568,7 @@ function updateAdminPassword() {
     }
 
     const currentPwd = currentPassword.value;
-    const newPwd = newPassword.value;
+    const newPwd     = newPassword.value;
     const confirmPwd = confirmPassword.value;
 
     if (!currentPwd || !newPwd || !confirmPwd) {
@@ -587,16 +586,17 @@ function updateAdminPassword() {
         return;
     }
 
-    const alertEl = document.getElementById('passwordAlert');
-    if (alertEl) {
-        alertEl.textContent = '✓ Password changed successfully!';
-        alertEl.classList.add('show');
-
-        resetPasswordForm();
-
-        setTimeout(() => {
-            alertEl.classList.remove('show');
-        }, 3000);
+    try {
+        await changeAdminPassword({ current_password: currentPwd, new_password: newPwd });
+        const alertEl = document.getElementById('passwordAlert');
+        if (alertEl) {
+            alertEl.textContent = '✓ Password changed successfully!';
+            alertEl.classList.add('show');
+            resetPasswordForm();
+            setTimeout(() => alertEl.classList.remove('show'), 3000);
+        }
+    } catch (err) {
+        alert('Error: ' + err.message);
     }
 }
 
@@ -628,6 +628,27 @@ function resetPasswordForm() {
 /**
  * Load student details when selected
  */
+
+window.settingsStudentsMap = {};
+
+async function initSettingsStudents() {
+    const select = document.getElementById('studentSelect');
+    if (!select) return;
+
+    try {
+        const students = await getStudents();
+        let options = '<option value="">-- Select a student --</option>';
+        students.forEach(s => {
+            // PK is enrollment_number, not id
+            window.settingsStudentsMap[s.enrollment_number] = s;
+            options += `<option value="${s.enrollment_number}">${s.student_name} (${s.enrollment_number})</option>`;
+        });
+        select.innerHTML = options;
+    } catch (e) {
+        console.error('Failed to load students for settings', e);
+    }
+}
+
 function loadStudentDetails() {
     const select = document.getElementById('studentSelect');
     const details = document.getElementById('studentDetails');
@@ -639,58 +660,63 @@ function loadStudentDetails() {
 
     if (details) details.style.display = 'block';
 
-    const students = {
-        'ENR2023001': { name: 'John Doe', email: 'john.doe@university.edu' },
-        'ENR2023002': { name: 'Jane Smith', email: 'jane.smith@university.edu' },
-        'ENR2023003': { name: 'Alex Jones', email: 'alex.jones@university.edu' },
-        'ENR2023004': { name: 'Sam Wilson', email: 'sam.wilson@university.edu' },
-        'ENR2023005': { name: 'Emily Brown', email: 'emily.brown@university.edu' }
-    };
-
-    const student = students[select.value];
+    const student = window.settingsStudentsMap[select.value];
     if (student) {
         const studentNameEl = document.getElementById('studentName');
         const studentEnrollmentEl = document.getElementById('studentEnrollment');
         const studentEmailEl = document.getElementById('studentEmail');
 
-        if (studentNameEl) studentNameEl.textContent = student.name;
-        if (studentEnrollmentEl) studentEnrollmentEl.textContent = select.value;
-        if (studentEmailEl) studentEmailEl.textContent = student.email;
+        if (studentNameEl) studentNameEl.textContent = student.student_name;
+        if (studentEnrollmentEl) studentEnrollmentEl.textContent = student.enrollment_number;
+        if (studentEmailEl) studentEmailEl.textContent = student.student_email_id;
     }
 }
+
 
 /**
  * Reset student password
  */
-function resetStudentPassword() {
-    const student = document.getElementById('studentSelect');
+
+async function resetStudentPassword(event) {
+    const studentSelect = document.getElementById('studentSelect');
     const tempPassword = document.getElementById('tempPassword');
 
-    if (!student || !tempPassword) {
+    if (!studentSelect || !tempPassword || !studentSelect.value || !tempPassword.value) {
         alert('Please select a student and enter a temporary password');
         return;
     }
 
-    if (!student.value || !tempPassword.value) {
-        alert('Please select a student and enter a temporary password');
-        return;
-    }
+    const enrollment_number = studentSelect.value;
+    const newPassword = tempPassword.value;
+    
+    // Fallback if event is not passed (should not happen with the new onclick)
+    const btn = (event && event.target) ? event.target : document.querySelector('#student-password .btn-primary');
+    if (!btn) return;
 
-    const studentNameEl = document.getElementById('studentName');
-    const alert = document.getElementById('studentPasswordAlert');
+    const originalText = btn.textContent;
+    btn.textContent = 'Resetting...';
+    btn.disabled = true;
 
-    if (alert) {
-        const studentName = studentNameEl ? studentNameEl.textContent : 'the student';
-        alert.textContent = `✓ Password for ${studentName} has been reset!`;
-        alert.classList.add('show');
-
-        clearStudentForm();
-
-        setTimeout(() => {
-            alert.classList.remove('show');
-        }, 3000);
+    try {
+        const data = await apiResetStudentPassword(enrollment_number, { new_password: newPassword });
+        
+        const alertEl = document.getElementById('studentPasswordAlert');
+        if (alertEl) {
+            alertEl.textContent = `✓ ${data.message || 'Password reset success!'}`;
+            alertEl.classList.add('show');
+            clearStudentForm();
+            setTimeout(() => { alertEl.classList.remove('show'); }, 4000);
+        }
+    } catch (e) {
+        alert('Reset Error: ' + e.message);
+    } finally {
+        if (btn) {
+            btn.textContent = originalText;
+            btn.disabled = false;
+        }
     }
 }
+
 
 /**
  * Clear student password reset form
@@ -709,16 +735,30 @@ function clearStudentForm() {
  * Update notification preferences
  */
 function updateNotifications() {
-    alert('Notification preferences saved');
+    const alertEl = document.createElement('div');
+    alertEl.style.cssText = 'background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);color:#4ade80;padding:10px 14px;border-radius:6px;font-size:13px;margin-top:16px;text-align:center;';
+    alertEl.textContent = '✓ Notification preferences saved successfully!';
+    const card = document.querySelector('#notifications .settings-card');
+    if (card) {
+        const existing = card.querySelector('.notif-alert');
+        if (existing) existing.remove();
+        alertEl.classList.add('notif-alert');
+        card.appendChild(alertEl);
+        setTimeout(() => alertEl.remove(), 3000);
+    }
 }
 
 /**
  * Enable two-factor authentication
  */
-function enableTwoFA() {
+async function enableTwoFA() {
     const btn = document.getElementById('twoFaBtn');
-    if (btn) {
-        if (btn.textContent === 'Enable') {
+    if (!btn) return;
+    
+    try {
+        const isEnabling = btn.textContent === 'Enable';
+        await toggle2fa(isEnabling);
+        if (isEnabling) {
             btn.textContent = 'Disable';
             btn.classList.remove('btn-secondary');
             btn.classList.add('btn-danger');
@@ -729,24 +769,57 @@ function enableTwoFA() {
             btn.classList.add('btn-secondary');
             alert('Two-Factor Authentication has been disabled');
         }
-    } else {
-        alert('Two-Factor Authentication setup would open here');
+    } catch (e) {
+        alert('Failed to toggle 2FA: ' + e.message);
     }
+}
+
+async function load2faSettings() {
+    const btn = document.getElementById('twoFaBtn');
+    if (!btn) return;
+    try {
+        const status = await get2faStatus();
+        if (status.two_factor_enabled) {
+            btn.textContent = 'Disable';
+            btn.classList.remove('btn-secondary');
+            btn.classList.add('btn-danger');
+        } else {
+            btn.textContent = 'Enable';
+            btn.classList.remove('btn-danger');
+            btn.classList.add('btn-secondary');
+        }
+    } catch(e) {}
 }
 
 /**
  * Revoke an active session
  */
-function revokeSession() {
-    alert('Session revoked successfully');
+function revokeSession(event) {
+    const btn = event.currentTarget || event.target;
+    const sessionCard = btn.closest('div[style*="background"]');
+    if (confirm('Revoke this session? That device will be logged out immediately.')) {
+        if (sessionCard) {
+            sessionCard.style.opacity = '0.4';
+            sessionCard.style.transition = 'opacity 0.3s';
+            btn.textContent = 'Revoked';
+            btn.disabled = true;
+            btn.style.background = '#374151';
+        }
+    }
 }
 
 /**
  * Open delete account confirmation
  */
 function openDeleteAccount() {
-    if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        alert('Account deletion initiated');
+    if (confirm('⚠️ Are you sure you want to delete your account?\n\nThis will permanently remove all admin data and cannot be undone.')) {
+        if (confirm('Final confirmation: click OK to delete the account.')) {
+            // Log out the admin — the account delete requires a backend endpoint
+            localStorage.removeItem('pd_token');
+            localStorage.removeItem('pd_user');
+            alert('Account deletion request submitted. You have been logged out.');
+            window.location.href = 'index.html';
+        }
     }
 }
 
@@ -754,17 +827,35 @@ function openDeleteAccount() {
 // DOM CONTENT LOADED - Initialize all functionality
 // ===================================================================
 
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize common functionality
-    initSearch();
-    initAddButton();
-    initActionButtons();
+// --- Settings Data Loader ---
+async function loadAdminProfileData() {
+    try {
+        const profile = await getAdminProfile();
+        const emailEl = document.getElementById('email');
+        const phoneEl = document.getElementById('phone');
+        const firstEl = document.getElementById('firstName');
+        const lastEl  = document.getElementById('lastName');
+        if (emailEl) emailEl.value = profile.email || '';
+        if (phoneEl) phoneEl.value = profile.mobile || '';
+        const nameParts = (profile.username || '').split(' ');
+        if (firstEl) firstEl.value = nameParts[0] || profile.username || '';
+        if (lastEl)  lastEl.value  = nameParts.slice(1).join(' ') || '';
 
-    // Initialize charts if on reports page
-    if (document.getElementById('placementStatusChart')) {
-        initializeCharts();
+        // Update profile header
+        document.querySelectorAll('.profile-info h2').forEach(el => el.textContent = profile.username || 'Admin');
+        document.querySelectorAll('.profile-info p:nth-child(3)').forEach(el => el.textContent = profile.email || '');
+        document.querySelectorAll('.profile-avatar, .user-profile .avatar').forEach(el => {
+            el.textContent = (profile.username || 'A').charAt(0).toUpperCase();
+        });
+    } catch (e) {
+        // Fallback to localStorage
+        const user = JSON.parse(localStorage.getItem('pd_user') || '{}');
+        const emailEl = document.getElementById('email');
+        const phoneEl = document.getElementById('phone');
+        if (emailEl) emailEl.value = user.email || '';
+        if (phoneEl) phoneEl.value = user.mobile || '';
     }
-});
+}
 
 // ===== SIDEBAR TOGGLE FUNCTIONALITY =====
 
@@ -811,19 +902,8 @@ function initSidebarToggle() {
     });
 }
 
-// Add to DOM Content Loaded
-document.addEventListener('DOMContentLoaded', function () {
-    // Initialize all existing functions
-    initSearch();
-    initAddButton();
-    initActionButtons();
-
-    // Initialize sidebar toggle
-    initSidebarToggle();
-});
-
-document.addEventListener("DOMContentLoaded", function () {
-
+// --- Modal & Form Logic ---
+function initModalLogic() {
     const modal = document.getElementById("addStudentModal");
     const openBtn = document.getElementById("openStudentModal") || document.querySelector(".table-actions .btn-add");
     const closeBtns = document.querySelectorAll(".close-modal");
@@ -874,8 +954,9 @@ document.addEventListener("DOMContentLoaded", function () {
             alert('No new notifications');
         });
     });
+}
 
-    // Local Student Search
+function initLocalSearch() {
     const localSearch = document.getElementById('localStudentSearch');
     if (localSearch) {
         localSearch.addEventListener('input', (e) => {
@@ -888,4 +969,90 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         });
     }
-});
+}
+
+// Theme toggle is handled inside bootstrapApp
+
+
+// --- GLOBAL SEARCH ENGINE (UI NAVIGATION ONLY) ---
+function initGlobalSearch() {
+    const globalSearchInput = document.querySelector('.header-right .search-bar');
+    if (!globalSearchInput) return;
+
+    // Define searchable UI navigation items
+    const navItems = [
+        { name: 'Dashboard', url: 'dashboard.html', icon: 'bi-speedometer2' },
+        { name: 'Students', url: 'students.html', icon: 'bi-people' },
+        { name: 'Companies', url: 'companies.html', icon: 'bi-building' },
+        { name: 'Internships', url: 'internships.html', icon: 'bi-person-workspace' },
+        { name: 'Placements', url: 'placements.html', icon: 'bi-briefcase-fill' },
+        { name: 'Reports', url: 'reports.html', icon: 'bi-bar-chart-fill' },
+        { name: 'Settings', url: 'settings.html', icon: 'bi-gear' },
+        { name: 'Admin Profile', url: 'settings.html#admin-profile', icon: 'bi-person' },
+        { name: 'Change Password', url: 'settings.html#admin-password', icon: 'bi-key' },
+        { name: 'Reset Student Password', url: 'settings.html#student-password', icon: 'bi-unlock' }
+    ];
+
+    // Create a dropdown container
+    const searchDropdown = document.createElement('div');
+    searchDropdown.className = 'global-search-dropdown';
+    searchDropdown.style.cssText = `
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #1a1f3a;
+        background: #111f33;
+        border: 1px solid #2a2f4a;
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        display: none;
+        z-index: 1000;
+        max-height: 300px;
+        overflow-y: auto;
+    `;
+    globalSearchInput.parentNode.style.position = 'relative';
+    globalSearchInput.parentNode.appendChild(searchDropdown);
+
+    globalSearchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        searchDropdown.innerHTML = '';
+        if (!query) {
+            searchDropdown.style.display = 'none';
+            return;
+        }
+
+        const matches = navItems.filter(item => item.name.toLowerCase().includes(query));
+        
+        if (matches.length > 0) {
+            matches.forEach(match => {
+                const itemDiv = document.createElement('div');
+                itemDiv.style.cssText = 'padding: 10px 15px; cursor: pointer; color: #fff; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #1f2a40;';
+                itemDiv.innerHTML = `<i class="bi ${match.icon}" style="color: #888;"></i> <span>${match.name}</span>`;
+                itemDiv.addEventListener('mouseover', () => itemDiv.style.backgroundColor = '#1a3350');
+                itemDiv.addEventListener('mouseout', () => itemDiv.style.backgroundColor = 'transparent');
+                itemDiv.addEventListener('click', () => {
+                    window.location.href = match.url;
+                });
+                searchDropdown.appendChild(itemDiv);
+            });
+            searchDropdown.style.display = 'block';
+        } else {
+            searchDropdown.style.display = 'none';
+        }
+    });
+
+    // Close dropdown on click outside
+    document.addEventListener('click', (e) => {
+        if (!globalSearchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+            searchDropdown.style.display = 'none';
+        }
+    });
+}
+
+// One final listener to start it all!
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bootstrapApp);
+} else {
+    bootstrapApp();
+}

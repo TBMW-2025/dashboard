@@ -3,9 +3,12 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placements - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -18,15 +21,54 @@
     <div class="container">
         <!-- Sidebar -->
         <div class="sidebar">
-            <div class="sidebar-header">MENU</div>
-            <nav class="sidebar-nav">
-                <a href="index.html">Dashboard</a>
-                <a href="students.html">Students</a>
-                <a href="companies.html">Companies</a>
-                <a href="placements.html" class="active">Placements</a>
-                <a href="reports.html">Reports</a>
-                <a href="settings.html">Settings</a>
-            </nav>
+            <div class="sidebar-top">
+                <img src="https://upload.wikimedia.org/wikipedia/en/b/bc/Rashtriya_Raksha_University_logo.png"
+                    alt="Logo" class="sidebar-img-logo">
+                <nav class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item ">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="students.html" class="nav-item ">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Students</span>
+                    </a>
+                    <a href="companies.html" class="nav-item ">
+                        <i class="bi bi-building"></i>
+                        <span>Companies</span>
+                    </a>
+                    <a href="internships.html" class="nav-item ">
+                        <i class="bi bi-person-workspace"></i>
+                        <span>Internships</span>
+                    </a>
+                    <a href="placements.html" class="nav-item active">
+                        <i class="bi bi-briefcase-fill"></i>
+                        <span>Placements</span>
+                    </a>
+                    <a href="reports.html" class="nav-item ">
+                        <i class="bi bi-bar-chart-fill"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="settings.html" class="nav-item ">
+                        <i class="bi bi-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="bottom-icons">
+                    <a href="mailto:pulse-r24@rru.ac.in" class="icon-btn" title="Contact Us"><i
+                            class="bi bi-chat-left-text"></i></a>
+                </div>
+                <div class="user-profile" onclick="window.location.href='dashboard.html'">
+                    <div class="avatar">A</div>
+                    <div>
+                        <div class="user-name">Arsh.G</div>
+                        <div class="user-role">Admin</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Main Content -->
@@ -34,10 +76,10 @@
             <!-- Top Header -->
             <div class="header">
                 <div class="header-left">
-                    <div class="logo">📋</div>
+
                     <div class="header-title">
                         <h1>Placement Monitor Dashboard</h1>
-                        <div class="header-subtitle">Future Leaders and Security Intelligence</div>
+                        <div class="header-subtitle" id="headerSubtitle">Future Leaders and Security Intelligence</div>
                     </div>
                 </div>
                 <div class="header-right">
@@ -47,14 +89,6 @@
                             🔔
                             <span class="notification-badge">1</span>
                         </button>
-                        <button class="icon-btn theme-toggle">🌙</button>
-                    </div>
-                    <div class="user-profile" onclick="window.location.href='login.html'">
-                        <div class="avatar">A</div>
-                        <div>
-                            <div class="user-name">Arsh.G</div>
-                            <div class="user-role">Admin</div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -64,6 +98,12 @@
                 <div class="content-title">Placements</div>
                 <div style="display: flex; gap: 15px; align-items: center;">
                     <input type="text" class="search-bar" placeholder="Search placements..." style="width: 250px;">
+                    <button onclick="document.getElementById('importPlacementModal').style.display='flex'" class="btn-import">
+                        <i class="bi bi-file-earmark-excel"></i> Import Excel
+                    </button>
+                    <button onclick="exportData('placements')" class="btn-add"
+                        style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to
+                        Excel</button>
                     <button class="btn-add">+ Add Placement</button>
                 </div>
             </div>
@@ -73,6 +113,7 @@
                 <div class="table-header placements-header">
                     <div class="dropdown-header">S.No <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Department & Course <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Company <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Role <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Placement Date <span class="dropdown-icon">▼</span></div>
@@ -80,94 +121,8 @@
                     <div class="dropdown-header">Status <span class="dropdown-icon">▼</span></div>
                     <div>Actions</div>
                 </div>
-                <div class="table-body">
-                    <div class="table-row placements-row">
-                        <div class="sno">1</div>
-                        <div class="student-name">John Doe</div>
-                        <div class="company-name">Google India</div>
-                        <div class="role">Software Engineer</div>
-                        <div class="placement-date">15-02-2026</div>
-                        <div class="salary">12 LPA</div>
-                        <div class="status placed">Placed</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-
-                    <div class="table-row placements-row">
-                        <div class="sno">2</div>
-                        <div class="student-name">Jane Smith</div>
-                        <div class="company-name">Microsoft</div>
-                        <div class="role">Cloud Architect</div>
-                        <div class="placement-date">10-02-2026</div>
-                        <div class="salary">14 LPA</div>
-                        <div class="status placed">Placed</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-
-                    <div class="table-row placements-row">
-                        <div class="sno">3</div>
-                        <div class="student-name">Alex Jones</div>
-                        <div class="company-name">Amazon</div>
-                        <div class="role">Data Scientist</div>
-                        <div class="placement-date">20-01-2026</div>
-                        <div class="salary">13.5 LPA</div>
-                        <div class="status placed">Placed</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-
-                    <div class="table-row placements-row">
-                        <div class="sno">4</div>
-                        <div class="student-name">Sam Wilson</div>
-                        <div class="company-name">Infosys</div>
-                        <div class="role">Systems Engineer</div>
-                        <div class="placement-date">TBD</div>
-                        <div class="salary">-</div>
-                        <div class="status pending">Pending</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-
-                    <div class="table-row placements-row">
-                        <div class="sno">5</div>
-                        <div class="student-name">Emily Brown</div>
-                        <div class="company-name">Cognizant</div>
-                        <div class="role">Java Developer</div>
-                        <div class="placement-date">05-02-2026</div>
-                        <div class="salary">10.5 LPA</div>
-                        <div class="status placed">Placed</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-
-                    <div class="table-row placements-row">
-                        <div class="sno">6</div>
-                        <div class="student-name">Michael Davis</div>
-                        <div class="company-name">TCS</div>
-                        <div class="role">Frontend Developer</div>
-                        <div class="placement-date">28-01-2026</div>
-                        <div class="salary">9.5 LPA</div>
-                        <div class="status placed">Placed</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-
-                    <div class="table-row placements-row">
-                        <div class="sno">7</div>
-                        <div class="student-name">Sarah Taylor</div>
-                        <div class="company-name">Wipro</div>
-                        <div class="role">Product Manager</div>
-                        <div class="placement-date">TBD</div>
-                        <div class="salary">-</div>
-                        <div class="status pending">Pending</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
-
-                    <div class="table-row placements-row">
-                        <div class="sno">8</div>
-                        <div class="student-name">Robert Lee</div>
-                        <div class="company-name">Adobe</div>
-                        <div class="role">UX Designer</div>
-                        <div class="placement-date">03-02-2026</div>
-                        <div class="salary">11 LPA</div>
-                        <div class="status placed">Placed</div>
-                        <button class="action-btn">⋯</button>
-                    </div>
+                <div class="table-body" id="placementsTableBody">
+                    <div style="padding:24px;text-align:center;opacity:0.5;">Loading placements…</div>
                 </div>
             </div>
             <!-- ===================== FOOTER ===================== -->
@@ -196,13 +151,295 @@
             </div>
         </div>
     </div>
-    </main>
-    </div>
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js"></script>
 
-    <script src="script.js"></script>
+    <!-- ADD PLACEMENT MODAL -->
+    <div id="addPlacementModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Placement</h2>
+                <button class="close-modal" id="closePlacementModal">&times;</button>
+            </div>
+            <form class="modal-form" id="addPlacementForm">
+                <div id="placementModalError" style="color:#f87171;font-size:13px;margin-bottom:8px;display:none;">
+                </div>
+                <div class="form-group">
+                    <select id="mp-student" required>
+                        <option value="">Select Student...</option>
+                    </select>
+                    <label>Student</label>
+                </div>
+                <div class="form-group">
+                    <select id="mp-company" required>
+                        <option value="">Select Company...</option>
+                    </select>
+                    <label>Company</label>
+                </div>
+                <div class="form-group"><input type="date" id="mp-date"><label>Placement Date</label></div>
+                <div class="form-group"><input type="number" id="mp-salary" step="0.1" placeholder=" "><label>Salary
+                        (LPA)</label></div>
+                <div class="form-group">
+                    <select id="mp-status">
+                        <option value="Placed">Placed</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <label>Status</label>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="add-btn" id="addPlacementSubmitBtn">Add Placement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- EDIT PLACEMENT MODAL -->
+    <div id="editPlacementModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Placement</h2>
+                <button class="close-modal" id="closeEditPlacementModal">&times;</button>
+            </div>
+            <form class="modal-form" id="editPlacementForm">
+                <input type="hidden" id="ep-id">
+                <div id="editPlacementModalError" style="color:#f87171;font-size:13px;margin-bottom:8px;display:none;">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="ep-student" disabled>
+                    <label>Student</label>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="ep-company" disabled>
+                    <label>Company</label>
+                </div>
+                <div class="form-group"><input type="text" id="ep-role" placeholder=" "><label>Role</label></div>
+                <div class="form-group"><input type="date" id="ep-date"><label class="static-label">Placement
+                        Date</label></div>
+                <div class="form-group"><input type="number" id="ep-salary" step="0.1" placeholder=" "><label>Salary
+                        (LPA)</label></div>
+                <div class="form-group">
+                    <select id="ep-status">
+                        <option value="Placed">Placed</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Rejected">Rejected</option>
+                    </select>
+                    <label>Status</label>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="add-btn" id="editPlacementSubmitBtn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- IMPORT PLACEMENTS MODAL -->
+    <div id="importPlacementModal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Import Placements from Excel</h2>
+                <button class="close-modal" onclick="document.getElementById('importPlacementModal').style.display='none'">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with the following headers:<br>
+                <strong>Enrolment No., Company Name, Date, Salary (LPA), Status</strong></p>
+                <form id="importPlacementForm">
+                    <div id="importError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;"></div>
+                    <div class="form-group">
+                        <input type="file" id="importFile" accept=".xlsx, .xls" required style="border: 1px dashed #555; padding: 20px; width: 100%; border-radius: 8px;">
+                    </div>
+                    <div class="modal-buttons" style="margin-top: 20px;">
+                        <button type="submit" class="add-btn" id="importSubmitBtn">Start Import</button>
+                    </div>
+                </form>
+                <div id="importStatus" style="margin-top: 15px; font-size: 14px; display: none;">
+                    <div class="spinner" style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <span style="margin-left: 10px;">Processing file...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth-guard.js?v=3"></script>
+    <script src="api.js?v=3"></script>
+    <script src="script.js?v=3"></script>
+    <script>
+        const tbody = document.getElementById('placementsTableBody');
+        let placementsData = [];
+
+        async function loadPlacements() {
+            try {
+                placementsData = await getPlacements() || [];
+                renderPlacements(placementsData);
+            } catch (e) {
+                tbody.innerHTML = `<div style="padding:24px;text-align:center;color:#f87171">${e.message}</div>`;
+            }
+        }
+
+        const statusClass = { 'Placed': 'placed', 'Pending': 'pending', 'Rejected': 'rejected' };
+
+        function renderPlacements(list) {
+            if (!list.length) {
+                tbody.innerHTML = '<div style="padding:24px;text-align:center;opacity:0.5;">No placements found.</div>';
+                return;
+            }
+            tbody.innerHTML = list.map((p, i) => `
+            <div class="table-row placements-row" data-id="${p.enrollment_number}">
+                <div class="sno">${i + 1}</div>
+                <div class="student-name">${escHtml(p.student_name || '')}</div>
+                <div class="department-course" style="color: #bbb;">${escHtml(p.department_course || '')}</div>
+                <div class="company-name">${escHtml(p.company || '')}</div>
+                <div class="role">${escHtml(p.role || '')}</div>
+                <div class="placement-date">${escHtml(p.placement_date || 'TBD')}</div>
+                <div class="salary">${p.salary_lpa ? p.salary_lpa + ' LPA' : '—'}</div>
+                <div class="status ${statusClass[p.status] || 'pending'}">${escHtml(p.status)}</div>
+                <div style="display:flex;gap:5px;">
+                    <button class="action-btn btn-edit-placement" data-id="${p.enrollment_number}" title="Edit">&#9998;</button>
+                    <button class="action-btn btn-del-placement" data-id="${p.enrollment_number}" title="Delete">&#128465;</button>
+                </div>
+            </div>`).join('');
+
+            tbody.querySelectorAll('.btn-del-placement').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm('Delete this placement?')) return;
+                    try { await deletePlacement(btn.dataset.id); loadPlacements(); }
+                    catch (e) { alert('Delete failed: ' + e.message); }
+                });
+            });
+
+            // Fit layout
+            setTimeout(() => { if (typeof autoFitTables === 'function') autoFitTables(); }, 100);
+        }
+
+        function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+
+        document.querySelector('.search-bar').addEventListener('input', e => {
+            const q = e.target.value.toLowerCase();
+            renderPlacements(placementsData.filter(p =>
+                (p.student_name || '').toLowerCase().includes(q) ||
+                (p.company_name || '').toLowerCase().includes(q)
+            ));
+        });
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadPlacements();
+
+            // Populate dropdowns for the modal
+            try {
+                const students = await getStudents();
+                const companies = await getCompanies();
+                const stuSelect = document.getElementById('mp-student');
+                const compSelect = document.getElementById('mp-company');
+
+                stuSelect.innerHTML = '<option value="">Select Student...</option>' +
+                    (students || []).map(s => `<option value="${s.id}">${escHtml(s.name)}</option>`).join('');
+
+                compSelect.innerHTML = '<option value="">Select Company...</option>' +
+                    (companies || []).map(c => `<option value="${c.id}">${escHtml(c.name)}</option>`).join('');
+            } catch (e) { console.warn("Could not load dropdowns:", e); }
+        });
+
+        // Modal controls
+        document.querySelector('.btn-add').addEventListener('click', () => {
+            document.getElementById('addPlacementModal').style.display = 'flex';
+        });
+        document.getElementById('closePlacementModal').addEventListener('click', () => {
+            document.getElementById('addPlacementModal').style.display = 'none';
+        });
+
+        // Form Submit
+        document.getElementById('addPlacementForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const errEl = document.getElementById('placementModalError');
+            const btn = document.getElementById('addPlacementSubmitBtn');
+            errEl.style.display = 'none';
+            btn.disabled = true; btn.textContent = 'Adding…';
+            try {
+                await createPlacement({
+                    student_id: parseInt(document.getElementById('mp-student').value),
+                    company: document.getElementById('mp-company').options[document.getElementById('mp-company').selectedIndex].text,
+                    student_name: document.getElementById('mp-student').options[document.getElementById('mp-student').selectedIndex].text,
+                    placement_date: document.getElementById('mp-date').value || '',
+                    salary_lpa: document.getElementById('mp-salary').value || null,
+                    status: document.getElementById('mp-status').value
+                });
+                document.getElementById('addPlacementModal').style.display = 'none';
+                document.getElementById('addPlacementForm').reset();
+                loadPlacements();
+            } catch (err) {
+                errEl.textContent = err.message; errEl.style.display = 'block';
+            } finally { btn.disabled = false; btn.textContent = 'Add Placement'; }
+        });
+
+        tbody.addEventListener('click', e => {
+            if (e.target.classList.contains('btn-edit-placement')) {
+                const id = e.target.dataset.id;
+                const placement = placementsData.find(p => p.id == id);
+                if (!placement) return;
+                document.getElementById('ep-id').value = placement.id;
+                document.getElementById('ep-student').value = placement.student_name;
+                document.getElementById('ep-company').value = placement.company || placement.company_name;
+                document.getElementById('ep-role').value = placement.role || '';
+                document.getElementById('ep-date').value = placement.placement_date ? placement.placement_date.split(' ')[0] : '';
+                document.getElementById('ep-salary').value = placement.salary_lpa || '';
+                document.getElementById('ep-status').value = placement.status;
+                document.getElementById('editPlacementModal').style.display = 'flex';
+            }
+        });
+
+        document.getElementById('closeEditPlacementModal').addEventListener('click', () => {
+            document.getElementById('editPlacementModal').style.display = 'none';
+        });
+
+        document.getElementById('editPlacementForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const id = document.getElementById('ep-id').value;
+            const btn = document.getElementById('editPlacementSubmitBtn');
+            btn.disabled = true; btn.textContent = 'Saving...';
+            try {
+                await updatePlacement(id, {
+                    role: document.getElementById('ep-role').value,
+                    placement_date: document.getElementById('ep-date').value,
+                    salary_lpa: document.getElementById('ep-salary').value,
+                    status: document.getElementById('ep-status').value
+                });
+                document.getElementById('editPlacementModal').style.display = 'none';
+                loadPlacements();
+            } catch (err) {
+                alert('Update failed: ' + err.message);
+            } finally { btn.disabled = false; btn.textContent = 'Save Changes'; }
+        });
+
+        // Import handling
+        document.getElementById('importPlacementForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const fileInput = document.getElementById('importFile');
+            const errEl = document.getElementById('importError');
+            const statusEl = document.getElementById('importStatus');
+            const btn = document.getElementById('importSubmitBtn');
+
+            if (!fileInput.files.length) return;
+
+            errEl.style.display = 'none';
+            statusEl.style.display = 'block';
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+
+            try {
+                const res = await importPlacements(formData);
+                alert(res.message || 'Import successful!');
+                document.getElementById('importPlacementModal').style.display = 'none';
+                fileInput.value = '';
+                loadPlacements();
+            } catch (err) {
+                errEl.textContent = err.message;
+                errEl.style.display = 'block';
+            } finally {
+                statusEl.style.display = 'none';
+                btn.disabled = false;
+            }
+        });
+    </script>
 </body>
 
 </html>
