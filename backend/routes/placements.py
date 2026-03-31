@@ -19,13 +19,13 @@ def get_placements():
             if prog == 'BCPA':
                 query = query.join(Student, Placement.enrollment_number == Student.enrollment_number).filter(
                     or_(
-                        Student.programme.like("%BCPA%"),
-                        Student.programme.like("%BCPS%"),
-                        Student.programme.like("%BACPA%")
+                        Student.programme.ilike("%BCPA%"),
+                        Student.programme.ilike("%BCPS%"),
+                        Student.programme.ilike("%BACPA%")
                     )
                 )
             else:
-                query = query.join(Student, Placement.enrollment_number == Student.enrollment_number).filter(Student.programme.like(f"%{prog}%"))
+                query = query.join(Student, Placement.enrollment_number == Student.enrollment_number).filter(Student.programme.ilike(f"%{prog}%"))
             
         placements = query.all()
         return jsonify([p.to_dict() for p in placements]), 200

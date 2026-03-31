@@ -18,13 +18,13 @@ def get_internships():
             if prog == 'BCPA':
                 query = query.join(Student, Internship.enrollment_number == Student.enrollment_number).filter(
                     or_(
-                        Student.programme.like("%BCPA%"),
-                        Student.programme.like("%BCPS%"),
-                        Student.programme.like("%BACPA%")
+                        Student.programme.ilike("%BCPA%"),
+                        Student.programme.ilike("%BCPS%"),
+                        Student.programme.ilike("%BACPA%")
                     )
                 )
             else:
-                query = query.join(Student, Internship.enrollment_number == Student.enrollment_number).filter(Student.programme.like(f"%{prog}%"))
+                query = query.join(Student, Internship.enrollment_number == Student.enrollment_number).filter(Student.programme.ilike(f"%{prog}%"))
             
         internships = query.all()
         return jsonify([i.to_dict() for i in internships]), 200

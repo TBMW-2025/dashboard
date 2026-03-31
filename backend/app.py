@@ -33,7 +33,14 @@ app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path='')
 # ─── Configuration ────────────────────────────────────────────────────────────
 app.config['SECRET_KEY'] = 'placement-dashboard-secret-key-2026-rru'
 app.config['JWT_SECRET_KEY'] = 'jwt-placement-dashboard-secret-2026'
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'placement.db')}"
+database_url = os.environ.get('SUPABASE_DB_URL')
+if database_url:
+    # Ensure URL starts with postgresql:// which is required by newer SQLAlchemy versions
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace("postgres://", "postgresql://", 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{os.path.join(BASE_DIR, 'placement.db')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = False  # No expiry for dev; set timedelta in prod
 

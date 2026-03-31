@@ -19,12 +19,12 @@ def get_stats():
         if prog:
             if prog == 'BCPA':
                 cond = or_(
-                    Student.programme.like("%BCPA%"),
-                    Student.programme.like("%BCPS%"),
-                    Student.programme.like("%BACPA%")
+                    Student.programme.ilike("%BCPA%"),
+                    Student.programme.ilike("%BCPS%"),
+                    Student.programme.ilike("%BACPA%")
                 )
             else:
-                cond = Student.programme.like(f"%{prog}%")
+                cond = Student.programme.ilike(f"%{prog}%")
                 
             student_query = student_query.filter(cond)
             placement_query = placement_query.filter(cond)
@@ -65,12 +65,12 @@ def get_department_stats():
         if prog:
             if prog == 'BCPA':
                 query = query.filter(or_(
-                    Student.programme.like("%BCPA%"),
-                    Student.programme.like("%BCPS%"),
-                    Student.programme.like("%BACPA%")
+                    Student.programme.ilike("%BCPA%"),
+                    Student.programme.ilike("%BCPS%"),
+                    Student.programme.ilike("%BACPA%")
                 ))
             else:
-                query = query.filter(Student.programme.like(f"%{prog}%"))
+                query = query.filter(Student.programme.ilike(f"%{prog}%"))
 
         results = query.group_by(Student.programme).all()
 
@@ -150,12 +150,12 @@ def get_yearly_trend():
         if prog:
             if prog == 'BCPA':
                 query = query.filter(or_(
-                    Student.programme.like("%BCPA%"),
-                    Student.programme.like("%BCPS%"),
-                    Student.programme.like("%BACPA%")
+                    Student.programme.ilike("%BCPA%"),
+                    Student.programme.ilike("%BCPS%"),
+                    Student.programme.ilike("%BACPA%")
                 ))
             else:
-                query = query.filter(Student.programme.like(f"%{prog}%"))
+                query = query.filter(Student.programme.ilike(f"%{prog}%"))
             
         placements = query.all()
         for p in placements:

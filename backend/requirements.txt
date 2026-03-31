@@ -6,3 +6,4 @@ werkzeug
 flask-bcrypt
 pandas
 openpyxl
+psycopg2-binary
