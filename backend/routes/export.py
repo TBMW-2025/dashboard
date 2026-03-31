@@ -42,7 +42,7 @@ def export_students():
                 'Student Name': s.student_name,
                 'Email ID': s.student_email_id,
                 'Mobile Number': s.mobile_number,
-                'Department': s.department_course,
+                'Programme': s.programme,
                 'Placement Status': s.placement_status
             })
         df = pd.DataFrame(data)

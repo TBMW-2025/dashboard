@@ -1,10 +1,11 @@
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required
 from werkzeug.utils import secure_filename
-from models import db, Student, User
+from models import db, Student, User, Placement
 import os
 import pandas as pd
 import io
+from datetime import datetime
 
 students_bp = Blueprint('students', __name__)
 
@@ -83,7 +84,7 @@ def create_student():
             enrollment_number=data['enrollment_number'],
             student_email_id=data.get('student_email_id', ''),
             mobile_number=data.get('mobile_number', ''),
-            department_course=data.get('department_course', ''),
+            programme=data.get('programme', ''),
             higher_education_plan=data.get('higher_education_plan', 'No'),
             placement_status=data.get('placement_status', 'Not Placed')
         )
@@ -113,7 +114,7 @@ def update_student(enrollment_number):
             return jsonify({'error': 'No data provided'}), 400
 
         fields = ['student_name', 'enrollment_number', 'student_email_id', 'mobile_number',
-                  'department_course', 'higher_education_plan', 'placement_status']
+                  'programme', 'higher_education_plan', 'placement_status']
 
         for field in fields:
             if field in data:
@@ -156,93 +157,123 @@ def import_students():
         if not file.filename.endswith(('.xlsx', '.xls')):
             return jsonify({'error': 'Invalid file format. Please upload an Excel file (.xlsx or .xls)'}), 400
 
-        # Read the file into pandas
         try:
             df = pd.read_excel(file)
         except Exception as e:
             return jsonify({'error': f'Failed to read Excel file: {str(e)}'}), 400
 
-        # Standardize column mapping (case-insensitive and trimmed)
-        column_mapping = {
-            'Enrollment Number': 'enrollment_number',
-            'Student Name': 'student_name',
-            'Email ID': 'student_email_id',
-            'Mobile Number': 'mobile_number',
-            'Department & Course': 'department_course',
-            'Higher Education Plan': 'higher_education_plan',
-            'Placement Status': 'placement_status'
-        }
+        # Helper to find columns with variations
+        def get_col(candidates):
+            for cand in candidates:
+                match = next((c for c in df.columns if str(c).strip().lower() == cand.strip().lower()), None)
+                if match: return match
+            return None
 
-        # Find actual columns in df that match our mapping
-        df_cols = {col.strip(): col for col in df.columns}
-        final_mapping = {}
-        for friendly_name, model_attr in column_mapping.items():
-            # Check for exact match or case-insensitive match
-            found = False
-            for actual_col in df_cols:
-                if actual_col.lower() == friendly_name.lower():
-                    final_mapping[actual_col] = model_attr
-                    found = True
-                    break
-            if not found:
-                # If required columns are missing, we should probably error or warn
-                if model_attr in ['enrollment_number', 'student_name']:
-                     return jsonify({'error': f'Missing required column: {friendly_name}'}), 400
+        col_enroll = get_col(['Enrollment Number', 'Enrolment No', 'Enrolment No.', 'Enrollment', 'Enrollment No.'])
+        col_name = get_col(['Student Name', 'Name', 'Name of Student'])
+        col_email = get_col(['Email ID', 'Email', 'Student Email'])
+        col_mobile = get_col(['Mobile Number', 'Contact', 'Phone', 'Mobile No.'])
+        col_programme = get_col(['Programme', 'Department & Course', 'Department', 'Course'])
+        col_higher = get_col(['Higher Education Plan', 'Planning for Higher Education?', 'Higher Education'])
+        col_placed = get_col(['Placement Status', 'Placed or Not'])
+        col_company = get_col(['Company', 'Placed Company', 'Organization'])
+        col_role = get_col(['Role', 'Designation', 'Job Role'])
+        col_salary = get_col(['Salary', 'LPA', 'CTC', 'Package'])
+        col_date = get_col(['Placement Date', 'Date of Placement', 'Date'])
 
-        # Process rows
+        if not col_enroll or not col_name:
+            return jsonify({'error': 'Required columns (Enrollment/Name) not found in the Excel file.'}), 400
+
         success_count = 0
-        duplicate_count = 0
-        errors = []
+        updated_count = 0
+        row_errors = []
 
         for index, row in df.iterrows():
             try:
-                enrollment = str(row.get(next((c for c in df.columns if c.strip().lower() == 'enrollment number'), None), '')).strip()
-                name = str(row.get(next((c for c in df.columns if c.strip().lower() == 'student name'), None), '')).strip()
+                enrollment = str(row.get(col_enroll, '')).strip()
+                name = str(row.get(col_name, '')).strip()
                 
-                if not enrollment or enrollment == 'nan' or not name or name == 'nan':
+                if not enrollment or enrollment.lower() == 'nan' or not name or name.lower() == 'nan':
                     continue
 
-                # Check for existing student
-                if Student.query.get(enrollment):
-                    duplicate_count += 1
-                    continue
+                student = Student.query.get(enrollment)
+                is_new = False
+                if not student:
+                    student = Student(enrollment_number=enrollment)
+                    db.session.add(student)
+                    is_new = True
+                
+                # Update core fields
+                student.student_name = name
+                if col_email: student.student_email_id = str(row.get(col_email, '')).strip().replace('nan', '')
+                if col_mobile: student.mobile_number = str(row.get(col_mobile, '')).strip().replace('nan', '')
+                if col_programme: student.programme = str(row.get(col_programme, '')).strip().replace('nan', '')
+                if col_higher: student.higher_education_plan = str(row.get(col_higher, 'No')).strip().replace('nan', 'No')
+                
+                # Update placement status (Yes / No)
+                p_status = str(row.get(col_placed, 'No')).strip().replace('nan', 'No')
+                if p_status.lower() in ['yes', 'placed']:
+                    student.placement_status = 'Yes'
+                else:
+                    student.placement_status = 'No'
 
-                student = Student(
-                    enrollment_number=enrollment,
-                    student_name=name,
-                    student_email_id=str(row.get(next((c for c in df.columns if c.strip().lower() == 'email id'), ''), '')).strip().replace('nan', ''),
-                    mobile_number=str(row.get(next((c for c in df.columns if c.strip().lower() == 'mobile number'), ''), '')).strip().replace('nan', ''),
-                    department_course=str(row.get(next((c for c in df.columns if c.strip().lower() == 'department & course'), ''), '')).strip().replace('nan', ''),
-                    higher_education_plan=str(row.get(next((c for c in df.columns if c.strip().lower() == 'higher education plan'), 'No'), 'No')).strip().replace('nan', 'No'),
-                    placement_status=str(row.get(next((c for c in df.columns if c.strip().lower() == 'placement status'), 'Not Placed'), 'Not Placed')).strip().replace('nan', 'Not Placed')
-                )
-                
-                db.session.add(student)
-                success_count += 1
-                
-                # Auto-create user account if email exists (similar to reset-password logic)
+                # Sync User creation/update
                 if student.student_email_id:
-                    existing_user = User.query.filter_by(email=student.student_email_id).first()
-                    if not existing_user:
-                        user = User(
-                            username=student.enrollment_number,
-                            email=student.student_email_id,
-                            mobile=student.mobile_number,
-                            role='student'
-                        )
-                        user.set_password('Student@123') # Default password
-                        db.session.add(user)
+                    u = User.query.filter_by(username=student.enrollment_number).first()
+                    if not u:
+                        u = User(username=student.enrollment_number, email=student.student_email_id, mobile=student.mobile_number, role='student')
+                        u.set_password('Student@123')
+                        db.session.add(u)
+                    else:
+                        u.email = student.student_email_id
+                        u.mobile = student.mobile_number
 
+                # Sync Placement Table for "Yes" students
+                if student.placement_status == 'Yes':
+                    p_rec = Placement.query.get(student.enrollment_number)
+                    if not p_rec:
+                        p_rec = Placement(enrollment_number=student.enrollment_number)
+                        db.session.add(p_rec)
+                    
+                    p_rec.student_name = student.student_name
+                    # Only update if columns exist in the Excel
+                    if col_company: p_rec.company = str(row.get(col_company, 'Unknown')).strip().replace('nan', 'Unknown')
+                    if col_role: p_rec.role = str(row.get(col_role, 'Unknown')).strip().replace('nan', 'Unknown')
+                    
+                    if col_salary:
+                        try:
+                            s_val = str(row.get(col_salary, '0')).strip().lower().replace('nan', '0').split(' ')[0]
+                            p_rec.salary_lpa = float(s_val) if s_val else 0.0
+                        except:
+                            p_rec.salary_lpa = 0.0
+                    
+                    if col_date:
+                        p_date = str(row.get(col_date, '')).strip().replace('nan', '')
+                        if p_date: p_rec.placement_date = p_date
+                    
+                    if not p_rec.placement_date:
+                        p_rec.placement_date = datetime.now().strftime('%Y-%m-%d')
+                    
+                    p_rec.status = 'Placed'
+                else:
+                    # If status is "No", remove from placement table if exists
+                    p_rec = Placement.query.get(student.enrollment_number)
+                    if p_rec:
+                        db.session.delete(p_rec)
+
+                if is_new: success_count += 1
+                else: updated_count += 1
+                
+                db.session.commit()
             except Exception as row_e:
-                errors.append(f"Row {index + 2}: {str(row_e)}")
+                db.session.rollback()
+                row_errors.append(f"Row {index + 2}: {str(row_e)}")
 
-        db.session.commit()
-        
         return jsonify({
-            'message': f'Import completed: {success_count} added, {duplicate_count} skipped.',
+            'message': f'Import completed: {success_count} added, {updated_count} updated.',
             'success_count': success_count,
-            'duplicate_count': duplicate_count,
-            'errors': errors
+            'updated_count': updated_count,
+            'errors': row_errors
         }), 201
 
     except Exception as e:

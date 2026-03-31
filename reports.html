@@ -140,7 +140,7 @@
                 </div>
 
                 <div class="chart-card">
-                    <div class="chart-title">Department-wise Placement</div>
+                    <div class="chart-title">Programme-wise Placement</div>
                     <div class="chart-container">
                         <canvas id="deptPlacementChart"></canvas>
                     </div>
@@ -198,7 +198,7 @@
                 </div>
 
                 <div class="metrics-card">
-                    <div class="metrics-title">Department Distribution</div>
+                    <div class="metrics-title">Programme Distribution</div>
                     <div id="deptBars"><div style="padding:12px;opacity:0.5;">Loading…</div></div>
                 </div>
             </div>
@@ -253,7 +253,7 @@
                 const max = Math.max(...depts.map(d => d.total), 1);
                 barsEl.innerHTML = depts.map(d => `
                     <div class="dept-item">
-                        <span class="dept-name">${d.department}</span>
+                        <span class="dept-name">${d.programme}</span>
                         <div class="dept-bar"><div class="dept-bar-fill" style="width:${(d.total/max*100).toFixed(0)}%"></div></div>
                         <span class="dept-count">${d.placed}/${d.total}</span>
                     </div>`).join('');
@@ -341,7 +341,7 @@
                 new Chart(deptCtx.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: depts.map(d => d.department),
+                        labels: depts.map(d => d.programme),
                         datasets: [
                             {
                                 label: 'Placed',

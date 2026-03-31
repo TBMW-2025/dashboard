@@ -62,7 +62,7 @@ class Student(db.Model):
     student_name = db.Column(db.String(120), nullable=False)
     student_email_id = db.Column(db.String(120))
     mobile_number = db.Column(db.String(20))
-    department_course = db.Column(db.String(150))
+    programme = db.Column(db.String(150))
     higher_education_plan = db.Column(db.String(10))
     placement_status = db.Column(db.String(10), default='Not Placed')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -76,7 +76,7 @@ class Student(db.Model):
             'student_name': self.student_name,
             'student_email_id': self.student_email_id,
             'mobile_number': self.mobile_number,
-            'department_course': self.department_course,
+            'programme': self.programme,
             'higher_education_plan': self.higher_education_plan,
             'placement_status': self.placement_status,
             'created_at': self.created_at.isoformat() if self.created_at else None
@@ -90,8 +90,6 @@ class Company(db.Model):
     contact_person = db.Column(db.String(120))
     contact = db.Column(db.String(20))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    internships = db.relationship('Internship', backref='company', lazy=True, cascade='all, delete-orphan')
 
     def to_dict(self):
         return {
@@ -120,7 +118,7 @@ class Placement(db.Model):
         return {
             'enrollment_number': self.enrollment_number,
             'student_name': self.student_name,
-            'department_course': self.student.department_course if self.student else None,
+            'programme': self.student.programme if self.student else None,
             'company': self.company,
             'role': self.role,
             'placement_date': self.placement_date,
@@ -133,18 +131,12 @@ class Internship(db.Model):
     __tablename__ = 'internships'
     id = db.Column(db.Integer, primary_key=True)
     enrollment_number = db.Column(db.String(50), db.ForeignKey('students.enrollment_number'), nullable=False)
-    company_id = db.Column(db.Integer, db.ForeignKey('companies.company_id'), nullable=True) # Now optional
     year = db.Column(db.String(10))
     programme = db.Column(db.String(100))
     gender = db.Column(db.String(20))
     internship_place = db.Column(db.String(255))
     internship_place_02 = db.Column(db.String(255))
     organization_type = db.Column(db.String(100))
-    role = db.Column(db.String(120))
-    duration = db.Column(db.String(50))
-    start_date = db.Column(db.String(20))
-    status = db.Column(db.String(20), default='Active')
-    stipend = db.Column(db.Float)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
@@ -152,18 +144,11 @@ class Internship(db.Model):
             'id': self.id,
             'enrollment_number': self.enrollment_number,
             'student_name': self.student.student_name if self.student else None,
-            'company_id': self.company_id,
-            'company_name': self.company.company_name if self.company else (self.internship_place if self.internship_place else None),
             'year': self.year,
             'programme': self.programme,
             'gender': self.gender,
             'internship_place': self.internship_place,
             'internship_place_02': self.internship_place_02,
             'organization_type': self.organization_type,
-            'role': self.role,
-            'duration': self.duration,
-            'start_date': self.start_date,
-            'status': self.status,
-            'stipend': self.stipend,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }

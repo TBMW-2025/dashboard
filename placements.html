@@ -104,16 +104,16 @@
                     <button onclick="exportData('placements')" class="btn-add"
                         style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to
                         Excel</button>
-                    <button class="btn-add">+ Add Placement</button>
+                    <button class="btn-add" id="openAddPlacementModal">+ Add Placement</button>
                 </div>
             </div>
 
             <!-- Table -->
             <div class="table-container">
                 <div class="table-header placements-header">
-                    <div class="dropdown-header">S.No <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Department & Course <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Company <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Role <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Placement Date <span class="dropdown-icon">▼</span></div>
@@ -285,22 +285,23 @@
             <div class="table-row placements-row" data-id="${p.enrollment_number}">
                 <div class="sno">${i + 1}</div>
                 <div class="student-name">${escHtml(p.student_name || '')}</div>
-                <div class="department-course" style="color: #bbb;">${escHtml(p.department_course || '')}</div>
+                <div class="department-course" style="color: #bbb;">${escHtml(p.programme || '')}</div>
                 <div class="company-name">${escHtml(p.company || '')}</div>
                 <div class="role">${escHtml(p.role || '')}</div>
                 <div class="placement-date">${escHtml(p.placement_date || 'TBD')}</div>
                 <div class="salary">${p.salary_lpa ? p.salary_lpa + ' LPA' : '—'}</div>
                 <div class="status ${statusClass[p.status] || 'pending'}">${escHtml(p.status)}</div>
                 <div style="display:flex;gap:5px;">
-                    <button class="action-btn btn-edit-placement" data-id="${p.enrollment_number}" title="Edit">&#9998;</button>
-                    <button class="action-btn btn-del-placement" data-id="${p.enrollment_number}" title="Delete">&#128465;</button>
+                    <button class="action-btn btn-edit-placement" data-id="${p.enrollment_number}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                    <button class="action-btn btn-del-placement" data-id="${p.enrollment_number}" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
             </div>`).join('');
 
             tbody.querySelectorAll('.btn-del-placement').forEach(btn => {
-                btn.addEventListener('click', async () => {
+                btn.addEventListener('click', async (e) => {
+                    const targetBtn = e.target.closest('.btn-del-placement');
                     if (!confirm('Delete this placement?')) return;
-                    try { await deletePlacement(btn.dataset.id); loadPlacements(); }
+                    try { await deletePlacement(targetBtn.dataset.id); loadPlacements(); }
                     catch (e) { alert('Delete failed: ' + e.message); }
                 });
             });
@@ -330,15 +331,15 @@
                 const compSelect = document.getElementById('mp-company');
 
                 stuSelect.innerHTML = '<option value="">Select Student...</option>' +
-                    (students || []).map(s => `<option value="${s.id}">${escHtml(s.name)}</option>`).join('');
+                    (students || []).map(s => `<option value="${s.enrollment_number}">${escHtml(s.student_name)}</option>`).join('');
 
                 compSelect.innerHTML = '<option value="">Select Company...</option>' +
-                    (companies || []).map(c => `<option value="${c.id}">${escHtml(c.name)}</option>`).join('');
+                    (companies || []).map(c => `<option value="${c.company_name}">${escHtml(c.company_name)}</option>`).join('');
             } catch (e) { console.warn("Could not load dropdowns:", e); }
         });
 
         // Modal controls
-        document.querySelector('.btn-add').addEventListener('click', () => {
+        document.getElementById('openAddPlacementModal').addEventListener('click', () => {
             document.getElementById('addPlacementModal').style.display = 'flex';
         });
         document.getElementById('closePlacementModal').addEventListener('click', () => {
@@ -354,8 +355,8 @@
             btn.disabled = true; btn.textContent = 'Adding…';
             try {
                 await createPlacement({
-                    student_id: parseInt(document.getElementById('mp-student').value),
-                    company: document.getElementById('mp-company').options[document.getElementById('mp-company').selectedIndex].text,
+                    enrollment_number: document.getElementById('mp-student').value,
+                    company: document.getElementById('mp-company').value,
                     student_name: document.getElementById('mp-student').options[document.getElementById('mp-student').selectedIndex].text,
                     placement_date: document.getElementById('mp-date').value || '',
                     salary_lpa: document.getElementById('mp-salary').value || null,
@@ -370,11 +371,12 @@
         });
 
         tbody.addEventListener('click', e => {
-            if (e.target.classList.contains('btn-edit-placement')) {
-                const id = e.target.dataset.id;
-                const placement = placementsData.find(p => p.id == id);
+            const btn = e.target.closest('.btn-edit-placement');
+            if (btn) {
+                const id = btn.dataset.id;
+                const placement = placementsData.find(p => p.enrollment_number == id);
                 if (!placement) return;
-                document.getElementById('ep-id').value = placement.id;
+                document.getElementById('ep-id').value = placement.enrollment_number;
                 document.getElementById('ep-student').value = placement.student_name;
                 document.getElementById('ep-company').value = placement.company || placement.company_name;
                 document.getElementById('ep-role').value = placement.role || '';

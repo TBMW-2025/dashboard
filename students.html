@@ -95,11 +95,15 @@
 
             <!-- Content Section -->
             <div class="content-header">
-                <div class="content-title">Students</div>
+                <div class="content-title">Students (<span id="studentCount">0</span>)</div>
                 <div style="display: flex; gap: 15px; align-items: center;">
-                    <button onclick="exportData('students')" class="btn-add" style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to Excel</button>
-                    <input type="text" id="studentSearch" class="search-bar" placeholder="Search students..." style="width: 250px;">
-                    <button class="btn-import" id="openImportModal"><i class="bi bi-file-earmark-excel"></i> Import Excel</button>
+                    <input type="text" id="studentSearch" class="search-bar" placeholder="Search students..."
+                        style="width: 250px;">
+                    <button class="btn-import" id="openImportModal"><i class="bi bi-file-earmark-excel"></i> Import
+                        Excel</button>
+                    <button onclick="exportData('students')" class="btn-add"
+                        style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to
+                        Excel</button>
                     <button class="btn-add" id="openAddStudentModal">+ Add Student</button>
                 </div>
             </div>
@@ -108,13 +112,15 @@
 
 
                 <div class="table-header students-header">
+                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Enrollment Number <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Student Email ID <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Mobile Number <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Department & Course <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
 
-                    <div class="dropdown-header">Planning for Higher Education? <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Planning for Higher Education? <span class="dropdown-icon">▼</span>
+                    </div>
                     <div class="dropdown-header">Placed or Not <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Action <span class="dropdown-icon">▼</span></div>
                 </div>
@@ -123,8 +129,8 @@
                     <div style="padding:24px;text-align:center;opacity:0.5;">Loading students…</div>
                 </div>
 
-
             </div>
+            <div id="pagination" class="pagination-container"></div>
             </main>
 
             <!-- ===================== FOOTER ===================== -->
@@ -181,16 +187,16 @@
                         <label>Mobile Number</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="ms-dept" placeholder=" ">
-                        <label>Department & Course</label>
+                        <input type="text" id="ms-programme" placeholder=" ">
+                        <label>Programme</label>
                     </div>
-                        <div class="form-group">
-                            <select id="ms-higher-ed">
-                                <option value="No">No</option>
-                                <option value="Yes">Yes</option>
-                            </select>
-                            <label>Planning for Higher Education?</label>
-                        </div>
+                    <div class="form-group">
+                        <select id="ms-higher-ed">
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                        <label>Planning for Higher Education?</label>
+                    </div>
                     <div class="form-group">
                         <select id="ms-placed">
                             <option value="No">No</option>
@@ -232,16 +238,16 @@
                         <label>Mobile Number</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="es-dept" placeholder=" ">
-                        <label>Department & Course</label>
+                        <input type="text" id="es-programme" placeholder=" ">
+                        <label>Programme</label>
                     </div>
-                        <div class="form-group">
-                            <select id="es-higher-ed">
-                                <option value="No">No</option>
-                                <option value="Yes">Yes</option>
-                            </select>
-                            <label>Planning for Higher Education?</label>
-                        </div>
+                    <div class="form-group">
+                        <select id="es-higher-ed">
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                        <label>Planning for Higher Education?</label>
+                    </div>
                     <div class="form-group">
                         <select id="es-placed">
                             <option value="No">No</option>
@@ -267,14 +273,16 @@
                     <input type="hidden" id="pf-student-id">
                     <input type="hidden" id="pf-student-name">
                     <div id="pfError" style="color:#f87171;font-size:13px;margin-bottom:8px;display:none;"></div>
-                    
+
                     <div class="form-group">
                         <select id="pf-company" required></select>
                         <label>Company</label>
                     </div>
                     <div class="form-group"><input type="text" id="pf-role" placeholder=" "><label>Role</label></div>
-                    <div class="form-group"><input type="date" id="pf-date" required><label class="static-label">Placement Date</label></div>
-                    <div class="form-group"><input type="number" step="0.1" id="pf-salary" required placeholder=" "><label>Salary (LPA)</label></div>
+                    <div class="form-group"><input type="date" id="pf-date" required><label
+                            class="static-label">Placement Date</label></div>
+                    <div class="form-group"><input type="number" step="0.1" id="pf-salary" required
+                            placeholder=" "><label>Salary (LPA)</label></div>
                     <div class="form-group">
                         <select id="pf-status" required>
                             <option value="Placed">Placed</option>
@@ -282,7 +290,7 @@
                         </select>
                         <label>Status</label>
                     </div>
-                    
+
                     <div class="modal-buttons">
                         <button type="submit" class="add-btn" id="pfSubmitBtn">Save Placement</button>
                     </div>
@@ -299,17 +307,24 @@
                 <div class="modal-body" style="padding: 20px;">
                     <p style="margin-bottom: 15px; font-size: 14px; color: #666;">
                         Please upload an Excel file (.xlsx or .xls) with the following columns:<br>
-                        <strong style="color: #333;">Enrollment Number, Student Name, Email ID, Mobile Number, Department & Course, Higher Education Plan, Placement Status</strong>
+                        <strong style="color: #333;">Enrollment Number, Student Name, Email ID, Mobile Number,
+                            Programme, Higher Education Plan, Placement Status</strong>
                     </p>
-                    <div id="importError" style="color:#f87171;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#fef2f2;border-radius:6px;border:1px solid #fee2e2;"></div>
-                    <div id="importSuccess" style="color:#10b981;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#f0fdf4;border-radius:6px;border:1px solid #dcfce7;"></div>
-                    
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <input type="file" id="importFile" accept=".xlsx, .xls" style="display: block; width: 100%; padding: 10px; border: 1px dashed #ccc; border-radius: 6px; cursor: pointer;">
+                    <div id="importError"
+                        style="color:#f87171;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#fef2f2;border-radius:6px;border:1px solid #fee2e2;">
                     </div>
-                    
+                    <div id="importSuccess"
+                        style="color:#10b981;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#f0fdf4;border-radius:6px;border:1px solid #dcfce7;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <input type="file" id="importFile" accept=".xlsx, .xls"
+                            style="display: block; width: 100%; padding: 10px; border: 1px dashed #ccc; border-radius: 6px; cursor: pointer;">
+                    </div>
+
                     <div class="modal-buttons" style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button type="button" class="btn-add" id="importSubmitBtn" style="background-color: #10b981; border: none; color: white;">Upload & Import</button>
+                        <button type="button" class="btn-add" id="importSubmitBtn"
+                            style="background-color: #10b981; border: none; color: white;">Upload & Import</button>
                     </div>
                 </div>
             </div>
@@ -322,303 +337,357 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js?v=3"></script>
     <script>
-    // ─── Students Page Logic ──────────────────────────────────────────────────
-    const tbody = document.getElementById('studentsTableBody');
-    const searchInput = document.getElementById('studentSearch');
-    let studentsData = [];
+        // ─── Students Page Logic ──────────────────────────────────────────────────
+        const tbody = document.getElementById('studentsTableBody');
+        const searchInput = document.getElementById('studentSearch');
+        const paginationEl = document.getElementById('pagination');
+        let studentsData = [];
+        let currentPage = 1;
+        const pageSize = 20;
 
-    async function loadStudents() {
-        try {
-            const allStudents = await getStudents() || [];
-            studentsData = allStudents;
-            renderStudents(studentsData);
-        } catch(e) {
-            tbody.innerHTML = `<div style="padding:24px;text-align:center;color:#f87171">${e.message}</div>`;
+        async function loadStudents() {
+            try {
+                const allStudents = await getStudents() || [];
+                studentsData = allStudents;
+                document.getElementById('studentCount').textContent = studentsData.length;
+                renderStudents(studentsData);
+            } catch (e) {
+                tbody.innerHTML = `<div style="padding:24px;text-align:center;color:#f87171">${e.message}</div>`;
+            }
         }
-    }
 
-    function renderStudents(list) {
-        if (!list.length) {
-            tbody.innerHTML = '<div style="padding:24px;text-align:center;opacity:0.5;">No students found.</div>';
-            return;
-        }
-        tbody.innerHTML = list.map(s => `
-            <div class="table-row students-row" data-id="${s.enrollment_number}">
-                <div>${escHtml(s.student_name)}</div>
-                <div>${escHtml(s.enrollment_number)}</div>
-                <div>${escHtml(s.student_email_id || '')}</div>
-                <div>${escHtml(s.mobile_number || '')}</div>
-                <div>${escHtml(s.department_course || '')}</div>
-                <div>${escHtml(s.higher_education_plan || 'No')}</div>
-                <div><select class="status-select" data-id="${s.enrollment_number}" data-name="${s.student_name}">
-                    <option value="No" ${s.placement_status !== 'Yes' ? 'selected' : ''}>No</option>
-                    <option value="Yes" ${s.placement_status === 'Yes'  ? 'selected' : ''}>Yes</option>
-                </select></div>
-                <div style="display:flex;gap:5px;">
-                    <button class="action-btn btn-edit" data-id="${s.enrollment_number}" title="Edit">&#9998;</button>
-                    <button class="action-btn btn-remove" data-id="${s.enrollment_number}" title="Delete">&#128465;</button>
+        function renderStudents(list) {
+            if (!list.length) {
+                tbody.innerHTML = '<div style="padding:24px;text-align:center;opacity:0.5;">No students found.</div>';
+                paginationEl.innerHTML = '';
+                return;
+            }
+
+            const totalPages = Math.ceil(list.length / pageSize);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+            
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const paginatedItems = list.slice(start, end);
+
+            tbody.innerHTML = paginatedItems.map((s, i) => `
+                <div class="table-row students-row" data-id="${s.enrollment_number}">
+                    <div class="sno" style="color: white;">${start + i + 1}</div>
+                    <div class="student-name">${escHtml(s.student_name)}</div>
+                    <div style="font-family:monospace; font-size:12px;">${escHtml(s.enrollment_number)}</div>
+                    <div class="student-email">${escHtml(s.student_email_id || '')}</div>
+                    <div class="student-phone">${escHtml(s.mobile_number || '')}</div>
+                    <div class="programme" style="color:#ddd">${escHtml(s.programme || '')}</div>
+                    <div class="higher-ed">${escHtml(s.higher_education_plan || 'No')}</div>
+                    <div class="status-cell">
+                        <div class="status ${s.placement_status === 'Yes' ? 'placed' : 'not-placed'}">
+                            ${escHtml(s.placement_status === 'Yes' ? 'Placed' : 'Not Placed')}
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:5px;">
+                        <button class="action-btn btn-edit" data-id="${s.enrollment_number}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button class="action-btn btn-remove" data-id="${s.enrollment_number}" title="Delete"><i class="bi bi-trash"></i></button>
+                        <button class="action-btn btn-reset-pw" data-id="${s.enrollment_number}" title="Reset Password"><i class="bi bi-shield-lock"></i></button>
+                    </div>
                 </div>
-            </div>`).join('');
+            `).join('');
 
+            renderPagination(list.length);
+            attachActionListeners();
 
+            // Fit layout
+            setTimeout(() => { if (typeof autoFitTables === 'function') autoFitTables(); }, 100);
+        }
 
-        // Remove button
-        tbody.querySelectorAll('.btn-remove').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                if (!confirm('Remove this student?')) return;
-                const id = btn.dataset.id;
-                try {
-                    await deleteStudent(id);
-                    loadStudents();
-                } catch(e) { alert('Delete failed: ' + e.message); }
-            });
-        });
+        function renderPagination(totalItems) {
+            const totalPages = Math.ceil(totalItems / pageSize);
+            if (totalPages <= 1) {
+                paginationEl.innerHTML = '';
+                return;
+            }
 
-        // Edit button
-        tbody.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.dataset.id;
-                const s = studentsData.find(x => x.enrollment_number === id);
-                if (s) {
-                    document.getElementById('es-original-enrollment').value = s.enrollment_number;
-                    document.getElementById('es-name').value = s.student_name || '';
-                    document.getElementById('es-enrollment').value = s.enrollment_number || '';
-                    document.getElementById('es-student-email').value = s.student_email_id || '';
-                    document.getElementById('es-phone').value = s.mobile_number || '';
-                    document.getElementById('es-dept').value = s.department_course || '';
-                    document.getElementById('es-higher-ed').value = s.higher_education_plan || 'No';
-                    document.getElementById('es-placed').value = s.placement_status || 'No';
-                    document.getElementById('editStudentModal').style.display = 'flex';
-                }
-            });
-        });
+            let html = `
+                <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+            `;
 
-        // Status select
-        tbody.querySelectorAll('.status-select').forEach(sel => {
-            sel.addEventListener('change', async () => {
-                const id = sel.dataset.id;
-                const isPlaced = sel.value;
-                if (isPlaced === 'Yes') {
-                    // Open placement flow modal instead of auto-creating
-                    sel.value = 'No'; // Revert until form is filled
-                    document.getElementById('pf-student-id').value = id;
-                    document.getElementById('pf-student-name').value = sel.dataset.name;
-                    
+            const maxVisible = 5;
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `
+                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
+                        ${i}
+                    </button>
+                `;
+            }
+
+            html += `
+                <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+                <div class="pagination-info">Page ${currentPage} of ${totalPages}</div>
+            `;
+
+            paginationEl.innerHTML = html;
+        }
+
+        window.changePage = (page) => {
+            currentPage = page;
+            renderStudents(getFilteredData());
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        function getFilteredData() {
+            const q = searchInput.value.toLowerCase();
+            return studentsData.filter(s =>
+                (s.student_name || '').toLowerCase().includes(q) ||
+                (s.enrollment_number || '').toLowerCase().includes(q) ||
+                (s.programme || '').toLowerCase().includes(q)
+            );
+        }
+
+        function attachActionListeners() {
+            // Remove button
+            tbody.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const targetBtn = e.target.closest('.btn-remove');
+                    if (!confirm('Remove this student?')) return;
+                    const id = targetBtn.dataset.id;
                     try {
-                        const companies = await getCompanies() || [];
-                        const compSelect = document.getElementById('pf-company');
-                        compSelect.innerHTML = companies.map(c => `<option value="${c.company_name}">${escHtml(c.company_name)}</option>`).join('');
-                    } catch(err) { console.error('Failed fetching company list', err); }
-                    
-                    document.getElementById('placementFlowModal').style.display = 'flex';
-                } else {
-                    try {
-                        let fd = new FormData();
-                        fd.append('placement_status', 'No');
-                        await updateStudent(id, fd);
+                        await deleteStudent(id);
                         loadStudents();
-                    } catch(e) { alert('Update failed: ' + e.message); }
-                }
+                    } catch (e) { alert('Delete failed: ' + e.message); }
+                });
             });
-        });
-        
-        // Fit layout
-        setTimeout(() => { if(typeof autoFitTables === 'function') autoFitTables(); }, 100);
-    }
 
-    document.getElementById('closePfModal').addEventListener('click', () => {
-        document.getElementById('placementFlowModal').style.display = 'none';
-        document.getElementById('placementFlowForm').reset();
-    });
-
-    document.getElementById('placementFlowForm').addEventListener('submit', async e => {
-        e.preventDefault();
-        const errEl = document.getElementById('pfError');
-        const btn = document.getElementById('pfSubmitBtn');
-        errEl.style.display = 'none'; btn.disabled = true; btn.textContent = 'Saving...';
-        
-        try {
-            const studentId = document.getElementById('pf-student-id').value;
-            const company = document.getElementById('pf-company').value;
-            
-            await createPlacement({
-                enrollment_number: studentId,
-                company: company,
-                student_name: document.getElementById('pf-student-name').value,
-                role: document.getElementById('pf-role').value,
-                placement_date: document.getElementById('pf-date').value,
-                salary_lpa: document.getElementById('pf-salary').value,
-                status: document.getElementById('pf-status').value
+            // Edit button
+            tbody.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const targetBtn = e.target.closest('.btn-edit');
+                    const id = targetBtn.dataset.id;
+                    const s = studentsData.find(x => x.enrollment_number === id);
+                    if (s) {
+                        document.getElementById('es-original-enrollment').value = s.enrollment_number;
+                        document.getElementById('es-name').value = s.student_name || '';
+                        document.getElementById('es-enrollment').value = s.enrollment_number || '';
+                        document.getElementById('es-student-email').value = s.student_email_id || '';
+                        document.getElementById('es-phone').value = s.mobile_number || '';
+                        document.getElementById('es-programme').value = s.programme || '';
+                        document.getElementById('es-higher-ed').value = s.higher_education_plan || 'No';
+                        document.getElementById('es-placed').value = s.placement_status || 'No';
+                        document.getElementById('editStudentModal').style.display = 'flex';
+                    }
+                });
             });
-            
-            // Placements API now natively syncs logic back into the Student record (placement_status = 'Yes' and company_name sync)
-            
+
+            // Reset Password
+            tbody.querySelectorAll('.btn-reset-pw').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const targetBtn = e.target.closest('.btn-reset-pw');
+                    const id = targetBtn.dataset.id;
+                    if (confirm(`Reset password for student ${id}? New password will be Student@123`)) {
+                        apiResetStudentPassword(id, { password: 'Student@123' })
+                            .then(() => alert('Password reset successfully'))
+                            .catch(err => alert('Reset failed: ' + err.message));
+                    }
+                });
+            });
+        }
+
+        document.getElementById('closePfModal').addEventListener('click', () => {
             document.getElementById('placementFlowModal').style.display = 'none';
             document.getElementById('placementFlowForm').reset();
-            alert('Placement successful!');
-            loadStudents(); 
-        } catch(err) {
-            errEl.style.display = 'block';
-            errEl.textContent = err.message;
-        } finally {
-            btn.disabled = false; btn.textContent = 'Save Placement';
+        });
+
+        document.getElementById('placementFlowForm').addEventListener('submit', async e => {
+            e.preventDefault();
+            const errEl = document.getElementById('pfError');
+            const btn = document.getElementById('pfSubmitBtn');
+            errEl.style.display = 'none'; btn.disabled = true; btn.textContent = 'Saving...';
+
+            try {
+                const studentId = document.getElementById('pf-student-id').value;
+                const company = document.getElementById('pf-company').value;
+
+                await createPlacement({
+                    enrollment_number: studentId,
+                    company: company,
+                    student_name: document.getElementById('pf-student-name').value,
+                    role: document.getElementById('pf-role').value,
+                    placement_date: document.getElementById('pf-date').value,
+                    salary_lpa: document.getElementById('pf-salary').value,
+                    status: document.getElementById('pf-status').value
+                });
+
+                document.getElementById('placementFlowModal').style.display = 'none';
+                document.getElementById('placementFlowForm').reset();
+                alert('Placement successful!');
+                loadStudents();
+            } catch (err) {
+                errEl.style.display = 'block';
+                errEl.textContent = err.message;
+            } finally {
+                btn.disabled = false; btn.textContent = 'Save Placement';
+            }
+        });
+
+        function escHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
-    });
 
-    function escHtml(str) {
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+        // Search
+        searchInput.addEventListener('input', () => {
+            currentPage = 1;
+            renderStudents(getFilteredData());
+        });
 
-    // Search
-    searchInput.addEventListener('input', () => {
-        const q = searchInput.value.toLowerCase();
-        const filtered = studentsData.filter(s =>
-            (s.student_name || '').toLowerCase().includes(q) ||
-            (s.enrollment_number || '').toLowerCase().includes(q) ||
-            (s.department_course || '').toLowerCase().includes(q)
-        );
-        renderStudents(filtered);
-    });
-
-    // Modal open/close
-    document.getElementById('openAddStudentModal').addEventListener('click', () => {
-        document.getElementById('addStudentModal').style.display = 'flex';
-    });
-    document.getElementById('closeAddModal').addEventListener('click', () => {
-        document.getElementById('addStudentModal').style.display = 'none';
-    });
-
-    // Add student form
-    document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const errEl = document.getElementById('modalError');
-        const btn = document.getElementById('addStudentSubmitBtn');
-        errEl.style.display = 'none';
-        btn.disabled = true;
-        btn.textContent = 'Adding…';
-        try {
-            const fd = new FormData();
-            fd.append('student_name', document.getElementById('ms-name').value.trim());
-            fd.append('enrollment_number', document.getElementById('ms-enrollment').value.trim());
-            fd.append('student_email_id', document.getElementById('ms-student-email').value.trim());
-            fd.append('mobile_number', document.getElementById('ms-phone').value.trim());
-            fd.append('department_course', document.getElementById('ms-dept').value.trim());
-            fd.append('higher_education_plan', document.getElementById('ms-higher-ed').value);
-            fd.append('placement_status', document.getElementById('ms-placed').value);
-
-            await createStudent(fd);
-            
+        // Modal open/close
+        document.getElementById('openAddStudentModal').addEventListener('click', () => {
+            document.getElementById('addStudentModal').style.display = 'flex';
+        });
+        document.getElementById('closeAddModal').addEventListener('click', () => {
             document.getElementById('addStudentModal').style.display = 'none';
-            document.getElementById('addStudentForm').reset();
-            loadStudents();
-        } catch(err) {
-            errEl.textContent = err.message;
-            errEl.style.display = 'block';
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Add Student';
-        }
-    });
+        });
 
-    // Edit student form
-    document.getElementById('editStudentForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const errEl = document.getElementById('editModalError');
-        const btn = document.getElementById('editStudentSubmitBtn');
-        errEl.style.display = 'none';
-        btn.disabled = true;
-        btn.textContent = 'Saving…';
+        // Add student form
+        document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errEl = document.getElementById('modalError');
+            const btn = document.getElementById('addStudentSubmitBtn');
+            errEl.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'Adding…';
+            try {
+                const fd = new FormData();
+                fd.append('student_name', document.getElementById('ms-name').value.trim());
+                fd.append('enrollment_number', document.getElementById('ms-enrollment').value.trim());
+                fd.append('student_email_id', document.getElementById('ms-student-email').value.trim());
+                fd.append('mobile_number', document.getElementById('ms-phone').value.trim());
+                fd.append('programme', document.getElementById('ms-programme').value.trim());
+                fd.append('higher_education_plan', document.getElementById('ms-higher-ed').value);
+                fd.append('placement_status', document.getElementById('ms-placed').value);
 
-        const id = document.getElementById('es-original-enrollment').value;
-        try {
-            const fd = new FormData();
-            fd.append('student_name', document.getElementById('es-name').value.trim());
-            fd.append('enrollment_number', document.getElementById('es-enrollment').value.trim());
-            fd.append('student_email_id', document.getElementById('es-student-email').value.trim());
-            fd.append('mobile_number', document.getElementById('es-phone').value.trim());
-            fd.append('department_course', document.getElementById('es-dept').value.trim());
-            fd.append('higher_education_plan', document.getElementById('es-higher-ed').value);
-            fd.append('placement_status', document.getElementById('es-placed').value);
+                await createStudent(fd);
 
-            await updateStudent(id, fd);
-            
+                document.getElementById('addStudentModal').style.display = 'none';
+                document.getElementById('addStudentForm').reset();
+                loadStudents();
+            } catch (err) {
+                errEl.textContent = err.message;
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Add Student';
+            }
+        });
+
+        // Edit student form
+        document.getElementById('editStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errEl = document.getElementById('editModalError');
+            const btn = document.getElementById('editStudentSubmitBtn');
+            errEl.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'Saving…';
+
+            const id = document.getElementById('es-original-enrollment').value;
+            try {
+                const fd = new FormData();
+                fd.append('student_name', document.getElementById('es-name').value.trim());
+                fd.append('enrollment_number', document.getElementById('es-enrollment').value.trim());
+                fd.append('student_email_id', document.getElementById('es-student-email').value.trim());
+                fd.append('mobile_number', document.getElementById('es-phone').value.trim());
+                fd.append('programme', document.getElementById('es-programme').value.trim());
+                fd.append('higher_education_plan', document.getElementById('es-higher-ed').value);
+                fd.append('placement_status', document.getElementById('es-placed').value);
+
+                await updateStudent(id, fd);
+
+                document.getElementById('editStudentModal').style.display = 'none';
+                document.getElementById('editStudentForm').reset();
+                loadStudents();
+            } catch (err) {
+                errEl.textContent = err.message;
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Changes';
+            }
+        });
+
+        document.getElementById('closeEditModal').addEventListener('click', () => {
             document.getElementById('editStudentModal').style.display = 'none';
-            document.getElementById('editStudentForm').reset();
-            loadStudents();
-        } catch(err) {
-            errEl.textContent = err.message;
-            errEl.style.display = 'block';
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Save Changes';
-        }
-    });
+        });
 
-    document.getElementById('closeEditModal').addEventListener('click', () => {
-        document.getElementById('editStudentModal').style.display = 'none';
-    });
+        // Import modal
+        document.getElementById('openImportModal').addEventListener('click', () => {
+            document.getElementById('importStudentModal').style.display = 'flex';
+            document.getElementById('importError').style.display = 'none';
+            document.getElementById('importSuccess').style.display = 'none';
+            document.getElementById('importFile').value = '';
+        });
 
-    // Import modal
-    document.getElementById('openImportModal').addEventListener('click', () => {
-        document.getElementById('importStudentModal').style.display = 'flex';
-        document.getElementById('importError').style.display = 'none';
-        document.getElementById('importSuccess').style.display = 'none';
-        document.getElementById('importFile').value = '';
-    });
+        document.getElementById('closeImportModal').addEventListener('click', () => {
+            document.getElementById('importStudentModal').style.display = 'none';
+        });
 
-    document.getElementById('closeImportModal').addEventListener('click', () => {
-        document.getElementById('importStudentModal').style.display = 'none';
-    });
+        document.getElementById('importSubmitBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('importFile');
+            const errEl = document.getElementById('importError');
+            const successEl = document.getElementById('importSuccess');
+            const btn = document.getElementById('importSubmitBtn');
 
-    document.getElementById('importSubmitBtn').addEventListener('click', async () => {
-        const fileInput = document.getElementById('importFile');
-        const errEl = document.getElementById('importError');
-        const successEl = document.getElementById('importSuccess');
-        const btn = document.getElementById('importSubmitBtn');
-        
-        if (!fileInput.files.length) {
-            errEl.textContent = 'Please select a file first.';
-            errEl.style.display = 'block';
-            return;
-        }
-
-        errEl.style.display = 'none';
-        successEl.style.display = 'none';
-        btn.disabled = true;
-        btn.textContent = 'Importing...';
-
-        try {
-            const formData = new FormData();
-            formData.append('file', fileInput.files[0]);
-            
-            const result = await importStudents(formData);
-            
-            successEl.innerHTML = `<strong>Success!</strong><br>${result.message}`;
-            if (result.errors && result.errors.length > 0) {
-                successEl.innerHTML += `<br><small style="color:#f87171;">Note: ${result.errors.length} rows had errors (see console)</small>`;
-                console.error('Import Row Errors:', result.errors);
+            if (!fileInput.files.length) {
+                errEl.textContent = 'Please select a file first.';
+                errEl.style.display = 'block';
+                return;
             }
-            successEl.style.display = 'block';
-            
-            fileInput.value = '';
-            loadStudents(); // Refresh table
-            
-            // Auto close after 3 seconds if no errors
-            if (!result.errors || result.errors.length === 0) {
-                setTimeout(() => {
-                    document.getElementById('importStudentModal').style.display = 'none';
-                }, 3000);
-            }
-        } catch(err) {
-            errEl.textContent = err.message;
-            errEl.style.display = 'block';
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Upload & Import';
-        }
-    });
 
-    document.addEventListener('DOMContentLoaded', loadStudents);
+            errEl.style.display = 'none';
+            successEl.style.display = 'none';
+            btn.disabled = true;
+            btn.textContent = 'Importing...';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+
+                const result = await importStudents(formData);
+
+                successEl.innerHTML = `<strong>Success!</strong><br>${result.message}`;
+                if (result.errors && result.errors.length > 0) {
+                    successEl.innerHTML += `<br><small style="color:#f87171;">Note: ${result.errors.length} rows had errors (see console)</small>`;
+                    console.error('Import Row Errors:', result.errors);
+                }
+                successEl.style.display = 'block';
+
+                fileInput.value = '';
+                loadStudents(); // Refresh table
+
+                // Auto close after 3 seconds if no errors
+                if (!result.errors || result.errors.length === 0) {
+                    setTimeout(() => {
+                        document.getElementById('importStudentModal').style.display = 'none';
+                    }, 3000);
+                }
+            } catch (err) {
+                errEl.textContent = err.message;
+                errEl.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Upload & Import';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadStudents);
     </script>
 </body>
+
 </html>

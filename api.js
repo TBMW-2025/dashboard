@@ -145,23 +145,23 @@ const deleteCompany  = (id)     => apiFetch(`/api/companies/${id}`, { method: 'D
 const importCompanies = (formData) => apiFetch('/api/companies/import', { method: 'POST', body: formData });
 
 // ─── PLACEMENTS ───────────────────────────────────────────────────────────────
-const getPlacements  = ()       => apiFetch('/api/placements');
+const getPlacements  = (prog='') => apiFetch(prog ? `/api/placements?programme=${encodeURIComponent(prog)}` : '/api/placements');
 const createPlacement= (data)   => apiFetch('/api/placements', { method: 'POST', body: JSON.stringify(data) });
 const updatePlacement= (id, d)  => apiFetch(`/api/placements/${id}`, { method: 'PUT', body: JSON.stringify(d) });
 const deletePlacement= (id)     => apiFetch(`/api/placements/${id}`, { method: 'DELETE' });
 const importPlacements = (formData) => apiFetch('/api/placements/import', { method: 'POST', body: formData });
 
 // ─── INTERNSHIPS ──────────────────────────────────────────────────────────────
-const getInternships   = ()       => apiFetch('/api/internships');
+const getInternships   = (prog='') => apiFetch(prog ? `/api/internships?programme=${encodeURIComponent(prog)}` : '/api/internships');
 const createInternship = (data)   => apiFetch('/api/internships', { method: 'POST', body: JSON.stringify(data) });
 const updateInternship = (id, d)  => apiFetch(`/api/internships/${id}`, { method: 'PUT', body: JSON.stringify(d) });
 const deleteInternship = (id)     => apiFetch(`/api/internships/${id}`, { method: 'DELETE' });
 const importInternships = (formData) => apiFetch('/api/internships/import', { method: 'POST', body: formData });
 
 // ─── REPORTS ──────────────────────────────────────────────────────────────────
-const getStats          = ()  => apiFetch('/api/reports/stats');
-const getDeptStats      = ()  => apiFetch('/api/reports/department');
-const getYearlyTrend    = ()  => apiFetch('/api/reports/yearly');
+const getStats          = (prog='') => apiFetch(prog ? `/api/reports/stats?programme=${encodeURIComponent(prog)}` : '/api/reports/stats');
+const getDeptStats      = (prog='') => apiFetch(prog ? `/api/reports/department?programme=${encodeURIComponent(prog)}` : '/api/reports/department');
+const getYearlyTrend    = (prog='') => apiFetch(prog ? `/api/reports/yearly?programme=${encodeURIComponent(prog)}` : '/api/reports/yearly');
 const getStudentsYearly = ()  => apiFetch('/api/reports/students-yearly');
 const getSalaryDist     = ()  => apiFetch('/api/reports/salary');
 

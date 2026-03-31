@@ -150,11 +150,11 @@ function renderMainChart() {
             scales: {
                 x: {
                     grid: { display: false, drawBorder: false },
-                    ticks: { color: '#9ca3af' }
+                    ticks: { color: '#ffffff' }
                 },
                 y: {
                     grid: { color: 'rgba(255, 255, 255, 0.05)', drawBorder: false },
-                    ticks: { color: '#9ca3af', stepSize: 1, precision: 0 }
+                    ticks: { color: '#ffffff', stepSize: 1, precision: 0 }
                 }
             }
         }
@@ -197,32 +197,7 @@ function renderMiniChart() {
 
 
 function setupStudentsTable() {
-    // Handle remove buttons
-    const removeBtns = document.querySelectorAll('.btn-remove');
-    removeBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const row = e.target.closest('tr');
-            if (row) {
-                row.remove();
-            }
-        });
-    });
-
-    // Handle placement status change
-    const statusSelects = document.querySelectorAll('.status-select');
-    statusSelects.forEach(select => {
-        select.addEventListener('change', (e) => {
-            if (e.target.value === 'Placed') {
-                const row = e.target.closest('tr');
-                if (row) {
-                    // Small delay to let user see it changed before removing
-                    setTimeout(() => {
-                        row.remove();
-                    }, 500);
-                }
-            }
-        });
-    });
+    // Dynamic rendering handled in page scripts now
 }
 
 // ===================================================================
@@ -256,12 +231,57 @@ function initSearch() {
 /**
  * Initialize add button functionality
  */
-function initAddButton() {}
+function initAddButton() {
+    // This is handled by page-specific scripts for now, 
+    // but we ensure common open/close logic for standard modals if needed.
+}
 
 /**
- * Initialize action button functionality
+ * Initialize action button functionality including table sorting
  */
-function initActionButtons() {}
+function initActionButtons() {
+    // 1. Table Sorting (for headers with dropdown-icon)
+    const headers = document.querySelectorAll('.dropdown-header');
+    headers.forEach((header, index) => {
+        header.addEventListener('click', () => {
+            const tableBody = header.closest('.table-container').querySelector('.table-body');
+            if (!tableBody) return;
+            
+            const rows = Array.from(tableBody.querySelectorAll('.table-row'));
+            const isAscending = !header.classList.contains('sort-asc');
+            
+            // Clear other header sort classes
+            headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+            
+            rows.sort((a, b) => {
+                const aVal = a.children[index].textContent.trim();
+                const bVal = b.children[index].textContent.trim();
+                
+                // Numeric sort for S.No or Salary
+                if (!isNaN(aVal) && !isNaN(bVal) && aVal !== '' && bVal !== '') {
+                    return isAscending ? aVal - bVal : bVal - aVal;
+                }
+                
+                // Date sort attempt
+                const aDate = Date.parse(aVal);
+                const bDate = Date.parse(bVal);
+                if (!isNaN(aDate) && !isNaN(bDate)) {
+                    return isAscending ? aDate - bDate : bDate - aDate;
+                }
+                
+                // Default string sort
+                return isAscending ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+            });
+            
+            header.classList.add(isAscending ? 'sort-asc' : 'sort-desc');
+            const icon = header.querySelector('.dropdown-icon');
+            if (icon) icon.textContent = isAscending ? '▲' : '▼';
+            
+            // Re-append rows in sorted order
+            rows.forEach(row => tableBody.appendChild(row));
+        });
+    });
+}
 // ===== REPORTS PAGE FUNCTIONALITY =====
 
 /**
@@ -309,16 +329,16 @@ async function initializeCharts() {
                         borderWidth: 2
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ffffff' } } } }
             });
         }
 
-        // --- 3. Department-wise ---
+        // --- 3. Programme-wise ---
         const deptCtx = document.getElementById('deptPlacementChart');
         if (deptCtx) {
             const deptStats = {};
             students.forEach(s => {
-                const dep = s.department_course || 'Unknown';
+                const dep = s.programme || 'Unknown';
                 if (!deptStats[dep]) deptStats[dep] = { total: 0, placed: 0 };
                 deptStats[dep].total++;
                 if (s.placement_status === 'Yes') deptStats[dep].placed++;
@@ -350,7 +370,7 @@ async function initializeCharts() {
                         borderRadius: 5
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' } } }, scales: { x: { ticks: { color: '#888' }, grid: { color: '#2a2f4a' } }, y: { ticks: { color: '#888' }, grid: { color: 'transparent' } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ffffff' } } }, scales: { x: { ticks: { color: '#ffffff' }, grid: { color: '#2a2f4a' } }, y: { ticks: { color: '#ffffff' }, grid: { color: 'transparent' } } } }
             });
         }
 
@@ -375,7 +395,7 @@ async function initializeCharts() {
             new Chart(salaryCtx.getContext('2d'), {
                 type: 'bar',
                 data: { labels: ranges.map(r => r.l), datasets: [{ label: 'Students', data: counts, backgroundColor: '#ff6b35', borderRadius: 5 }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa' } } }, scales: { y: { ticks: { color: '#888', stepSize: 1 }, grid: { color: '#2a2f4a' }, beginAtZero: true }, x: { ticks: { color: '#888' }, grid: { color: 'transparent' } } } }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#ffffff' } } }, scales: { y: { ticks: { color: '#ffffff', stepSize: 1 }, grid: { color: '#2a2f4a' }, beginAtZero: true }, x: { ticks: { color: '#ffffff' }, grid: { color: 'transparent' } } } }
             });
         }
 

@@ -104,14 +104,14 @@
                     <button onclick="exportData('companies')" class="btn-add"
                         style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to
                         Excel</button>
-                    <button class="btn-add">+ Add Company</button>
+                    <button class="btn-add" id="openAddCompanyModal">+ Add Company</button>
                 </div>
             </div>
 
             <!-- Table -->
             <div class="table-container">
                 <div class="table-header companies-header">
-                    <div class="dropdown-header">S.No <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Company Name <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Role <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Contact Person <span class="dropdown-icon">▼</span></div>
@@ -250,14 +250,15 @@
                 <div class="contact-person">${escHtml(c.contact_person || '')}</div>
                 <div class="contact-phone">${escHtml(c.contact || '')}</div>
                 <div style="display:flex;gap:5px;">
-                    <button class="action-btn btn-edit-company" data-id="${c.company_id}" title="Edit">&#9998;</button>
-                    <button class="action-btn btn-del-company" data-id="${c.company_id}" title="Delete">&#128465;</button>
+                    <button class="action-btn btn-edit-company" data-id="${c.company_id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                    <button class="action-btn btn-del-company" data-id="${c.company_id}" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
             </div>`).join('');
 
             tbody.querySelectorAll('.btn-edit-company').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const id = btn.dataset.id;
+                btn.addEventListener('click', (e) => {
+                    const targetBtn = e.target.closest('.btn-edit-company');
+                    const id = targetBtn.dataset.id;
                     const comp = companiesData.find(x => x.company_id == id);
                     if (!comp) return;
                     document.getElementById('ec-id').value = comp.company_id;
@@ -270,10 +271,11 @@
             });
 
             tbody.querySelectorAll('.btn-del-company').forEach(btn => {
-                btn.addEventListener('click', async () => {
+                btn.addEventListener('click', async (e) => {
+                    const targetBtn = e.target.closest('.btn-del-company');
                     if (!confirm('Delete this company?')) return;
                     try {
-                        await deleteCompany(btn.dataset.id);
+                        await deleteCompany(targetBtn.dataset.id);
                         loadCompanies();
                     } catch (e) { alert('Delete failed: ' + e.message); }
                 });
@@ -292,7 +294,7 @@
         });
 
         // Open add modal from "+ Add Company" button
-        document.querySelector('.btn-add').addEventListener('click', () => {
+        document.getElementById('openAddCompanyModal').addEventListener('click', () => {
             document.getElementById('addCompanyModal').style.display = 'flex';
         });
         document.getElementById('closeCompanyModal').addEventListener('click', () => {

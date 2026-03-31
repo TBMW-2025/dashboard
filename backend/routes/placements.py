@@ -2,6 +2,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required
 from models import db, Placement, Student
 import pandas as pd
+from sqlalchemy import or_
+from datetime import datetime
 
 placements_bp = Blueprint('placements', __name__)
 
@@ -10,7 +12,22 @@ placements_bp = Blueprint('placements', __name__)
 @jwt_required()
 def get_placements():
     try:
-        placements = Placement.query.order_by(Placement.created_at.desc()).all()
+        prog = request.args.get('programme')
+        query = Placement.query.order_by(Placement.created_at.desc())
+        
+        if prog:
+            if prog == 'BCPA':
+                query = query.join(Student, Placement.enrollment_number == Student.enrollment_number).filter(
+                    or_(
+                        Student.programme.like("%BCPA%"),
+                        Student.programme.like("%BCPS%"),
+                        Student.programme.like("%BACPA%")
+                    )
+                )
+            else:
+                query = query.join(Student, Placement.enrollment_number == Student.enrollment_number).filter(Student.programme.like(f"%{prog}%"))
+            
+        placements = query.all()
         return jsonify([p.to_dict() for p in placements]), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -147,68 +164,112 @@ def import_placements():
         except Exception as e:
             return jsonify({'error': f'Failed to read Excel file: {str(e)}'}), 400
 
+        def get_col(candidates):
+            for cand in candidates:
+                match = next((c for c in df.columns if str(c).strip().lower() == cand.strip().lower()), None)
+                if match: return match
+            return None
+
+        col_enroll = get_col(['Enrolment No.', 'Enrolment No', 'Enrollment Number', 'Enrollment', 'Student Enrollment'])
+        col_name = get_col(['Student Name', 'Name'])
+        col_company = get_col(['Company Name', 'Company', 'Organization'])
+        col_role = get_col(['Role', 'Role Offered'])
+        col_date = get_col(['Date', 'Placement Date', 'Date of Placement'])
+        col_salary = get_col(['Salary (LPA)', 'Salary', 'LPA', 'Package'])
+        col_status = get_col(['Status', 'Placement Status'])
+
+        if not col_enroll and not col_name:
+            return jsonify({'error': 'Required column (Enrolment No. or Student Name) not found in the Excel file.'}), 400
+
         success_count = 0
-        errors = []
+        updated_count = 0
+        row_errors = []
 
         for index, row in df.iterrows():
             try:
-                enroll = str(row.get(next((c for c in df.columns if 'enrol' in c.strip().lower()), ''), '')).strip()
-                if not enroll or enroll == 'nan':
-                    name = str(row.get(next((c for c in df.columns if 'student name' in c.strip().lower()), ''), '')).strip()
-                    if name and name != 'nan':
+                # Robust enrollment parsing
+                enroll_val = row.get(col_enroll)
+                if pd.isnull(enroll_val): enroll = ''
+                elif isinstance(enroll_val, (float, int)): enroll = str(int(enroll_val))
+                else: enroll = str(enroll_val).strip()
+
+                if not enroll or enroll.lower() == 'nan':
+                    # Try matching by name if enrollment is missing
+                    name_val = row.get(col_name)
+                    name = str(name_val).strip() if pd.notnull(name_val) else ''
+                    if name and name.lower() != 'nan':
                         student_match = Student.query.filter_by(student_name=name).first()
                         if student_match:
                             enroll = student_match.enrollment_number
                 
-                if not enroll or enroll == 'nan':
+                if not enroll or enroll.lower() == 'nan':
                     continue
 
                 student = Student.query.get(enroll)
                 if not student:
-                    errors.append(f"Row {index + 2}: Student {enroll} not found.")
+                    row_errors.append(f"Row {index + 2}: Student {enroll} not found in database.")
                     continue
 
-                company_name = str(row.get(next((c for c in df.columns if 'company' in c.strip().lower()), ''), '')).strip().replace('nan', '')
+                company_name = str(row.get(col_company, '')).strip().replace('nan', '') if col_company else ''
                 if not company_name:
                     continue
 
                 existing = Placement.query.get(enroll)
+                is_new = False
                 if existing:
                     existing.company = company_name
-                    existing.role = str(row.get(next((c for c in df.columns if 'role' in c.strip().lower()), ''), '')).strip().replace('nan', '')
-                    existing.placement_date = str(row.get(next((c for c in df.columns if 'date' in c.strip().lower()), ''), '')).strip().replace('nan', '')
-                    salary = row.get(next((c for c in df.columns if 'salary' in c.strip().lower()), None))
-                    if pd.notnull(salary):
-                        existing.salary_lpa = float(salary)
-                    existing.status = str(row.get(next((c for c in df.columns if 'status' in c.strip().lower()), 'Placed'), 'Placed')).strip().replace('nan', 'Placed')
-                    if existing.status == 'Placed':
-                        student.placement_status = 'Yes'
+                    if col_role: existing.role = str(row.get(col_role, '')).strip().replace('nan', '')
+                    if col_date: 
+                        p_date = str(row.get(col_date, '')).strip().replace('nan', '')
+                        if p_date: existing.placement_date = p_date
+                    
+                    if col_salary:
+                        try:
+                            s_val = str(row.get(col_salary, '0')).strip().lower().replace('nan', '0').split(' ')[0]
+                            existing.salary_lpa = float(s_val)
+                        except: pass
+                    
+                    existing.status = str(row.get(col_status, 'Placed')).strip().replace('nan', 'Placed') if col_status else existing.status
                 else:
+                    is_new = True
                     new_placement = Placement(
                         enrollment_number=enroll,
                         student_name=student.student_name,
                         company=company_name,
-                        role=str(row.get(next((c for c in df.columns if 'role' in c.strip().lower()), ''), '')).strip().replace('nan', ''),
-                        placement_date=str(row.get(next((c for c in df.columns if 'date' in c.strip().lower()), ''), '')).strip().replace('nan', ''),
-                        status=str(row.get(next((c for c in df.columns if 'status' in c.strip().lower()), 'Placed'), 'Placed')).strip().replace('nan', 'Placed')
+                        role=str(row.get(col_role, '')).strip().replace('nan', '') if col_role else '',
+                        status=str(row.get(col_status, 'Placed')).strip().replace('nan', 'Placed') if col_status else 'Placed'
                     )
-                    salary = row.get(next((c for c in df.columns if 'salary' in c.strip().lower()), None))
-                    if pd.notnull(salary):
-                        new_placement.salary_lpa = float(salary)
                     
-                    if new_placement.status == 'Placed':
-                        student.placement_status = 'Yes'
+                    if col_date:
+                        p_date = str(row.get(col_date, '')).strip().replace('nan', '')
+                        if p_date: new_placement.placement_date = p_date
+                    
+                    if not new_placement.placement_date:
+                        new_placement.placement_date = datetime.now().strftime('%Y-%m-%d')
+
+                    if col_salary:
+                        try:
+                            s_val = str(row.get(col_salary, '0')).strip().lower().replace('nan', '0').split(' ')[0]
+                            new_placement.salary_lpa = float(s_val)
+                        except: pass
+                    
                     db.session.add(new_placement)
                 
-                success_count += 1
+                # Sync back to student status
+                student.placement_status = 'Yes' # Since they are in the placement table
+                
+                db.session.commit()
+                if is_new: success_count += 1
+                else: updated_count += 1
             except Exception as row_e:
-                errors.append(f"Row {index + 2}: {str(row_e)}")
+                db.session.rollback()
+                row_errors.append(f"Row {index + 2}: {str(row_e)}")
 
-        db.session.commit()
         return jsonify({
-            'message': f'Import completed: {success_count} records processed.',
+            'message': f'Import completed: {success_count} added, {updated_count} updated.',
             'success_count': success_count,
-            'errors': errors
+            'updated_count': updated_count,
+            'errors': row_errors
         }), 201
     except Exception as e:
         db.session.rollback()

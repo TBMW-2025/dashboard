@@ -98,37 +98,53 @@ def import_companies():
         except Exception as e:
             return jsonify({'error': f'Failed to read Excel file: {str(e)}'}), 400
 
+        def get_col(candidates):
+            for cand in candidates:
+                match = next((c for c in df.columns if str(c).strip().lower() == cand.strip().lower()), None)
+                if match: return match
+            return None
+
+        col_name = get_col(['Company Name', 'Company', 'Organization'])
+        col_role = get_col(['Role', 'Role Offered', 'Job Role'])
+        col_person = get_col(['Contact Person', 'HR Name', 'Contact'])
+        col_contact = get_col(['Contact', 'Phone', 'Mobile', 'Contact Phone'])
+
+        if not col_name:
+            return jsonify({'error': 'Required column (Company Name) not found in the Excel file.'}), 400
+
         success_count = 0
-        duplicate_count = 0
-        errors = []
+        updated_count = 0
+        row_errors = []
 
         for index, row in df.iterrows():
             try:
-                name = str(row.get(next((c for c in df.columns if c.strip().lower() == 'company name'), None), '')).strip()
-                if not name or name == 'nan':
+                name = str(row.get(col_name, '')).strip()
+                if not name or name.lower() == 'nan':
                     continue
 
-                if Company.query.filter_by(company_name=name).first():
-                    duplicate_count += 1
-                    continue
+                company = Company.query.filter_by(company_name=name).first()
+                is_new = False
+                if not company:
+                    company = Company(company_name=name)
+                    db.session.add(company)
+                    is_new = True
+                
+                if col_role: company.role = str(row.get(col_role, '')).strip().replace('nan', '')
+                if col_person: company.contact_person = str(row.get(col_person, '')).strip().replace('nan', '')
+                if col_contact: company.contact = str(row.get(col_contact, '')).strip().replace('nan', '')
 
-                company = Company(
-                    company_name=name,
-                    role=str(row.get(next((c for c in df.columns if c.strip().lower() == 'role'), ''), '')).strip().replace('nan', ''),
-                    contact_person=str(row.get(next((c for c in df.columns if c.strip().lower() == 'contact person'), ''), '')).strip().replace('nan', ''),
-                    contact=str(row.get(next((c for c in df.columns if c.strip().lower() == 'contact'), ''), '')).strip().replace('nan', '')
-                )
-                db.session.add(company)
-                success_count += 1
+                db.session.commit()
+                if is_new: success_count += 1
+                else: updated_count += 1
             except Exception as row_e:
-                errors.append(f"Row {index + 2}: {str(row_e)}")
+                db.session.rollback()
+                row_errors.append(f"Row {index + 2}: {str(row_e)}")
 
-        db.session.commit()
         return jsonify({
-            'message': f'Import completed: {success_count} added, {duplicate_count} skipped.',
+            'message': f'Import completed: {success_count} added, {updated_count} updated.',
             'success_count': success_count,
-            'duplicate_count': duplicate_count,
-            'errors': errors
+            'updated_count': updated_count,
+            'errors': row_errors
         }), 201
     except Exception as e:
         db.session.rollback()

@@ -26,7 +26,7 @@ body {
 
 .sidebar-header {
     font-size: 14px;
-    color: #888;
+    color: #fff;
     margin-bottom: 30px;
     font-weight: 600;
     letter-spacing: 1px;
@@ -46,7 +46,7 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #888;
+    color: #fff;
     text-decoration: none;
     font-size: 11px;
     padding: 12px 5px;
@@ -116,7 +116,7 @@ body {
 }
 
 .header-subtitle {
-    color: #888;
+    color: #fff;
     font-size: 12px;
 }
 
@@ -131,13 +131,13 @@ body {
     border: 1px solid #2a2f4a;
     border-radius: 6px;
     padding: 10px 15px;
-    color: #888;
+    color: #fff;
     width: 300px;
     font-size: 14px;
 }
 
 .search-bar::placeholder {
-    color: #555;
+    color: #fff;
 }
 
 .header-icons {
@@ -149,7 +149,7 @@ body {
 .icon-btn {
     background: none;
     border: none;
-    color: #888;
+    color: #fff;
     font-size: 18px;
     cursor: pointer;
     transition: color 0.3s;
@@ -157,7 +157,7 @@ body {
 }
 
 .icon-btn:hover {
-    color: #ff6b35;
+    color: #ffffff;
 }
 
 .notification-badge {
@@ -199,7 +199,7 @@ body {
 
 .user-role {
     font-size: 10px;
-    color: #888;
+    color: #ffffff;
 }
 
 .content-header {
@@ -295,7 +295,7 @@ body {
 }
 
 .sno {
-    color: #888;
+    color: #fff;
     font-weight: 500;
 }
 
@@ -310,20 +310,20 @@ body {
 }
 
 .role {
-    color: #aaa;
+    color: #fff;
 }
 
 .contact-person {
-    color: #aaa;
+    color: #fff;
 }
 
 .contact-phone {
-    color: #aaa;
+    color: #fff;
     font-family: 'Courier New', monospace;
 }
 
 .placement-date {
-    color: #aaa;
+    color: #fff;
 }
 
 .salary {
@@ -347,7 +347,7 @@ body {
 
 .status.pending {
     background-color: rgba(251, 146, 60, 0.1);
-    color: #fb923c;
+    color: #ffffff;
 }
 
 .action-btn {
@@ -483,7 +483,7 @@ body {
 }
 
 .stat-change.negative {
-    color: #ef4444;
+    color: #ffffff;
 }
 
 /* Charts Section */
@@ -548,7 +548,7 @@ body {
 
 .metric-label {
     font-size: 13px;
-    color: #aaa;
+    color: #fff;
 }
 
 .metric-value {
@@ -575,7 +575,7 @@ body {
 
 .dept-name {
     font-size: 13px;
-    color: #aaa;
+    color: #fff;
     flex: 1;
 }
 
@@ -618,7 +618,8 @@ body {
     height: fit-content;
 }
 
-.settings-nav-item, .settings-option {
+.settings-nav-item,
+.settings-option {
     padding: 12px 15px;
     cursor: pointer;
     color: #888;
@@ -628,12 +629,14 @@ body {
     margin-bottom: 8px;
 }
 
-.settings-nav-item:hover, .settings-option:hover {
+.settings-nav-item:hover,
+.settings-option:hover {
     background-color: #252b4a;
     color: #ff6b35;
 }
 
-.settings-nav-item.active, .settings-option.active {
+.settings-nav-item.active,
+.settings-option.active {
     background-color: rgba(255, 107, 53, 0.1);
     color: #ff6b35;
     font-weight: 600;
@@ -678,7 +681,7 @@ body {
     font-size: 13px;
     font-weight: 600;
     margin-bottom: 8px;
-    color: #aaa;
+    color: #ffffff;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -703,7 +706,7 @@ body {
 }
 
 .form-input::placeholder {
-    color: #666;
+    color: #ffffff;
 }
 
 .form-group-row {
@@ -1212,7 +1215,8 @@ body {
 
 .charts-row .widget {
     flex: 1;
-    min-width: 0; /* Prevents flex items from overflowing */
+    min-width: 0;
+    /* Prevents flex items from overflowing */
 }
 
 .widget {
@@ -1738,13 +1742,13 @@ body {
 
 /* Students Page Grid Re-injection */
 .students-header {
-    grid-template-columns: repeat(7, 1fr) 100px;
+    grid-template-columns: 50px repeat(7, 1fr) 100px;
     min-width: unset;
     font-size: 11px;
 }
 
 .students-row {
-    grid-template-columns: repeat(7, 1fr) 100px;
+    grid-template-columns: 50px repeat(7, 1fr) 100px;
     min-width: unset;
     font-size: 10px;
 }
@@ -1890,7 +1894,8 @@ body {
 
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #000000;
+    background-color: #ffffff;
+    color: #ffffff;
 }
 
 /* Custom Scrollbar */
@@ -1928,4 +1933,54 @@ tbody tr {
 tbody tr:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 30px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.pagination-btn {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    min-width: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.pagination-btn.active {
+    background: #4ade80;
+    color: #1a1a1a;
+    border-color: #4ade80;
+    font-weight: 600;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.pagination-info {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 14px;
+    margin: 0 15px;
 }

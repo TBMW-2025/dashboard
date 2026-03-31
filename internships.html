@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Placements - Placement Monitor Dashboard</title>
+    <title>Internships - Placement Monitor Dashboard</title>
     <link rel="stylesheet" href="styles.css?v=3">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
@@ -112,16 +112,16 @@
             <!-- Table -->
             <div class="table-container">
                 <div class="table-header internships-header">
-                    <div>Sr. No.</div>
-                    <div>Year</div>
-                    <div>Enrolment No.</div>
-                    <div>Programme</div>
-                    <div>Name of Student</div>
-                    <div>Gender</div>
-                    <div>Internship Place</div>
-                    <div>Internship Place 02</div>
-                    <div>Type of Organization</div>
-                    <div>Actions</div>
+                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Year <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Enrolment No. <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Name of Student <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Gender <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Internship Place <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Internship Place 02 <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Type of Organization <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Actions <span class="dropdown-icon">▼</span></div>
                 </div>
                 <div class="table-body" id="tableBody">
                     <div style="padding:24px;text-align:center;opacity:0.5;">Loading internships…</div>
@@ -154,7 +154,7 @@
         </div>
         </main>
     <!-- Add Internship Modal -->
-    <div id="studentModal" class="modal">
+    <div id="studentModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
                 <h2>Add Internship Record</h2>
@@ -210,20 +210,9 @@
                             <option value="NGO">NGO</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select id="mi-status" class="form-select">
-                            <option value="Active">Active/Ongoing</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Pending">Pending</option>
-                        </select>
-                    </div>
                 </div>
 
                 <!-- Hidden or Optional legacy fields -->
-                <input type="hidden" id="mi-company" value="1">
-                <input type="hidden" id="mi-role" value="Intern">
-                <input type="hidden" id="mi-duration" value="1">
 
                 <div class="button-group">
                     <button type="submit" id="saveStudentBtn" class="btn btn-primary">Save Internship</button>
@@ -234,7 +223,7 @@
     </div>
 
     <!-- Edit Internship Modal -->
-    <div id="editInternshipModal" class="modal">
+    <div id="editInternshipModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
                 <h2>Edit Internship Record</h2>
@@ -291,14 +280,6 @@
                             <option value="NGO">NGO</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">Status</label>
-                        <select id="ei-status" class="form-select">
-                            <option value="Active">Active/Ongoing</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Pending">Pending</option>
-                        </select>
-                    </div>
                 </div>
 
                 <div class="button-group">
@@ -310,7 +291,7 @@
     </div>
 
     <!-- Import Internships Modal -->
-    <div id="importInternshipModal" class="modal">
+    <div id="importInternshipModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Import Internships from Excel</h2>
@@ -318,7 +299,7 @@
             </div>
             <div style="padding: 20px;">
                 <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with headers:<br>
-                <strong>Year, Enrolment No., Programme, Gender, Internship Place, Type of Organization</strong></p>
+                <strong>Year, Enrolment No., Programme, Gender, Internship Place, Internship Place 02, Type of Organization</strong></p>
                 <form id="importInternshipForm">
                     <div id="importInternError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;"></div>
                     <div class="form-group">
@@ -373,15 +354,16 @@
                         <div>${esc(item.internship_place_02)}</div>
                         <div>${esc(item.organization_type)}</div>
                         <div style="display:flex;gap:5px;">
-                            <button class="action-btn btn-edit-intern" data-id="${item.id}" title="Edit">&#9998;</button>
-                            <button class="action-btn btn-del-intern" data-id="${item.id}" title="Delete">&#128465;</button>
+                            <button class="action-btn btn-edit-intern" data-id="${item.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                            <button class="action-btn btn-del-intern" data-id="${item.id}" title="Delete"><i class="bi bi-trash"></i></button>
                         </div>
                     </div>`
                 ).join('');
 
                 tbody.querySelectorAll('.btn-edit-intern').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        const id = btn.dataset.id;
+                    btn.addEventListener('click', (e) => {
+                        const targetBtn = e.target.closest('.btn-edit-intern');
+                        const id = targetBtn.dataset.id;
                         const item = data.find(x => x.id == id);
                         if (!item) return;
                         document.getElementById('ei-id').value = item.id;
@@ -392,16 +374,16 @@
                         document.getElementById('ei-place').value = item.internship_place || '';
                         document.getElementById('ei-place-02').value = item.internship_place_02 || '';
                         document.getElementById('ei-org-type').value = item.organization_type || 'Govt./Pvt';
-                        document.getElementById('ei-status').value = item.status || 'Active';
                         document.getElementById('editInternshipModal').style.display = 'flex';
                     });
                 });
 
                 tbody.querySelectorAll('.btn-del-intern').forEach(btn => {
-                    btn.addEventListener('click', async () => {
+                    btn.addEventListener('click', async (e) => {
+                        const targetBtn = e.target.closest('.btn-del-intern');
                         if (!confirm('Delete this internship?')) return;
-                        try { await deleteInternship(btn.dataset.id); load(); }
-                        catch (e) { alert('Delete failed: ' + e.message); }
+                        try { await deleteInternship(targetBtn.dataset.id); load(); }
+                        catch (err) { alert('Delete failed: ' + err.message); }
                     });
                 });
             }
@@ -458,12 +440,7 @@
                         gender: document.getElementById('mi-gender').value,
                         internship_place: document.getElementById('mi-place').value,
                         internship_place_02: document.getElementById('mi-place-02').value || '',
-                        organization_type: document.getElementById('mi-org-type').value,
-                        status: document.getElementById('mi-status').value,
-                        // Legacy fields
-                        company_id: parseInt(document.getElementById('mi-company').value),
-                        role: document.getElementById('mi-role').value,
-                        duration: document.getElementById('mi-duration').value
+                        organization_type: document.getElementById('mi-org-type').value
                     });
                     const modal = document.getElementById('studentModal');
                     if (modal) modal.style.display = 'none';
@@ -492,8 +469,7 @@
                         gender: document.getElementById('ei-gender').value,
                         internship_place: document.getElementById('ei-place').value,
                         internship_place_02: document.getElementById('ei-place-02').value || '',
-                        organization_type: document.getElementById('ei-org-type').value,
-                        status: document.getElementById('ei-status').value
+                        organization_type: document.getElementById('ei-org-type').value
                     });
                     document.getElementById('editInternshipModal').style.display = 'none';
                     load();

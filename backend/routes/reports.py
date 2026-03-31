@@ -1,7 +1,7 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required
 from models import db, Student, Company, Placement, Internship
-from sqlalchemy import func, case
+from sqlalchemy import func, case, or_
 
 reports_bp = Blueprint('reports', __name__)
 
@@ -10,11 +10,33 @@ reports_bp = Blueprint('reports', __name__)
 @jwt_required()
 def get_stats():
     try:
-        total_students = Student.query.count()
-        placed_students = Student.query.filter_by(placement_status='Yes').count()
-        total_companies = Company.query.count()
-        total_internships = Internship.query.count()
-        pending_placements = Placement.query.filter_by(status='Pending').count()
+        prog = request.args.get('programme')
+
+        student_query = Student.query
+        placement_query = db.session.query(Placement).join(Student, Placement.enrollment_number == Student.enrollment_number)
+        internship_query = db.session.query(Internship).join(Student, Internship.enrollment_number == Student.enrollment_number)
+
+        if prog:
+            if prog == 'BCPA':
+                cond = or_(
+                    Student.programme.like("%BCPA%"),
+                    Student.programme.like("%BCPS%"),
+                    Student.programme.like("%BACPA%")
+                )
+            else:
+                cond = Student.programme.like(f"%{prog}%")
+                
+            student_query = student_query.filter(cond)
+            placement_query = placement_query.filter(cond)
+            internship_query = internship_query.filter(cond)
+
+        total_students = student_query.count()
+        placed_students = student_query.filter_by(placement_status='Yes').count()
+        total_internships = internship_query.count()
+        pending_placements = placement_query.filter(Placement.status == 'Pending').count()
+        
+        # Count unique companies from placement records for this filtered set
+        total_companies = placement_query.with_entities(Placement.company).distinct().count() if prog else Company.query.count()
 
         return jsonify({
             'total_students': total_students,
@@ -33,23 +55,45 @@ def get_stats():
 def get_department_stats():
     """Department-wise placement breakdown."""
     try:
-        results = db.session.query(
-            Student.department_course,
+        prog = request.args.get('programme')
+        query = db.session.query(
+            Student.programme,
             func.count(Student.enrollment_number).label('total'),
             func.sum(case((Student.placement_status == 'Yes', 1), else_=0)).label('placed')
-        ).group_by(Student.department_course).all()
+        )
+        
+        if prog:
+            if prog == 'BCPA':
+                query = query.filter(or_(
+                    Student.programme.like("%BCPA%"),
+                    Student.programme.like("%BCPS%"),
+                    Student.programme.like("%BACPA%")
+                ))
+            else:
+                query = query.filter(Student.programme.like(f"%{prog}%"))
+
+        results = query.group_by(Student.programme).all()
+
+        data_map = {}
+        for row in results:
+            raw_prog = row.programme or 'Unknown'
+            # Normalize BCPA variants into a single bucket
+            if any(x in raw_prog for x in ['BCPA', 'BCPS', 'BACPA']):
+                norm_prog = 'BCPA'
+            else:
+                norm_prog = raw_prog
+                
+            if norm_prog not in data_map:
+                data_map[norm_prog] = {'programme': norm_prog, 'total': 0, 'placed': 0}
+                
+            data_map[norm_prog]['total'] = int(data_map[norm_prog]['total']) + int(row.total or 0)
+            data_map[norm_prog]['placed'] = int(data_map[norm_prog]['placed']) + int(row.placed or 0)
 
         data = []
-        for row in results:
-            dept = row.department_course or 'Unknown'
-            total = row.total or 0
-            placed = int(row.placed or 0)
-            data.append({
-                'department': dept,
-                'total': total,
-                'placed': placed,
-                'percentage': round((placed / total * 100), 1) if total > 0 else 0
-            })
+        for v in data_map.values():
+            total = int(v['total'])
+            v['percentage'] = round((int(v['placed']) / total * 100), 1) if total > 0 else 0
+            data.append(v)
 
         return jsonify(data), 200
     except Exception as e:
@@ -100,7 +144,20 @@ def get_yearly_trend():
         years_range = [str(y) for y in range(start_year, current_year + 1)]
         yearly = {year: 0 for year in years_range}
         
-        placements = Placement.query.filter_by(status='Placed').all()
+        prog = request.args.get('programme')
+        query = db.session.query(Placement).join(Student, Placement.enrollment_number == Student.enrollment_number).filter(Placement.status == 'Placed')
+        
+        if prog:
+            if prog == 'BCPA':
+                query = query.filter(or_(
+                    Student.programme.like("%BCPA%"),
+                    Student.programme.like("%BCPS%"),
+                    Student.programme.like("%BACPA%")
+                ))
+            else:
+                query = query.filter(Student.programme.like(f"%{prog}%"))
+            
+        placements = query.all()
         for p in placements:
             if p.placement_date:
                 try:
