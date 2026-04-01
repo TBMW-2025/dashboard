@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OSINT Job Aggregator</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- UI Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="external-jobs.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="bi bi-shield-lock-fill"></i>
+                <span>OSINT Jobs</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-filter="">
+                    <i class="bi bi-grid-fill"></i> All Channels
+                </a>
+                <a href="#" class="nav-item" data-filter="Internship">
+                    <i class="bi bi-mortarboard"></i> Internships
+                </a>
+                <a href="#" class="nav-item" data-filter="Fresher">
+                    <i class="bi bi-briefcase"></i> Fresher Jobs
+                </a>
+                <div class="nav-label">Domains</div>
+                <a href="#" class="nav-item" data-filter="Cyber Security">
+                    <i class="bi bi-terminal"></i> Cyber Security
+                </a>
+                <a href="#" class="nav-item" data-filter="Digital Forensics">
+                    <i class="bi bi-search"></i> Digital Forensics
+                </a>
+                <a href="#" class="nav-item" data-filter="Criminology">
+                    <i class="bi bi-people"></i> Criminology
+                </a>
+                <a href="#" class="nav-item" data-filter="Intelligence">
+                    <i class="bi bi-eye"></i> Intelligence
+                </a>
+                <div class="nav-label">Job Sector</div>
+                <a href="#" class="nav-item" data-filter="Govt">
+                    <i class="bi bi-bank"></i> Govt Jobs
+                </a>
+                <a href="#" class="nav-item" data-filter="Private">
+                    <i class="bi bi-building-gear"></i> Private Sector
+                </a>
+            <div class="sidebar-footer">
+                <p>© 2026 Pulse-R24 Dashboard</p>
+                <div class="user-info">
+                    <div class="avatar">A</div>
+                    <div class="username">Admin Support</div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div class="search-container">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="jobSearch" placeholder="Search roles, companies, or keywords...">
+                </div>
+                <div class="actions">
+                    <button id="refreshBtn" class="btn-refresh" title="Fetch Latest Jobs">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh Feed
+                    </button>
+                    <button class="btn-primary">
+                        <i class="bi bi-bell"></i> Alerts
+                    </button>
+                </div>
+            </header>
+
+            <section class="feed-header">
+                <div class="feed-info">
+                    <h1 id="feedTitle">Recent Job Opportunities</h1>
+                    <p id="feedStats">Loading intelligence feed...</p>
+                </div>
+                <div class="platform-filter">
+                    <button class="chip active" data-platform="">All Platforms</button>
+                    <button class="chip" data-platform="LinkedIn"><i class="bi bi-linkedin"></i> LinkedIn</button>
+                    <button class="chip" data-platform="Internshala">Internshala</button>
+                    <button class="chip" data-platform="Indeed">Indeed</button>
+                    <button class="chip govt-chip" data-platform="Govt Portal"><i class="bi bi-bank"></i> Govt Portal</button>
+                </div>
+            </section>
+
+            <!-- Job Grid -->
+            <div class="job-grid" id="jobGrid">
+                <!-- Skeleton Loading State -->
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+
+            <!-- Empty State (Hidden) -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <i class="bi bi-search-heart"></i>
+                <h3>No jobs matching your criteria</h3>
+                <p>Try adjusting your filters or search keywords.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="external-jobs.js"></script>
+    <!-- CDN: Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN: SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase config (change only this file when moving to a new host) -->
+    <script src="supabase-client.js"></script>
+    <script src="api.js"></script>
+</body>
+</html>

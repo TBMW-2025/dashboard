@@ -41,6 +41,10 @@
                         <i class="bi bi-person-workspace"></i>
                         <span>Internships</span>
                     </a>
+                    <a href="field-visits.html" class="nav-item ">
+                        <i class="bi bi-pin-map-fill"></i>
+                        <span>Field Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item ">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
@@ -417,7 +421,13 @@
     </div>
 
     <script src="auth-guard.js?v=9"></script>
-    <script src="api.js?v=9"></script>
+        <!-- CDN: Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN: SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase config (change only this file when moving to a new host) -->
+    <script src="supabase-client.js"></script>
+    <script src="api.js"></script>
     <script src="security.js?v=9"></script>
     <script src="script.js?v=9"></script>
 </body>

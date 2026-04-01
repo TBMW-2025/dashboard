@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login — Placement Monitor Dashboard</title>
 
     <style>
@@ -202,12 +201,7 @@
                 <button type="submit" id="loginBtn">Login</button>
 
                 <div class="extra">
-                    <span style="color:#aaa;font-size:12px">Default: admin / admin123</span>
-                </div>
-
-                
-                    <button type="button" id="verifyOtpBtn">Verify & Login</button>
-                    <input type="hidden" id="hiddenUserId">
+                    <span style="color:#aaa;font-size:12px">Default: admin / Admin@123</span>
                 </div>
 
             </form>
@@ -216,19 +210,28 @@
 
     </div>
 
-
-    <script src="api.js?v=3"></script>
+    <!-- CDN: Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN: SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase config (change this when you move servers) -->
+    <script src="supabase-client.js"></script>
+    <!-- Data layer -->
+    <script src="api.js"></script>
     <script>
+        // If already logged in, redirect to dashboard
+        if (localStorage.getItem('pd_user')) {
+            window.location.href = 'dashboard.html';
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
             const errorMsg = document.getElementById('errorMsg');
             const loginBtn = document.getElementById('loginBtn');
 
             errorMsg.classList.remove('show');
-
             if (!username || !password) {
                 errorMsg.textContent = 'Please enter username and password.';
                 errorMsg.classList.add('show');
@@ -241,8 +244,6 @@
             try {
                 const res = await apiLogin(username, password);
                 if (res.requires_2fa) {
-                    // Redirect to MFA verification page instead of inline
-                    localStorage.setItem('mfa_user_id', res.user_id);
                     window.location.href = 'mfa.html';
                 } else {
                     window.location.href = 'dashboard.html';
@@ -252,32 +253,6 @@
                 errorMsg.classList.add('show');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Login';
-            }
-        });
-
-        document.getElementById('verifyOtpBtn').addEventListener('click', async function() {
-            const otp = document.getElementById('otpCode').value.trim();
-            const userId = document.getElementById('hiddenUserId').value;
-            const errorMsg = document.getElementById('errorMsg');
-            const verifyBtn = document.getElementById('verifyOtpBtn');
-
-            if (!otp) {
-                errorMsg.textContent = 'Please enter OTP.';
-                errorMsg.classList.add('show');
-                return;
-            }
-
-            verifyBtn.disabled = true;
-            verifyBtn.textContent = 'Verifying...';
-
-            try {
-                await apiVerifyOtp(userId, otp);
-                window.location.href = 'dashboard.html';
-            } catch (err) {
-                errorMsg.textContent = err.message || 'Verification failed. Please try again.';
-                errorMsg.classList.add('show');
-                verifyBtn.disabled = false;
-                verifyBtn.textContent = 'Verify & Login';
             }
         });
     </script>

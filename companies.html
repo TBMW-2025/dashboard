@@ -41,9 +41,17 @@
                         <i class="bi bi-person-workspace"></i>
                         <span>Internships</span>
                     </a>
+                    <a href="field-visits.html" class="nav-item ">
+                        <i class="bi bi-pin-map-fill"></i>
+                        <span>Field Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item ">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
+                    </a>
+                    <a href="external-jobs.html" class="nav-item ">
+                        <i class="bi bi-globe"></i>
+                        <span>External Jobs (OSINT)</span>
                     </a>
                     <a href="reports.html" class="nav-item ">
                         <i class="bi bi-bar-chart-fill"></i>
@@ -101,9 +109,9 @@
                     <button onclick="document.getElementById('importCompanyModal').style.display='flex'" class="btn-import">
                         <i class="bi bi-file-earmark-excel"></i> Import Excel
                     </button>
-                    <button onclick="exportData('companies')" class="btn-add"
-                        style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to
-                        Excel</button>
+                    <button onclick="exportData('companies')" class="btn-export">
+                        <i class="bi bi-download"></i> Export to Excel
+                    </button>
                     <button class="btn-add" id="openAddCompanyModal">+ Add Company</button>
                 </div>
             </div>
@@ -222,7 +230,13 @@
     </div>
 
     <script src="auth-guard.js?v=3"></script>
-    <script src="api.js?v=3"></script>
+        <!-- CDN: Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN: SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase config (change only this file when moving to a new host) -->
+    <script src="supabase-client.js"></script>
+    <script src="api.js"></script>
     <script src="script.js?v=3"></script>
     <script>
         const tbody = document.getElementById('companiesTableBody');
@@ -243,15 +257,15 @@
                 return;
             }
             tbody.innerHTML = list.map((c, i) => `
-            <div class="table-row companies-row" data-id="${c.company_id}">
+            <div class="table-row companies-row" data-id="${c.id}">
                 <div class="sno">${i + 1}</div>
                 <div class="company-name">${escHtml(c.company_name)}</div>
                 <div class="role">${escHtml(c.role || '')}</div>
                 <div class="contact-person">${escHtml(c.contact_person || '')}</div>
                 <div class="contact-phone">${escHtml(c.contact || '')}</div>
                 <div style="display:flex;gap:5px;">
-                    <button class="action-btn btn-edit-company" data-id="${c.company_id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                    <button class="action-btn btn-del-company" data-id="${c.company_id}" title="Delete"><i class="bi bi-trash"></i></button>
+                    <button class="action-btn btn-edit-company" data-id="${c.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                    <button class="action-btn btn-del-company" data-id="${c.id}" title="Delete"><i class="bi bi-trash"></i></button>
                 </div>
             </div>`).join('');
 
@@ -259,9 +273,9 @@
                 btn.addEventListener('click', (e) => {
                     const targetBtn = e.target.closest('.btn-edit-company');
                     const id = targetBtn.dataset.id;
-                    const comp = companiesData.find(x => x.company_id == id);
+                    const comp = companiesData.find(x => x.id == id);
                     if (!comp) return;
-                    document.getElementById('ec-id').value = comp.company_id;
+                    document.getElementById('ec-id').value = comp.id;
                     document.getElementById('ec-name').value = comp.company_name;
                     document.getElementById('ec-role').value = comp.role || '';
                     document.getElementById('ec-contact').value = comp.contact_person || '';

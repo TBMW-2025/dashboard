@@ -41,9 +41,17 @@
                         <i class="bi bi-person-workspace"></i>
                         <span>Internships</span>
                     </a>
+                    <a href="field-visits.html" class="nav-item ">
+                        <i class="bi bi-pin-map-fill"></i>
+                        <span>Field Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item ">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
+                    </a>
+                    <a href="external-jobs.html" class="nav-item ">
+                        <i class="bi bi-globe"></i>
+                        <span>External Jobs (OSINT)</span>
                     </a>
                     <a href="reports.html" class="nav-item ">
                         <i class="bi bi-bar-chart-fill"></i>
@@ -101,9 +109,9 @@
                         style="width: 250px;">
                     <button class="btn-import" id="openImportModal"><i class="bi bi-file-earmark-excel"></i> Import
                         Excel</button>
-                    <button onclick="exportData('students')" class="btn-add"
-                        style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to
-                        Excel</button>
+                    <button onclick="exportData('students')" class="btn-export">
+                        <i class="bi bi-download"></i> Export to Excel
+                    </button>
                     <button class="btn-add" id="openAddStudentModal">+ Add Student</button>
                 </div>
             </div>
@@ -333,7 +341,13 @@
         </main>
     </div>
     <script src="auth-guard.js?v=3"></script>
-    <script src="api.js?v=3"></script>
+        <!-- CDN: Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN: SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase config (change only this file when moving to a new host) -->
+    <script src="supabase-client.js"></script>
+    <script src="api.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js?v=3"></script>
     <script>
@@ -638,51 +652,34 @@
             document.getElementById('importStudentModal').style.display = 'none';
         });
 
-        document.getElementById('importSubmitBtn').addEventListener('click', async () => {
+        document.getElementById('importStudentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
             const fileInput = document.getElementById('importFile');
             const errEl = document.getElementById('importError');
-            const successEl = document.getElementById('importSuccess');
+            const statusEl = document.getElementById('importStatus');
             const btn = document.getElementById('importSubmitBtn');
 
-            if (!fileInput.files.length) {
-                errEl.textContent = 'Please select a file first.';
-                errEl.style.display = 'block';
-                return;
-            }
+            if (!fileInput.files.length) return;
 
             errEl.style.display = 'none';
-            successEl.style.display = 'none';
+            statusEl.style.display = 'block';
             btn.disabled = true;
-            btn.textContent = 'Importing...';
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
 
             try {
-                const formData = new FormData();
-                formData.append('file', fileInput.files[0]);
-
                 const result = await importStudents(formData);
-
-                successEl.innerHTML = `<strong>Success!</strong><br>${result.message}`;
-                if (result.errors && result.errors.length > 0) {
-                    successEl.innerHTML += `<br><small style="color:#f87171;">Note: ${result.errors.length} rows had errors (see console)</small>`;
-                    console.error('Import Row Errors:', result.errors);
-                }
-                successEl.style.display = 'block';
-
+                alert(result.message || 'Import successful!');
+                document.getElementById('importStudentModal').style.display = 'none';
                 fileInput.value = '';
-                loadStudents(); // Refresh table
-
-                // Auto close after 3 seconds if no errors
-                if (!result.errors || result.errors.length === 0) {
-                    setTimeout(() => {
-                        document.getElementById('importStudentModal').style.display = 'none';
-                    }, 3000);
-                }
+                loadStudents();
             } catch (err) {
                 errEl.textContent = err.message;
                 errEl.style.display = 'block';
             } finally {
+                statusEl.style.display = 'none';
                 btn.disabled = false;
-                btn.textContent = 'Upload & Import';
             }
         });
 

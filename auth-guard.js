@@ -1,36 +1,29 @@
 /**
  * auth-guard.js — Redirect unauthenticated users to login.
  * Load this as the FIRST script on any protected page.
+ * Works with pure Supabase (no Flask backend).
  */
 (function () {
-    const token = localStorage.getItem('pd_token');
-    // When served as root ('/'), the popped segment is '', so fall back to 'index.html' (login page)
+    const user = localStorage.getItem('pd_user');
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    const publicPages = ['index.html', 'forgot-password.html', 'mfa.html', ''];
 
-    // If no token and not already on the login page, redirect to login
-    if (!token && currentPage !== 'index.html') {
+    if (!user && !publicPages.includes(currentPage)) {
         window.location.replace('index.html');
+        return;
     }
 
-    // Populate sidebar user info if DOM is ready or when DOMContentLoaded fires
     function populateUserInfo() {
         try {
-            const user = JSON.parse(localStorage.getItem('pd_user') || '{}');
-            const nameEl = document.querySelector('.user-name');
-            const roleEl = document.querySelector('.user-role');
+            const u = JSON.parse(localStorage.getItem('pd_user') || '{}');
+            const nameEl   = document.querySelector('.user-name');
+            const roleEl   = document.querySelector('.user-role');
             const avatarEl = document.querySelector('.avatar');
 
-            if (nameEl && user.username) {
-                nameEl.textContent = user.username;
-            }
-            if (roleEl && user.role) {
-                roleEl.textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
-            }
-            if (avatarEl && user.username) {
-                avatarEl.textContent = user.username.charAt(0).toUpperCase();
-            }
+            if (nameEl   && u.username) nameEl.textContent   = u.username;
+            if (roleEl   && u.role)     roleEl.textContent   = u.role.charAt(0).toUpperCase() + u.role.slice(1);
+            if (avatarEl && u.username) avatarEl.textContent = u.username.charAt(0).toUpperCase();
 
-            // Wire up user-profile click to logout → go to login page (index.html)
             const profileEl = document.querySelector('.user-profile');
             if (profileEl) {
                 profileEl.style.cursor = 'pointer';
@@ -43,9 +36,7 @@
                     }
                 };
             }
-        } catch (e) {
-            // silently ignore
-        }
+        } catch (e) { /* silent */ }
     }
 
     if (document.readyState === 'loading') {

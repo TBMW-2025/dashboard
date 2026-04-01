@@ -41,9 +41,17 @@
                         <i class="bi bi-person-workspace"></i>
                         <span>Internships</span>
                     </a>
+                    <a href="field-visits.html" class="nav-item ">
+                        <i class="bi bi-pin-map-fill"></i>
+                        <span>Field Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item active">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
+                    </a>
+                    <a href="external-jobs.html" class="nav-item ">
+                        <i class="bi bi-globe"></i>
+                        <span>External Jobs (OSINT)</span>
                     </a>
                     <a href="reports.html" class="nav-item ">
                         <i class="bi bi-bar-chart-fill"></i>
@@ -101,9 +109,9 @@
                     <button onclick="document.getElementById('importPlacementModal').style.display='flex'" class="btn-import">
                         <i class="bi bi-file-earmark-excel"></i> Import Excel
                     </button>
-                    <button onclick="exportData('placements')" class="btn-add"
-                        style="background-color: transparent; border: 1px solid #ccc; color: white;">Export to
-                        Excel</button>
+                    <button onclick="exportData('placements')" class="btn-export">
+                        <i class="bi bi-download"></i> Export to Excel
+                    </button>
                     <button class="btn-add" id="openAddPlacementModal">+ Add Placement</button>
                 </div>
             </div>
@@ -259,7 +267,13 @@
     </div>
 
     <script src="auth-guard.js?v=3"></script>
-    <script src="api.js?v=3"></script>
+        <!-- CDN: Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN: SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase config (change only this file when moving to a new host) -->
+    <script src="supabase-client.js"></script>
+    <script src="api.js"></script>
     <script src="script.js?v=3"></script>
     <script>
         const tbody = document.getElementById('placementsTableBody');
@@ -316,7 +330,7 @@
             const q = e.target.value.toLowerCase();
             renderPlacements(placementsData.filter(p =>
                 (p.student_name || '').toLowerCase().includes(q) ||
-                (p.company_name || '').toLowerCase().includes(q)
+                (p.company || '').toLowerCase().includes(q)
             ));
         });
 
@@ -429,7 +443,12 @@
 
             try {
                 const res = await importPlacements(formData);
-                alert(res.message || 'Import successful!');
+                let msg = res.message || 'Import completed!';
+                if (res.errors && res.errors.length > 0) {
+                    msg += `\n\nNote: ${res.errors.length} rows had errors. Check console for details.`;
+                    console.error('Import Errors:', res.errors);
+                }
+                alert(msg);
                 document.getElementById('importPlacementModal').style.display = 'none';
                 fileInput.value = '';
                 loadPlacements();

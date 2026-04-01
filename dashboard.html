@@ -43,9 +43,17 @@
                         <i class="bi bi-person-workspace"></i>
                         <span>Internships</span>
                     </a>
+                    <a href="field-visits.html" class="nav-item ">
+                        <i class="bi bi-pin-map-fill"></i>
+                        <span>Field Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item ">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
+                    </a>
+                    <a href="external-jobs.html" class="nav-item ">
+                        <i class="bi bi-globe"></i>
+                        <span>External Jobs (OSINT)</span>
                     </a>
                     <a href="reports.html" class="nav-item ">
                         <i class="bi bi-bar-chart-fill"></i>
@@ -111,7 +119,7 @@
 
                 <!-- STAT CARDS ROW -->
                 <div class="widget span-full" style="padding: 0; background: transparent; box-shadow: none;">
-                    <div style="display:grid; grid-template-columns: repeat(4,1fr); gap: 16px;">
+                    <div style="display:grid; grid-template-columns: repeat(5,1fr); gap: 16px;">
                         <div class="widget" style="padding: 20px; display:flex; align-items:center; gap:16px;">
                             <div style="font-size:2rem;">&#128101;</div>
                             <div>
@@ -144,6 +152,15 @@
                                 <div style="font-size:11px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;">
                                     Internships</div>
                                 <div id="stat-internships" style="font-size:2rem;font-weight:700;color:#3b82f6;">&#8212;
+                                </div>
+                            </div>
+                        </div>
+                        <div class="widget" style="padding: 20px; display:flex; align-items:center; gap:16px; cursor: pointer;" onclick="window.location.href='external-jobs.html'">
+                            <div style="font-size:2rem;">&#127760;</div>
+                            <div>
+                                <div style="font-size:11px;opacity:0.6;text-transform:uppercase;letter-spacing:1px;">
+                                    OSINT Jobs</div>
+                                <div id="stat-external" style="font-size:2rem;font-weight:700;color:#a855f7;">&#8212;
                                 </div>
                             </div>
                         </div>
@@ -240,7 +257,13 @@
             </main>
         </div>
         <script src="auth-guard.js?v=3"></script>
-        <script src="api.js?v=3"></script>
+            <!-- CDN: Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- CDN: SheetJS for Excel import/export -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Supabase config (change only this file when moving to a new host) -->
+    <script src="supabase-client.js"></script>
+    <script src="api.js"></script>
         <script src="https://d3js.org/d3.v7.min.js"></script>
         <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -259,6 +282,7 @@
                         document.getElementById('stat-placed').textContent = stats.placed_students;
                         document.getElementById('stat-companies').textContent = stats.total_companies;
                         document.getElementById('stat-internships').textContent = stats.total_internships;
+                        document.getElementById('stat-external').textContent = stats.total_external_jobs || 0;
                     }
                 } catch (e) {
                     console.warn('Stats load failed:', e.message);

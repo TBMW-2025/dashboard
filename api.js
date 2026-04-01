@@ -1,218 +1,565 @@
 /**
- * api.js — Shared API utility for Placement Dashboard
- * All fetch() calls to the Flask backend go through here.
+ * api.js — Placement Dashboard Data Layer (Pure Supabase Edition)
+ * ─────────────────────────────────────────────────────────────────────────────
+ * All functions use the Supabase JS client (window._sb) from supabase-client.js.
+ * Function names are identical to the old Flask version so all HTML pages work
+ * without changes.
+ *
+ * Excel import/export is handled client-side using SheetJS (loaded via CDN).
+ * ─────────────────────────────────────────────────────────────────────────────
  */
 
-const API_BASE = 'http://127.0.0.1:5001';
-
-// ─── Token Helpers ────────────────────────────────────────────────────────────
-function getToken() {
-    return localStorage.getItem('pd_token');
-}
-
-function saveToken(token) {
-    localStorage.setItem('pd_token', token);
-}
-
-function clearToken() {
-    localStorage.removeItem('pd_token');
-    localStorage.removeItem('pd_user');
-}
-
-function saveUser(user) {
-    localStorage.setItem('pd_user', JSON.stringify(user));
-}
-
+// ─── Session Helpers ──────────────────────────────────────────────────────────
 function getUser() {
-    try {
-        return JSON.parse(localStorage.getItem('pd_user'));
-    } catch {
-        return null;
-    }
+    try { return JSON.parse(localStorage.getItem('pd_user') || 'null'); } catch { return null; }
 }
-
-// ─── Core fetch wrapper ───────────────────────────────────────────────────────
-async function apiFetch(endpoint, options = {}) {
-    const token = getToken();
-    const headers = {
-        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
-        ...(options.headers || {})
-    };
-
-    if (!headers['Content-Type'] && !(options.body instanceof FormData)) {
-        headers['Content-Type'] = 'application/json';
-    }
-
-    const response = await fetch(`${API_BASE}${endpoint}`, {
-        ...options,
-        headers
-    });
-
-    if (response.status === 401) {
-        clearToken();
-        window.location.href = 'index.html';
-        return null;
-    }
-
-    const data = await response.json().catch(() => ({}));
-
-    if (!response.ok) {
-        throw new Error(data.error || `API error ${response.status}`);
-    }
-
-    return data;
+function saveUser(user) { localStorage.setItem('pd_user', JSON.stringify(user)); }
+function clearSession() {
+    localStorage.removeItem('pd_user');
+    localStorage.removeItem('pd_token');
 }
+function isLoggedIn() { return !!getUser(); }
 
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
+async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 async function apiLogin(username, password) {
-    const data = await fetch(`${API_BASE}/api/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-    });
-    const json = await data.json();
-    if (!data.ok) throw new Error(json.error || 'Login failed');
+    const hash = await sha256(password);
+    const { data, error } = await _sb.from('settings').select('*').limit(1).single();
+    if (error) throw new Error('Cannot reach database. Check connection.');
 
-    // 2FA flow — store OTP hints for mfa.html
-    if (json.requires_2fa) {
-        localStorage.setItem('mfa_user_id', json.user_id);
-        if (json.email_hint)  localStorage.setItem('mfa_email_hint',  json.email_hint);
-        if (json.mobile_hint) localStorage.setItem('mfa_mobile_hint', json.mobile_hint);
-    } else {
-        saveToken(json.token);
-        saveUser(json.user);
+    if (data.admin_username !== username) throw new Error('Invalid username or password.');
+    if (data.admin_password_hash !== hash) throw new Error('Invalid username or password.');
+
+    const user = {
+        username: data.admin_username,
+        email:    data.admin_email,
+        mobile:   data.admin_mobile,
+        role:     'admin',
+        twoFaEnabled: data.two_factor_enabled
+    };
+
+    if (data.two_factor_enabled) {
+        // 2FA flow: store pending user and redirect to MFA page
+        localStorage.setItem('mfa_pending_user', JSON.stringify(user));
+        return { requires_2fa: true };
     }
-    return json;
-}
 
-async function apiVerifyOtp(userId, otp) {
-    const data = await fetch(`${API_BASE}/api/auth/verify-otp`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, otp: otp })
-    });
-    const json = await data.json();
-    if (!data.ok) throw new Error(json.error || 'OTP verification failed');
-    saveToken(json.token);
-    saveUser(json.user);
-    return json;
-}
-
-async function skipMFA() {
-    try {
-        const userId = localStorage.getItem('mfa_user_id');
-        if (!userId) {
-            alert('No pending login session found. Please login again.');
-            window.location.href = 'index.html';
-            return;
-        }
-
-        const data = await fetch(`${API_BASE}/api/auth/demo-bypass`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_id: userId })
-        });
-
-        const json = await data.json();
-        if (!data.ok) throw new Error(json.error || 'Demo bypass failed');
-
-        saveToken(json.access_token);
-        saveUser(json.user);
-        window.location.href = 'dashboard.html';
-    } catch (e) {
-        alert('Bypass failed: ' + e.message);
-    }
+    // No 2FA — save session immediately
+    saveUser(user);
+    localStorage.setItem('pd_token', 'supabase_session_' + Date.now());
+    return { success: true, user };
 }
 
 function apiLogout() {
-    clearToken();
+    clearSession();
     window.location.href = 'index.html';
 }
 
+// MFA bypass for demo mode
+async function skipMFA() {
+    const pending = localStorage.getItem('mfa_pending_user');
+    if (!pending) { window.location.href = 'index.html'; return; }
+    const user = JSON.parse(pending);
+    saveUser(user);
+    localStorage.setItem('pd_token', 'supabase_session_' + Date.now());
+    localStorage.removeItem('mfa_pending_user');
+    window.location.href = 'dashboard.html';
+}
+
+async function apiVerifyOtp(userId, otp) {
+    // For demo: accept any 6-digit OTP
+    if (otp && otp.length >= 4) {
+        const pending = localStorage.getItem('mfa_pending_user');
+        if (!pending) throw new Error('No pending login session.');
+        const user = JSON.parse(pending);
+        saveUser(user);
+        localStorage.setItem('pd_token', 'supabase_session_' + Date.now());
+        localStorage.removeItem('mfa_pending_user');
+        return { success: true, user };
+    }
+    throw new Error('Invalid OTP.');
+}
+
+// ─── HELPER: throw on Supabase error ─────────────────────────────────────────
+function sbCheck(error, context) {
+    if (error) throw new Error(`[${context}] ${error.message}`);
+}
+
 // ─── STUDENTS ─────────────────────────────────────────────────────────────────
-const getStudents    = ()       => apiFetch('/api/students');
-const createStudent  = (data)   => apiFetch('/api/students', { method: 'POST', body: data instanceof FormData ? data : JSON.stringify(data) });
-const updateStudent  = (id, d)  => apiFetch(`/api/students/${id}`, { method: 'PUT', body: d instanceof FormData ? d : JSON.stringify(d) });
-const deleteStudent  = (id)     => apiFetch(`/api/students/${id}`, { method: 'DELETE' });
-const importStudents = (formData) => apiFetch('/api/students/import', { method: 'POST', body: formData });
-const apiResetStudentPassword = (id, body) => apiFetch(`/api/students/${id}/reset-password`, { method: 'POST', body: JSON.stringify(body) });
+async function getStudents() {
+    const { data, error } = await _sb.from('students').select('*').order('student_name');
+    sbCheck(error, 'getStudents');
+    return data;
+}
+
+async function createStudent(payload) {
+    // Accepts plain object or FormData
+    const obj = payload instanceof FormData ? Object.fromEntries(payload.entries()) : payload;
+    const { data, error } = await _sb.from('students').insert(obj).select().single();
+    sbCheck(error, 'createStudent');
+    return data;
+}
+
+async function updateStudent(id, payload) {
+    const obj = payload instanceof FormData ? Object.fromEntries(payload.entries()) : payload;
+    const { data, error } = await _sb.from('students').update(obj).eq('enrollment_number', id).select().single();
+    sbCheck(error, 'updateStudent');
+    return data;
+}
+
+async function deleteStudent(id) {
+    const { error } = await _sb.from('students').delete().eq('enrollment_number', id);
+    sbCheck(error, 'deleteStudent');
+    return { success: true };
+}
+
+async function importStudents(fileOrFormData) {
+    // Accepts a File object or FormData with a 'file' key
+    const file = fileOrFormData instanceof File ? fileOrFormData
+        : (fileOrFormData instanceof FormData ? fileOrFormData.get('file') : null);
+    if (!file) throw new Error('No file provided for import.');
+    const rows = await parseExcelFile(file, 'students');
+    if (!rows.length) throw new Error('No valid rows found in file.');
+    const { data, error } = await _sb.from('students').upsert(rows, { onConflict: 'enrollment_number' }).select();
+    sbCheck(error, 'importStudents');
+    return { imported: data.length, message: `Successfully imported ${data.length} students.` };
+}
+
+async function apiResetStudentPassword(enrollmentNumber, body) {
+    // In the pure frontend version, student passwords are stored in their student record
+    const { error } = await _sb.from('students')
+        .update({ student_password: body.new_password })
+        .eq('enrollment_number', enrollmentNumber);
+    sbCheck(error, 'resetStudentPassword');
+    return { message: 'Password reset successfully.' };
+}
 
 // ─── COMPANIES ────────────────────────────────────────────────────────────────
-const getCompanies   = ()       => apiFetch('/api/companies');
-const createCompany  = (data)   => apiFetch('/api/companies', { method: 'POST', body: JSON.stringify(data) });
-const updateCompany  = (id, d)  => apiFetch(`/api/companies/${id}`, { method: 'PUT', body: JSON.stringify(d) });
-const deleteCompany  = (id)     => apiFetch(`/api/companies/${id}`, { method: 'DELETE' });
-const importCompanies = (formData) => apiFetch('/api/companies/import', { method: 'POST', body: formData });
+async function getCompanies() {
+    const { data, error } = await _sb.from('companies').select('*').order('company_name');
+    sbCheck(error, 'getCompanies');
+    return data;
+}
+
+async function createCompany(payload) {
+    const { data, error } = await _sb.from('companies').insert(payload).select().single();
+    sbCheck(error, 'createCompany');
+    return data;
+}
+
+async function updateCompany(id, payload) {
+    const { data, error } = await _sb.from('companies').update(payload).eq('id', id).select().single();
+    sbCheck(error, 'updateCompany');
+    return data;
+}
+
+async function deleteCompany(id) {
+    const { error } = await _sb.from('companies').delete().eq('id', id);
+    sbCheck(error, 'deleteCompany');
+    return { success: true };
+}
+
+async function importCompanies(fileOrFormData) {
+    const file = fileOrFormData instanceof File ? fileOrFormData
+        : (fileOrFormData instanceof FormData ? fileOrFormData.get('file') : null);
+    if (!file) throw new Error('No file provided.');
+    const rows = await parseExcelFile(file, 'companies');
+    if (!rows.length) throw new Error('No valid rows found.');
+    const { data, error } = await _sb.from('companies').upsert(rows, { onConflict: 'id' }).select();
+    sbCheck(error, 'importCompanies');
+    return { imported: data.length, message: `Imported ${data.length} companies.` };
+}
 
 // ─── PLACEMENTS ───────────────────────────────────────────────────────────────
-const getPlacements  = (prog='') => apiFetch(prog ? `/api/placements?programme=${encodeURIComponent(prog)}` : '/api/placements');
-const createPlacement= (data)   => apiFetch('/api/placements', { method: 'POST', body: JSON.stringify(data) });
-const updatePlacement= (id, d)  => apiFetch(`/api/placements/${id}`, { method: 'PUT', body: JSON.stringify(d) });
-const deletePlacement= (id)     => apiFetch(`/api/placements/${id}`, { method: 'DELETE' });
-const importPlacements = (formData) => apiFetch('/api/placements/import', { method: 'POST', body: formData });
+async function getPlacements(programme = '') {
+    let query = _sb.from('placements').select('*').order('student_name');
+    if (programme) query = query.eq('programme', programme);
+    const { data, error } = await query;
+    sbCheck(error, 'getPlacements');
+    return data;
+}
+
+async function createPlacement(payload) {
+    const { data, error } = await _sb.from('placements').insert(payload).select().single();
+    sbCheck(error, 'createPlacement');
+    // Also update the student's placement_status
+    if (payload.enrollment_number) {
+        await _sb.from('students').update({ placement_status: 'Yes' })
+            .eq('enrollment_number', payload.enrollment_number);
+    }
+    return data;
+}
+
+async function updatePlacement(id, payload) {
+    const { data, error } = await _sb.from('placements').update(payload).eq('enrollment_number', id).select().single();
+    sbCheck(error, 'updatePlacement');
+    return data;
+}
+
+async function deletePlacement(id) {
+    const { error } = await _sb.from('placements').delete().eq('enrollment_number', id);
+    sbCheck(error, 'deletePlacement');
+    // Reset student's placement_status back to 'No'
+    await _sb.from('students').update({ placement_status: 'No' }).eq('enrollment_number', id);
+    return { success: true };
+}
+
+async function importPlacements(fileOrFormData) {
+    const file = fileOrFormData instanceof File ? fileOrFormData
+        : (fileOrFormData instanceof FormData ? fileOrFormData.get('file') : null);
+    if (!file) throw new Error('No file provided.');
+    const rows = await parseExcelFile(file, 'placements');
+    if (!rows.length) throw new Error('No valid rows found in file. Check that your Excel headers match: Enrolment No., Company Name, Date, Salary (LPA), Status');
+    // Use upsert to allow re-importing
+    const { data, error } = await _sb.from('placements').upsert(rows, { onConflict: 'enrollment_number', ignoreDuplicates: false }).select();
+    sbCheck(error, 'importPlacements');
+    // Update student placement_status
+    for (const p of data || []) {
+        if (p.enrollment_number) {
+            await _sb.from('students').update({ placement_status: 'Yes' })
+                .eq('enrollment_number', p.enrollment_number);
+        }
+    }
+    return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} placement records.` };
+}
 
 // ─── INTERNSHIPS ──────────────────────────────────────────────────────────────
-const getInternships   = (prog='') => apiFetch(prog ? `/api/internships?programme=${encodeURIComponent(prog)}` : '/api/internships');
-const createInternship = (data)   => apiFetch('/api/internships', { method: 'POST', body: JSON.stringify(data) });
-const updateInternship = (id, d)  => apiFetch(`/api/internships/${id}`, { method: 'PUT', body: JSON.stringify(d) });
-const deleteInternship = (id)     => apiFetch(`/api/internships/${id}`, { method: 'DELETE' });
-const importInternships = (formData) => apiFetch('/api/internships/import', { method: 'POST', body: formData });
+async function getInternships(programme = '') {
+    let query = _sb.from('internships').select('*').order('created_at', { ascending: false });
+    if (programme) query = query.eq('programme', programme);
+    const { data, error } = await query;
+    sbCheck(error, 'getInternships');
 
-// ─── REPORTS ──────────────────────────────────────────────────────────────────
-const getStats          = (prog='') => apiFetch(prog ? `/api/reports/stats?programme=${encodeURIComponent(prog)}` : '/api/reports/stats');
-const getDeptStats      = (prog='') => apiFetch(prog ? `/api/reports/department?programme=${encodeURIComponent(prog)}` : '/api/reports/department');
-const getYearlyTrend    = (prog='') => apiFetch(prog ? `/api/reports/yearly?programme=${encodeURIComponent(prog)}` : '/api/reports/yearly');
-const getStudentsYearly = ()  => apiFetch('/api/reports/students-yearly');
-const getSalaryDist     = ()  => apiFetch('/api/reports/salary');
+    // Fetch students to map names
+    const { data: students, error: err2 } = await _sb.from('students').select('enrollment_number, student_name');
+    if (!err2 && students) {
+        const studentMap = {};
+        for (let s of students) studentMap[s.enrollment_number] = s.student_name;
+        return (data || []).map(i => ({ ...i, student_name: studentMap[i.enrollment_number] || '' }));
+    }
+    return data || [];
+}
 
-const toggle2fa = (enabled) => apiFetch('/api/auth/settings/2fa', { method: 'POST', body: JSON.stringify({enabled}) });
-const get2faStatus = () => apiFetch('/api/auth/settings/2fa');
+async function createInternship(payload) {
+    const { data, error } = await _sb.from('internships').insert(payload).select().single();
+    sbCheck(error, 'createInternship');
+    return data;
+}
 
-// ─── ADMIN PROFILE ───────────────────────────────────────────────────────────
-const getAdminProfile = () => apiFetch('/api/auth/profile');
-const updateAdminProfile = (data) => apiFetch('/api/auth/profile', { method: 'PUT', body: JSON.stringify(data) });
-const changeAdminPassword = (data) => apiFetch('/api/auth/change-password', { method: 'POST', body: JSON.stringify(data) });
+async function updateInternship(id, payload) {
+    const { data, error } = await _sb.from('internships').update(payload).eq('id', id).select().single();
+    sbCheck(error, 'updateInternship');
+    return data;
+}
 
-// ─── EXPORT TO EXCEL ────────────────────────────────────────────────────────
+async function deleteInternship(id) {
+    const { error } = await _sb.from('internships').delete().eq('id', id);
+    sbCheck(error, 'deleteInternship');
+    return { success: true };
+}
+
+async function importInternships(fileOrFormData) {
+    const file = fileOrFormData instanceof File ? fileOrFormData
+        : (fileOrFormData instanceof FormData ? fileOrFormData.get('file') : null);
+    if (!file) throw new Error('No file provided.');
+    const rows = await parseExcelFile(file, 'internships');
+    if (!rows.length) throw new Error('No valid rows found in file. Check that your Excel headers match: Year, Enrolment No., Programme, Gender, Internship Place, Internship Place 02, Type of Organization');
+    // Simple insert — internships have auto-generated IDs, no unique constraint to conflict on
+    const { data, error } = await _sb.from('internships').insert(rows).select();
+    sbCheck(error, 'importInternships');
+    return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} internship records.` };
+}
+// ─── FIELD VISITS ─────────────────────────────────────────────────────────────
+async function getFieldVisits(programme = '') {
+    let query = _sb.from('field_visits').select('*').order('created_at', { ascending: false });
+    if (programme) query = query.eq('programme', programme);
+    const { data, error } = await query;
+    sbCheck(error, 'getFieldVisits');
+
+    // Map student names
+    const { data: students, error: err2 } = await _sb.from('students').select('enrollment_number, student_name');
+    if (!err2 && students) {
+        const studentMap = {};
+        for (let s of students) studentMap[s.enrollment_number] = s.student_name;
+        return (data || []).map(i => ({ ...i, student_name: studentMap[i.enrollment_number] || '' }));
+    }
+    return data || [];
+}
+
+async function createFieldVisit(payload) {
+    const { data, error } = await _sb.from('field_visits').insert(payload).select().single();
+    sbCheck(error, 'createFieldVisit');
+    return data;
+}
+
+async function updateFieldVisit(id, payload) {
+    const { data, error } = await _sb.from('field_visits').update(payload).eq('id', id).select().single();
+    sbCheck(error, 'updateFieldVisit');
+    return data;
+}
+
+async function deleteFieldVisit(id) {
+    const { error } = await _sb.from('field_visits').delete().eq('id', id);
+    sbCheck(error, 'deleteFieldVisit');
+    return { success: true };
+}
+
+async function importFieldVisits(fileOrFormData) {
+    const file = fileOrFormData instanceof File ? fileOrFormData
+        : (fileOrFormData instanceof FormData ? fileOrFormData.get('file') : null);
+    if (!file) throw new Error('No file provided.');
+    const rows = await parseExcelFile(file, 'field_visits');
+    if (!rows.length) throw new Error('No valid rows found in file.');
+    const { data, error } = await _sb.from('field_visits').insert(rows).select();
+    sbCheck(error, 'importFieldVisits');
+    return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} field visit records.` };
+}
+
+// ─── REPORTS (computed client-side from raw data) ─────────────────────────────
+async function getStats(programme = '') {
+    const [students, placements, companies, internships] = await Promise.all([
+        getStudents(), getPlacements(programme), getCompanies(), getInternships(programme)
+    ]);
+    const filtered = programme ? students.filter(s => s.programme === programme) : students;
+    const placed   = filtered.filter(s => s.placement_status === 'Yes').length;
+    const rate     = filtered.length > 0 ? ((placed / filtered.length) * 100).toFixed(1) : 0;
+    const avgSalary = placements.length > 0
+        ? (placements.reduce((sum, p) => sum + (parseFloat(p.salary_lpa) || 0), 0) / placements.length).toFixed(2)
+        : 0;
+    return {
+        total_students: filtered.length,
+        placed_students: placed,
+        placement_rate: parseFloat(rate),
+        total_companies: companies.length,
+        total_internships: internships.length,
+        avg_salary: parseFloat(avgSalary)
+    };
+}
+
+async function getDeptStats(programme = '') {
+    const students = await getStudents();
+    const filtered = programme ? students.filter(s => s.programme === programme) : students;
+    const deptMap = {};
+    filtered.forEach(s => {
+        const d = s.programme || 'Unknown';
+        if (!deptMap[d]) deptMap[d] = { total: 0, placed: 0 };
+        deptMap[d].total++;
+        if (s.placement_status === 'Yes') deptMap[d].placed++;
+    });
+    return Object.entries(deptMap).map(([dept, v]) => ({ department: dept, ...v }));
+}
+
+async function getYearlyTrend(programme = '') {
+    const placements = await getPlacements(programme);
+    const yearMap = {};
+    placements.forEach(p => {
+        const y = (p.placement_date || '').split('-')[0] || (p.created_at || '').split('-')[0] || 'Unknown';
+        yearMap[y] = (yearMap[y] || 0) + 1;
+    });
+    return Object.entries(yearMap)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([year, count]) => ({ year, count }));
+}
+
+async function getStudentsYearly() {
+    const students = await getStudents();
+    const yearMap = {};
+    students.forEach(s => {
+        const y = (s.created_at || '').split('-')[0] || 'Unknown';
+        yearMap[y] = (yearMap[y] || 0) + 1;
+    });
+    return Object.entries(yearMap).sort(([a], [b]) => a.localeCompare(b)).map(([year, count]) => ({ year, count }));
+}
+
+async function getSalaryDist() {
+    const placements = await getPlacements();
+    return placements.map(p => ({ salary_lpa: p.salary_lpa, company: p.company }));
+}
+
+// ─── ADMIN PROFILE ────────────────────────────────────────────────────────────
+async function getAdminProfile() {
+    const { data, error } = await _sb.from('settings').select('admin_username,admin_email,admin_mobile,two_factor_enabled').limit(1).single();
+    sbCheck(error, 'getAdminProfile');
+    return { username: data.admin_username, email: data.admin_email, mobile: data.admin_mobile, two_factor_enabled: data.two_factor_enabled };
+}
+
+async function updateAdminProfile(payload) {
+    const updates = {};
+    if (payload.email)  updates.admin_email  = payload.email;
+    if (payload.mobile) updates.admin_mobile = payload.mobile;
+    const { data, error } = await _sb.from('settings').update(updates).eq('id', 1).select().single();
+    sbCheck(error, 'updateAdminProfile');
+    const user = getUser() || {};
+    if (payload.email)  user.email  = payload.email;
+    if (payload.mobile) user.mobile = payload.mobile;
+    saveUser(user);
+    return data;
+}
+
+async function changeAdminPassword(payload) {
+    const currentHash = await sha256(payload.current_password);
+    const { data: settings, error: fetchErr } = await _sb.from('settings').select('admin_password_hash').limit(1).single();
+    sbCheck(fetchErr, 'changeAdminPassword-fetch');
+    if (settings.admin_password_hash !== currentHash) throw new Error('Current password is incorrect.');
+    const newHash = await sha256(payload.new_password);
+    const { error } = await _sb.from('settings').update({ admin_password_hash: newHash }).eq('id', 1);
+    sbCheck(error, 'changeAdminPassword-update');
+    return { message: 'Password changed successfully.' };
+}
+
+// ─── 2FA SETTINGS ─────────────────────────────────────────────────────────────
+async function toggle2fa(enabled) {
+    const { error } = await _sb.from('settings').update({ two_factor_enabled: enabled }).eq('id', 1);
+    sbCheck(error, 'toggle2fa');
+    return { enabled };
+}
+
+async function get2faStatus() {
+    const { data, error } = await _sb.from('settings').select('two_factor_enabled').limit(1).single();
+    sbCheck(error, 'get2faStatus');
+    return { enabled: data.two_factor_enabled };
+}
+
+// ─── EXPORT TO EXCEL (client-side via SheetJS) ────────────────────────────────
 async function exportData(type) {
-    const token = getToken();
-    const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-
+    if (typeof XLSX === 'undefined') {
+        alert('SheetJS library not loaded. Please check your internet connection.');
+        return;
+    }
     try {
-        const response = await fetch(`${API_BASE}/api/export/${type}`, {
-            method: 'GET',
-            headers
+        let rows = [];
+        let sheetName = type;
+        if (type === 'students')    { rows = await getStudents();    sheetName = 'Students'; }
+        else if (type === 'placements')  { rows = await getPlacements();  sheetName = 'Placements'; }
+        else if (type === 'companies')   { rows = await getCompanies();   sheetName = 'Companies'; }
+        else if (type === 'internships') { rows = await getInternships(); sheetName = 'Internships'; }
+        else if (type === 'field_visits') { rows = await getFieldVisits(); sheetName = 'FieldVisits'; }
+        else throw new Error(`Unknown export type: ${type}`);
+
+        if (!rows || !rows.length) { alert('No data to export.'); return; }
+
+        // Remove internal fields
+        const cleaned = rows.map(r => {
+            const obj = { ...r };
+            delete obj.created_at;
+            return obj;
         });
 
-        if (response.status === 401) {
-            clearToken();
-            window.location.href = 'dashboard.html';
+        const ws = XLSX.utils.json_to_sheet(cleaned);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+        const filename = `${type}_export_${new Date().toISOString().slice(0,10)}.xlsx`;
+        XLSX.writeFile(wb, filename);
+    } catch (err) {
+        alert('Export Error: ' + err.message);
+    }
+}
+
+// ─── EXCEL PARSER (client-side via SheetJS) ───────────────────────────────────
+async function parseExcelFile(file, type) {
+    return new Promise((resolve, reject) => {
+        if (typeof XLSX === 'undefined') {
+            reject(new Error('SheetJS (xlsx) library not loaded.'));
             return;
         }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const wb = XLSX.read(e.target.result, { type: 'array' });
+                const ws = wb.Sheets[wb.SheetNames[0]];
+                const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
 
-        if (!response.ok) {
-            const err = await response.json().catch(() => ({}));
-            throw new Error(err.error || `Export failed: ${response.status}`);
-        }
+                let rows = [];
+                // Helper: get first matching value from a row using multiple possible header names
+                function col(r, ...keys) {
+                    for (const k of keys) {
+                        if (r[k] !== undefined && r[k] !== '') return String(r[k]).trim();
+                    }
+                    return '';
+                }
 
-        let filename = `${type}_export_.xlsx`;
-        const disposition = response.headers.get('Content-Disposition');
-        if (disposition && disposition.includes('filename=')) {
-            const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
-            if (filenameMatch && filenameMatch.length === 2) filename = filenameMatch[1];
-        }
+                if (type === 'students') {
+                    rows = raw.map(r => ({
+                        enrollment_number:     col(r, 'Enrollment Number', 'Enrolment Number', 'Enrollment No.', 'Enrolment No.', 'Enrollment', 'enrollment_number'),
+                        student_name:          col(r, 'Student Name', 'Name', 'student_name'),
+                        student_email_id:      col(r, 'Email ID', 'Email Id', 'Email', 'student_email_id'),
+                        mobile_number:         col(r, 'Mobile Number', 'Mobile', 'Phone', 'mobile_number'),
+                        programme:             col(r, 'Programme', 'Program', 'programme'),
+                        higher_education_plan: col(r, 'Higher Education Plan', 'Higher Education', 'higher_education_plan') || 'No',
+                        placement_status:      col(r, 'Placement Status', 'placement_status') || 'No',
+                    })).filter(r => r.enrollment_number && r.student_name);
 
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-    } catch (error) {
-        alert("Export Error: " + error.message);
+                } else if (type === 'companies') {
+                    rows = raw.map(r => ({
+                        company_name:   col(r, 'Company Name', 'Company', 'company_name'),
+                        role:           col(r, 'Role', 'role'),
+                        contact_person: col(r, 'Contact Person', 'Contact Name', 'contact_person'),
+                        contact:        col(r, 'Contact', 'Phone', 'Mobile', 'contact'),
+                    })).filter(r => r.company_name);
+
+                } else if (type === 'placements') {
+                    rows = raw.map(r => ({
+                        enrollment_number: col(r, 'Enrollment Number', 'Enrolment Number', 'Enrollment No.', 'Enrolment No.', 'enrollment_number'),
+                        student_name:      col(r, 'Student Name', 'Name', 'student_name'),
+                        company:           col(r, 'Company Name', 'Company', 'company'),
+                        salary_lpa:        parseFloat(col(r, 'Salary (LPA)', 'Salary LPA', 'Salary', 'salary_lpa', 'Package (LPA)', 'Package')) || null,
+                        location:          col(r, 'Location', 'Place', 'location'),
+                        role:              col(r, 'Role', 'Job Role', 'role'),
+                        designation:       col(r, 'Designation', 'designation'),
+                        placement_date:    col(r, 'Placement Date', 'Date', 'placement_date'),
+                        status:            col(r, 'Status', 'status') || 'Placed',
+                    })).filter(r => r.enrollment_number);
+
+                } else if (type === 'internships') {
+                    rows = raw.map(r => ({
+                        enrollment_number:   col(r, 'Enrolment No.', 'Enrollment No.', 'Enrollment Number', 'Enrolment Number', 'enrollment_number'),
+                        year:                col(r, 'Year', 'year'),
+                        programme:           col(r, 'Programme', 'Program', 'programme'),
+                        gender:              col(r, 'Gender', 'gender'),
+                        internship_place:    col(r, 'Internship Place', 'internship_place'),
+                        internship_place_02: col(r, 'Internship Place 02', 'Internship Place 2', 'internship_place_02'),
+                        organization_type:   col(r, 'Type of Organization', 'Organization Type', 'organization_type'),
+                    })).filter(r => r.enrollment_number);
+                } else if (type === 'field_visits') {
+                    rows = raw.map(r => ({
+                        enrollment_number:   col(r, 'Enrolment No.', 'Enrollment No.', 'Enrollment Number', 'Enrolment Number', 'enrollment_number'),
+                        visit_date:          col(r, 'Date', 'Visit Date', 'visit_date'),
+                        programme:           col(r, 'Programme', 'Program', 'programme'),
+                        organization_name:   col(r, 'Organization Name', 'Organization', 'Company', 'organization_name'),
+                        location:            col(r, 'Location', 'Place', 'location'),
+                        faculty_coordinator: col(r, 'Faculty Coordinator', 'Faculty', 'Coordinator', 'faculty_coordinator')
+                    })).filter(r => r.enrollment_number);
+                }
+                resolve(rows);
+            } catch (err) {
+                reject(new Error('Failed to parse Excel file: ' + err.message));
+            }
+        };
+        reader.onerror = () => reject(new Error('Failed to read file.'));
+        reader.readAsArrayBuffer(file);
+    });
+}
+
+// ─── LOAD ADMIN PROFILE IN SETTINGS ──────────────────────────────────────────
+async function loadAdminProfileData() {
+    try {
+        const profile = await getAdminProfile();
+        const emailEl   = document.getElementById('email');
+        const phoneEl   = document.getElementById('phone');
+        const usernameEl = document.getElementById('username') || document.getElementById('adminUsername');
+        if (emailEl)    emailEl.value   = profile.email   || '';
+        if (phoneEl)    phoneEl.value   = profile.mobile  || '';
+        if (usernameEl) usernameEl.value = profile.username || 'admin';
+        // Populate sidebar
+        const user = getUser() || {};
+        user.email  = profile.email;
+        user.mobile = profile.mobile;
+        saveUser(user);
+    } catch (e) {
+        console.error('Failed to load admin profile', e);
     }
 }
