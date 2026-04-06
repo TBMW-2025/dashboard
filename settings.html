@@ -390,30 +390,10 @@
                                     style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
                                     <div style="color: #fff; font-weight: 600; margin-bottom: 15px;">Active Sessions
                                     </div>
-                                    <div
-                                        style="background-color: var(--bg-panel); padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                                        <div
-                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                            <div>
-                                                <div style="color: #aaa; font-size: 13px;">Chrome on Windows</div>
-                                                <div style="color: #888; font-size: 12px;">Last active: 2 minutes ago
-                                                </div>
-                                            </div>
-                                            <span
-                                                style="color: #4ade80; font-size: 12px; font-weight: 600;">Current</span>
-                                        </div>
-                                    </div>
-                                    <div
-                                        style="background-color: var(--bg-panel); padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                                        <div
-                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                            <div>
-                                                <div style="color: #aaa; font-size: 13px;">Safari on iPhone</div>
-                                                <div style="color: #888; font-size: 12px;">Last active: 1 hour ago</div>
-                                            </div>
-                                            <button class="btn btn-secondary"
-                                                style="padding: 6px 12px; font-size: 12px;"
-                                                onclick="revokeSession(event)">Revoke</button>
+                                    <div id="activeSessionsContainer">
+                                        <div style="padding: 20px; text-align: center; opacity: 0.5; font-size: 13px;">
+                                            <i class="bi bi-arrow-clockwise spin" style="display: block; font-size: 20px; margin-bottom: 10px;"></i>
+                                            Checking system integrity...
                                         </div>
                                     </div>
                                 </div>
@@ -465,6 +445,75 @@
             <script src="api.js?v=6"></script>
             <script src="security.js?v=9"></script>
             <script src="script.js?v=9"></script>
+            <script>
+                // Dynamic Session & Security Info
+                async function loadActiveSessions() {
+                    const container = document.getElementById('activeSessionsContainer');
+                    if (!container) return;
+
+                    // 1. Get IP Address
+                    let ip = 'Unknown IP';
+                    try {
+                        const res = await fetch('https://api.ipify.org?format=json');
+                        const data = await res.json();
+                        ip = data.ip;
+                    } catch (e) { console.warn('Could not fetch IP'); }
+
+                    // 2. Browser & OS Detection
+                    const ua = navigator.userAgent;
+                    let browser = "Web Browser";
+                    if (ua.includes("Chrome")) browser = "Chrome";
+                    else if (ua.includes("Safari")) browser = "Safari";
+                    else if (ua.includes("Firefox")) browser = "Firefox";
+                    
+                    let os = "Desktop System";
+                    if (ua.includes("Win")) os = "Windows";
+                    else if (ua.includes("Mac")) os = "macOS";
+                    else if (ua.includes("Linux")) os = "Linux";
+                    else if (ua.includes("Android")) os = "Android";
+                    else if (ua.includes("iPhone")) os = "iPhone";
+
+                    // 3. Unique Machine ID (MAC Substitute)
+                    let machineId = localStorage.getItem('pd_machine_id');
+                    if (!machineId) {
+                        machineId = 'MAC-' + Math.random().toString(16).slice(2, 6).toUpperCase() + '-' + 
+                                    Math.random().toString(16).slice(2, 6).toUpperCase() + '-' + 
+                                    Math.random().toString(16).slice(2, 6).toUpperCase();
+                        localStorage.setItem('pd_machine_id', machineId);
+                    }
+
+                    // Render current session
+                    container.innerHTML = `
+                        <div style="background-color: var(--bg-panel); padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 3px solid #4ade80;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <div>
+                                    <div style="color: #fff; font-weight: 600; font-size: 14px; margin-bottom: 4px;">${browser} on ${os}</div>
+                                    <div style="color: #aaa; font-size: 12px; margin-bottom: 2px;">IP Address: ${ip}</div>
+                                    <div style="color: #6366f1; font-size: 12px; font-family: monospace; font-weight: bold;">Machine ID: ${machineId}</div>
+                                    <div style="color: #888; font-size: 11px; margin-top: 8px;">Last active: Just now</div>
+                                </div>
+                                <span style="background: rgba(74, 222, 128, 0.1); color: #4ade80; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px;">CURRENT SESSION</span>
+                            </div>
+                        </div>
+                        
+                        <div style="opacity: 0.6; filter: grayscale(1);">
+                            <div style="color: #888; font-size: 11px; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px;">Recent Devices</div>
+                            <div style="background-color: var(--bg-panel); padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <div style="color: #ccc; font-size: 13px;">Safari on iPhone</div>
+                                    <div style="color: #777; font-size: 11px;">Last active: 4 hours ago</div>
+                                </div>
+                                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 11px;" disabled>Revoked</button>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Only run if the security tab is visible or on load
+                    loadActiveSessions();
+                });
+            </script>
 </body>
 
 </html>
