@@ -217,7 +217,8 @@
     <!-- Supabase config (change this when you move servers) -->
     <script src="supabase-client.js"></script>
     <!-- Data layer -->
-    <script src="api.js?v=6"></script>
+    <script src="security.js"></script>
+    <script src="api.js?v=7"></script>
     <script>
         // If already logged in, redirect to dashboard
         if (localStorage.getItem('pd_user')) {
@@ -231,6 +232,15 @@
             const errorMsg = document.getElementById('errorMsg');
             const loginBtn = document.getElementById('loginBtn');
 
+            // A07: Rate Limiting Check
+            const lockout = isLoginLockedOut();
+            if (lockout.locked) {
+                const remaining = Math.ceil(lockout.remainingMs / 60000);
+                errorMsg.textContent = `Too many failed attempts. Locked out for ${remaining} more minutes.`;
+                errorMsg.classList.add('show');
+                return;
+            }
+
             errorMsg.classList.remove('show');
             if (!username || !password) {
                 errorMsg.textContent = 'Please enter username and password.';
@@ -243,13 +253,28 @@
 
             try {
                 const res = await apiLogin(username, password);
+                
+                // Clear attempts on success
+                if (typeof clearLoginAttempts === 'function') clearLoginAttempts();
+
                 if (res.requires_2fa) {
                     window.location.href = 'mfa.html';
                 } else {
                     window.location.href = 'dashboard.html';
                 }
             } catch (err) {
-                errorMsg.textContent = err.message || 'Login failed. Please try again.';
+                // A07: Record failed attempt
+                if (typeof recordLoginAttempt === 'function') {
+                    const result = recordLoginAttempt();
+                    if (result.locked) {
+                        errorMsg.textContent = 'Too many failed attempts. You have been locked out for 15 minutes.';
+                    } else {
+                        errorMsg.textContent = `${err.message || 'Login failed.'} (${result.attemptsLeft} attempts remaining)`;
+                    }
+                } else {
+                    errorMsg.textContent = err.message || 'Login failed. Please try again.';
+                }
+                
                 errorMsg.classList.add('show');
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Login';

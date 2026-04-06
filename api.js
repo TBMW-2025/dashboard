@@ -92,14 +92,6 @@ function sbCheck(error, context) {
 // ─── STUDENTS ─────────────────────────────────────────────────────────────────
 async function getStudents() {
     let { data, error } = await _sb.from('students').select('*').order('student_name');
-    // Enhanced fallback: Trigger on 404 AND if table exists but is empty (length 0)
-    if ((error && error.status === 404) || (!error && (data || []).length === 0)) {
-        const fallback = await _sb.from('student').select('*').order('student_name');
-        if (fallback.data && fallback.data.length > 0) {
-            data = fallback.data;
-            error = fallback.error;
-        }
-    }
     sbCheck(error, 'getStudents');
     return data || [];
 }
@@ -149,14 +141,6 @@ async function apiResetStudentPassword(enrollmentNumber, body) {
 // ─── COMPANIES ────────────────────────────────────────────────────────────────
 async function getCompanies() {
     let { data, error } = await _sb.from('companies').select('*').order('company_name');
-    // Enhanced fallback: Trigger on 404 AND if table exists but is empty (length 0)
-    if ((error && error.status === 404) || (!error && (data || []).length === 0)) {
-        const fallback = await _sb.from('company').select('*').order('company_name');
-        if (fallback.data && fallback.data.length > 0) {
-            data = fallback.data;
-            error = fallback.error;
-        }
-    }
     sbCheck(error, 'getCompanies');
     return data || [];
 }
