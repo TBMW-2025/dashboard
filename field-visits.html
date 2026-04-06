@@ -61,7 +61,7 @@
                     <a href="mailto:pulse-r24@rru.ac.in" class="icon-btn" title="Contact Us"><i
                             class="bi bi-chat-left-text"></i></a>
                 </div>
-                <div class="user-profile" >
+                <div class="user-profile">
                     <div class="avatar">A</div>
                     <div>
                         <div class="user-name">Arsh.G</div>
@@ -79,14 +79,19 @@
                     <h1>Field Visits List</h1>
                 </div>
                 <div class="header-actions-unified">
-                    <input type="text" id="fieldSearchUnified" class="search-bar-unified" placeholder="Search field visits...">
-                    <button class="select-unified" onclick="document.getElementById('importFieldVisitModal').style.display='flex'" style="width: auto; padding: 10px 15px;">
+                    <input type="text" id="fieldSearchUnified" class="search-bar-unified"
+                        placeholder="Search field visits...">
+                    <button class="select-unified"
+                        onclick="document.getElementById('importFieldVisitModal').style.display='flex'"
+                        style="width: auto; padding: 10px 15px;">
                         <i class="bi bi-file-earmark-excel"></i> Import
                     </button>
-                    <button class="select-unified" onclick="exportData('field_visits')" style="width: auto; padding: 10px 15px;">
+                    <button class="select-unified" onclick="exportData('field_visits')"
+                        style="width: auto; padding: 10px 15px;">
                         <i class="bi bi-download"></i> Export
                     </button>
-                    <button class="select-unified" id="addStudentBtn" style="width: auto; padding: 10px 15px; background: var(--accent-blue);">
+                    <button class="select-unified" id="addStudentBtn"
+                        style="width: auto; padding: 10px 15px; background: var(--accent-blue);">
                         + Add Field Visit
                     </button>
                 </div>
@@ -108,10 +113,10 @@
                     <div style="padding:24px;text-align:center;opacity:0.5;">Loading field_visits…</div>
                 </div>
             </div>
-            </div>
-            </div>
         </div>
-        </main>
+    </div>
+    </div>
+    </main>
     <!-- Add Field Visit Modal -->
     <div id="studentModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 800px;">
@@ -121,11 +126,12 @@
             </div>
             <form id="studentForm">
                 <div id="internModalError" class="alert alert-error"></div>
-                
+
                 <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Field Visited / Organization</label>
-                        <input type="text" id="mi-field_visited" class="form-input" placeholder="e.g. Police Station" required>
+                        <input type="text" id="mi-field_visited" class="form-input" placeholder="e.g. Police Station"
+                            required>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Visit Date</label>
@@ -157,7 +163,8 @@
 
                 <div class="form-group">
                     <label class="form-label">Staff Names</label>
-                    <input type="text" id="mi-staff_name" class="form-input" placeholder="Mr. Nethaji Subash I / Ms. Suriya P" required>
+                    <input type="text" id="mi-staff_name" class="form-input"
+                        placeholder="Mr. Nethaji Subash I / Ms. Suriya P" required>
                 </div>
 
                 <div class="button-group">
@@ -173,12 +180,13 @@
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
                 <h2>Edit Field Visit Record</h2>
-                <button class="close-modal" onclick="document.getElementById('editFieldVisitModal').style.display='none'">&times;</button>
+                <button class="close-modal"
+                    onclick="document.getElementById('editFieldVisitModal').style.display='none'">&times;</button>
             </div>
             <form id="editFieldVisitForm">
                 <input type="hidden" id="ei-id">
                 <div id="editInternModalError" class="alert alert-error"></div>
-                
+
                 <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Field Visited</label>
@@ -219,7 +227,8 @@
 
                 <div class="button-group">
                     <button type="submit" id="editFieldVisitSubmitBtn" class="btn btn-primary">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('editFieldVisitModal').style.display='none'">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="document.getElementById('editFieldVisitModal').style.display='none'">Cancel</button>
                 </div>
             </form>
         </div>
@@ -230,29 +239,37 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Import Field Visits from Excel</h2>
-                <button class="close-modal" onclick="document.getElementById('importFieldVisitModal').style.display='none'">&times;</button>
+                <button class="close-modal"
+                    onclick="document.getElementById('importFieldVisitModal').style.display='none'">&times;</button>
             </div>
             <div style="padding: 20px;">
-                <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with headers:<br>
-                <strong>Field_Visited, Visited_Date, No_of_Student_Visited, Program_Name, No_of_Staff_Visited, Staff_Name, City</strong></p>
+                <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with
+                    headers:<br>
+                    <strong>Field_Visited, Visited_Date, No_of_Student_Visited, Program_Name, No_of_Staff_Visited,
+                        Staff_Name, City</strong>
+                </p>
                 <form id="importFieldVisitForm">
-                    <div id="importInternError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;"></div>
+                    <div id="importInternError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;">
+                    </div>
                     <div class="form-group">
-                        <input type="file" id="importInternFile" accept=".xlsx, .xls" required style="border: 1px dashed #555; padding: 20px; width: 100%; border-radius: 8px; color: white;">
+                        <input type="file" id="importInternFile" accept=".xlsx, .xls" required
+                            style="border: 1px dashed #555; padding: 20px; width: 100%; border-radius: 8px; color: white;">
                     </div>
                     <div class="modal-buttons" style="margin-top: 20px;">
                         <button type="submit" class="btn btn-primary" id="importInternSubmitBtn">Start Import</button>
                     </div>
                 </form>
                 <div id="importInternStatus" style="margin-top: 15px; font-size: 14px; display: none;">
-                    <div class="spinner" style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div class="spinner"
+                        style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+                    </div>
                     <span style="margin-left: 10px;">Processing file...</span>
                 </div>
             </div>
         </div>
     </div>
     <script src="auth-guard.js?v=3"></script>
-        <!-- CDN: Supabase JS -->
+    <!-- CDN: Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- CDN: SheetJS for Excel import/export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -440,6 +457,4 @@
         })();
     </script>
 </body>
-
-</html>
 </html>
