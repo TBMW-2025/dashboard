@@ -634,7 +634,7 @@ body {
 .internships-row {
     display: grid !important;
     grid-template-columns: 40px 60px 100px 80px 1.5fr 60px 120px 80px 1fr 80px 1fr 80px 1fr 80px 80px 100px !important;
-    min-width: 1400px !important;
+    min-width: fit-content !important;
     font-size: 12px !important;
     align-items: center;
 }
@@ -653,7 +653,7 @@ body {
 .students-header,
 .students-row {
     display: grid !important;
-    grid-template-columns: 50px 160px 1.5fr 1.2fr 1.5fr 120px 110px 90px 100px !important;
+    grid-template-columns: 50px 160px 1.5fr 1.2fr 1.5fr 120px 110px 100px !important;
     min-width: unset !important;
     font-size: 13px !important;
     align-items: center;
