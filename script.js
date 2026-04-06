@@ -5,7 +5,6 @@
  */
 function bootstrapApp() {
     window.bootstrapApp = bootstrapApp; // Ensure global visibility
-    console.log("Placement Monitor Dashboard: Initializing...");
     
     // Core UI Components
     initSidebarToggle();
@@ -419,7 +418,6 @@ function switchTab(tabName) {
     
     // Normalize tabName — remove leading # if present
     const cleanTab = tabName.startsWith('#') ? tabName.substring(1) : tabName;
-    console.log(`[Settings] Switching to tab: ${cleanTab}`);
 
     const contents = document.querySelectorAll('.settings-content');
     let found = false;

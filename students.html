@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students List</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=fresh_5">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -32,10 +32,6 @@
                     <a href="students.html" class="nav-item active">
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
-                    </a>
-                    <a href="companies.html" class="nav-item ">
-                        <i class="bi bi-building"></i>
-                        <span>Companies</span>
                     </a>
                     <a href="internships.html" class="nav-item ">
                         <i class="bi bi-person-workspace"></i>
@@ -80,93 +76,77 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Header -->
-            <div class="header">
-                <div class="header-left">
-
-                    <div class="header-title">
-                        <h1>Placement Monitor Dashboard</h1>
-                        <div class="header-subtitle" id="headerSubtitle">Future Leaders and Security Intelligence</div>
-                    </div>
+        <div class="main-content dashboard-layout-container">
+            <!-- TOP HEADER ROW -->
+            <div class="top-header-row">
+                <div>
+                    <h1>Students List (<span id="studentCount">0</span>)</h1>
+                    <div class="subtitle">Future Leaders and Security Intelligence</div>
                 </div>
-                <div class="header-right">
-                    <input type="text" class="search-bar" placeholder="Search for anything...">
-                    <div class="header-icons">
-                        <button class="icon-btn notification-toggle">
-                            🔔
-                            <span class="notification-badge">1</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Section -->
-            <div class="content-header">
-                <div class="content-title">Students (<span id="studentCount">0</span>)</div>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <input type="text" id="studentSearch" class="search-bar" placeholder="Search students..."
-                        style="width: 250px;">
-                    <button class="btn-import" id="openImportModal"><i class="bi bi-file-earmark-excel"></i> Import
-                        Excel</button>
-                    <button onclick="exportData('students')" class="btn-export">
-                        <i class="bi bi-download"></i> Export to Excel
+                <div class="header-actions-unified">
+                    <input type="text" id="studentSearch" class="search-bar-unified" placeholder="Search students...">
+                    <button class="select-unified" id="openImportModal" style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-file-earmark-excel"></i> Import
                     </button>
-                    <button class="btn-add" id="openAddStudentModal">+ Add Student</button>
+                    <button class="select-unified" onclick="exportData('students')"
+                        style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                    <button class="select-unified" id="openAddStudentModal"
+                        style="width: auto; padding: 10px 15px; background: var(--accent-blue);">
+                        + Add Student
+                    </button>
                 </div>
             </div>
 
-            <div class="table-container">
+            <div class="widget-panel">
+
+                <div class="table-container">
 
 
-                <div class="table-header students-header">
-                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Enrollment Number <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Student Email ID <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Mobile Number <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
-
-                    <div class="dropdown-header">Planning for Higher Education? <span class="dropdown-icon">▼</span>
+                    <div class="table-header" id="tableHeader">
+                        <div class="dropdown-header sno">SNo <span class="dropdown-icon">▼</span></div>
+                        <div class="dropdown-header">Enrollment No <span class="dropdown-icon">▼</span></div>
+                        <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
+                        <div class="dropdown-header">Mobile Number <span class="dropdown-icon">▼</span></div>
+                        <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
+                        <div class="dropdown-header">Higher Education Plan? <span class="dropdown-icon">▼</span></div>
+                        <div class="dropdown-header">Placement Status <span class="dropdown-icon">▼</span></div>
+                        <div class="dropdown-header">Action <span class="dropdown-icon">▼</span></div>
                     </div>
-                    <div class="dropdown-header">Placed or Not <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Action <span class="dropdown-icon">▼</span></div>
-                </div>
 
-                <div class="table-body" id="studentsTableBody">
-                    <div style="padding:24px;text-align:center;opacity:0.5;">Loading students…</div>
+                    <div class="table-body" id="studentsTableBody">
+                        <div style="padding:24px;text-align:center;opacity:0.5;">Loading students…</div>
+                    </div>
                 </div>
-
+                <div id="pagination" class="pagination-container"></div>
             </div>
-            <div id="pagination" class="pagination-container"></div>
-            </main>
-
-            <!-- ===================== FOOTER ===================== -->
-            <div class="footer">
-
-                <div>
-                    <h3>Rashtriya Raksha University</h3>
-                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
-                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
+            <!-- FOOTER -->
+            <footer class="app-footer"
+                style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
+                    <div>
+                        <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha University</h3>
+                        <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus, Pondicherry
+                            Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To Mahalakshmi Nagar,
+                            Murungapakkam, Puducherry – 605004</p>
+                    </div>
+                    <div>
+                        <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Contact</h3>
+                        <p style="font-size: 12px; color: #8b949e;">Email: pulse-r24@rru.ac.in</p>
+                        <p style="font-size: 12px; color: #8b949e;">Phone: +91 79 XXXXXXXX</p>
+                    </div>
+                    <div>
+                        <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Follow</h3>
+                        <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                style="color: inherit; text-decoration: none;">Instagram</a></p>
+                        <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                style="color: inherit; text-decoration: none;">LinkedIn</a></p>
+                    </div>
                 </div>
-
-                <div>
-                    <h3>Contact</h3>
-                    <p>Email: pulse-r24@rru.ac.in</p>
-                    <p>Phone: +91 79 XXXXXXXX</p>
-                    <p>Office:</p>
-                    <p>Web:</p>
-                </div>
-
-                <div>
-                    <h3>Follow</h3>
-                    <p>Instagram:</p>
-                    <p>LinkedIn:</p>
-                </div>
-
-            </div>
-
+            </footer>
         </div>
+
         <!-- ================= ADD STUDENT MODAL ================= -->
 
         <!-- ADD STUDENT MODAL -->
@@ -313,27 +293,37 @@
                     <button class="close-modal" id="closeImportModal">&times;</button>
                 </div>
                 <div class="modal-body" style="padding: 20px;">
-                    <p style="margin-bottom: 15px; font-size: 14px; color: #666;">
+                    <p style="margin-bottom: 15px; font-size: 14px; color: #94a3b8;">
                         Please upload an Excel file (.xlsx or .xls) with the following columns:<br>
-                        <strong style="color: #333;">Enrollment Number, Student Name, Email ID, Mobile Number,
+                        <strong style="color: #ffffff;">Enrollment Number, Student Name, Email ID, Mobile Number,
                             Programme, Higher Education Plan, Placement Status</strong>
                     </p>
-                    <div id="importError"
-                        style="color:#f87171;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#fef2f2;border-radius:6px;border:1px solid #fee2e2;">
-                    </div>
-                    <div id="importSuccess"
-                        style="color:#10b981;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#f0fdf4;border-radius:6px;border:1px solid #dcfce7;">
-                    </div>
+                    </p>
+                    <form id="importStudentForm">
+                        <div id="importError"
+                            style="color:#f87171;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#fef2f2;border-radius:6px;border:1px solid #fee2e2;">
+                        </div>
+                        <div id="importSuccess"
+                            style="color:#10b981;font-size:13px;margin-bottom:12px;display:none;padding:10px;background:#f0fdf4;border-radius:6px;border:1px solid #dcfce7;">
+                        </div>
 
-                    <div class="form-group" style="margin-bottom: 20px;">
-                        <input type="file" id="importFile" accept=".xlsx, .xls"
-                            style="display: block; width: 100%; padding: 10px; border: 1px dashed #ccc; border-radius: 6px; cursor: pointer;">
-                    </div>
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <input type="file" id="importFile" accept=".xlsx, .xls"
+                                style="display: block; width: 100%; padding: 10px; border: 1px dashed #ccc; border-radius: 6px; cursor: pointer;">
+                        </div>
 
-                    <div class="modal-buttons" style="display: flex; justify-content: flex-end; gap: 10px;">
-                        <button type="button" class="btn-add" id="importSubmitBtn"
-                            style="background-color: #10b981; border: none; color: white;">Upload & Import</button>
-                    </div>
+                        <div id="importStatus" style="margin-top: 15px; font-size: 14px; display: none;">
+                            <div class="spinner"
+                                style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+                            </div>
+                            <span style="margin-left: 10px; color: #666;">Processing file...</span>
+                        </div>
+
+                        <div class="modal-buttons" style="display: flex; justify-content: flex-end; gap: 10px;">
+                            <button type="submit" class="btn-add" id="importSubmitBtn"
+                                style="background-color: #10b981; border: none; color: white;">Upload & Import</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -341,13 +331,13 @@
         </main>
     </div>
     <script src="auth-guard.js?v=3"></script>
-        <!-- CDN: Supabase JS -->
+    <!-- CDN: Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- CDN: SheetJS for Excel import/export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase config (change only this file when moving to a new host) -->
     <script src="supabase-client.js"></script>
-    <script src="api.js"></script>
+    <script src="api.js?v=6"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="script.js?v=3"></script>
     <script>
@@ -361,7 +351,9 @@
 
         async function loadStudents() {
             try {
-                const allStudents = await getStudents() || [];
+                let allStudents = await getStudents() || [];
+                // Sort by enrollment number ascending (default display)
+                allStudents.sort((a, b) => (String(a.enrollment_number || "")).localeCompare(String(b.enrollment_number || "")));
                 studentsData = allStudents;
                 document.getElementById('studentCount').textContent = studentsData.length;
                 renderStudents(studentsData);
@@ -379,7 +371,7 @@
 
             const totalPages = Math.ceil(list.length / pageSize);
             if (currentPage > totalPages) currentPage = totalPages || 1;
-            
+
             const start = (currentPage - 1) * pageSize;
             const end = start + pageSize;
             const paginatedItems = list.slice(start, end);
@@ -401,7 +393,6 @@
                     <div style="display:flex;gap:5px;">
                         <button class="action-btn btn-edit" data-id="${s.enrollment_number}" title="Edit"><i class="bi bi-pencil-square"></i></button>
                         <button class="action-btn btn-remove" data-id="${s.enrollment_number}" title="Delete"><i class="bi bi-trash"></i></button>
-                        <button class="action-btn btn-reset-pw" data-id="${s.enrollment_number}" title="Reset Password"><i class="bi bi-shield-lock"></i></button>
                     </div>
                 </div>
             `).join('');
@@ -429,7 +420,7 @@
             const maxVisible = 5;
             let startPage = Math.max(1, currentPage - 2);
             let endPage = Math.min(totalPages, startPage + maxVisible - 1);
-            
+
             if (endPage - startPage < maxVisible - 1) {
                 startPage = Math.max(1, endPage - maxVisible + 1);
             }
@@ -497,19 +488,6 @@
                         document.getElementById('es-higher-ed').value = s.higher_education_plan || 'No';
                         document.getElementById('es-placed').value = s.placement_status || 'No';
                         document.getElementById('editStudentModal').style.display = 'flex';
-                    }
-                });
-            });
-
-            // Reset Password
-            tbody.querySelectorAll('.btn-reset-pw').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const targetBtn = e.target.closest('.btn-reset-pw');
-                    const id = targetBtn.dataset.id;
-                    if (confirm(`Reset password for student ${id}? New password will be Student@123`)) {
-                        apiResetStudentPassword(id, { password: 'Student@123' })
-                            .then(() => alert('Password reset successfully'))
-                            .catch(err => alert('Reset failed: ' + err.message));
                     }
                 });
             });

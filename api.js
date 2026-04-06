@@ -36,9 +36,9 @@ async function apiLogin(username, password) {
 
     const user = {
         username: data.admin_username,
-        email:    data.admin_email,
-        mobile:   data.admin_mobile,
-        role:     'admin',
+        email: data.admin_email,
+        mobile: data.admin_mobile,
+        role: 'admin',
         twoFaEnabled: data.two_factor_enabled
     };
 
@@ -91,9 +91,17 @@ function sbCheck(error, context) {
 
 // ─── STUDENTS ─────────────────────────────────────────────────────────────────
 async function getStudents() {
-    const { data, error } = await _sb.from('students').select('*').order('student_name');
+    let { data, error } = await _sb.from('students').select('*').order('student_name');
+    // Enhanced fallback: Trigger on 404 AND if table exists but is empty (length 0)
+    if ((error && error.status === 404) || (!error && (data || []).length === 0)) {
+        const fallback = await _sb.from('student').select('*').order('student_name');
+        if (fallback.data && fallback.data.length > 0) {
+            data = fallback.data;
+            error = fallback.error;
+        }
+    }
     sbCheck(error, 'getStudents');
-    return data;
+    return data || [];
 }
 
 async function createStudent(payload) {
@@ -140,9 +148,17 @@ async function apiResetStudentPassword(enrollmentNumber, body) {
 
 // ─── COMPANIES ────────────────────────────────────────────────────────────────
 async function getCompanies() {
-    const { data, error } = await _sb.from('companies').select('*').order('company_name');
+    let { data, error } = await _sb.from('companies').select('*').order('company_name');
+    // Enhanced fallback: Trigger on 404 AND if table exists but is empty (length 0)
+    if ((error && error.status === 404) || (!error && (data || []).length === 0)) {
+        const fallback = await _sb.from('company').select('*').order('company_name');
+        if (fallback.data && fallback.data.length > 0) {
+            data = fallback.data;
+            error = fallback.error;
+        }
+    }
     sbCheck(error, 'getCompanies');
-    return data;
+    return data || [];
 }
 
 async function createCompany(payload) {
@@ -175,36 +191,29 @@ async function importCompanies(fileOrFormData) {
 }
 
 // ─── PLACEMENTS ───────────────────────────────────────────────────────────────
-async function getPlacements(programme = '') {
-    let query = _sb.from('placements').select('*').order('student_name');
-    if (programme) query = query.eq('programme', programme);
+async function getPlacements(course = '') {
+    let query = _sb.from('placements').select('*').order('created_at', { ascending: false });
+    if (course) query = query.eq('course', course);
     const { data, error } = await query;
     sbCheck(error, 'getPlacements');
-    return data;
+    return data || [];
 }
 
 async function createPlacement(payload) {
     const { data, error } = await _sb.from('placements').insert(payload).select().single();
     sbCheck(error, 'createPlacement');
-    // Also update the student's placement_status
-    if (payload.enrollment_number) {
-        await _sb.from('students').update({ placement_status: 'Yes' })
-            .eq('enrollment_number', payload.enrollment_number);
-    }
     return data;
 }
 
 async function updatePlacement(id, payload) {
-    const { data, error } = await _sb.from('placements').update(payload).eq('enrollment_number', id).select().single();
+    const { data, error } = await _sb.from('placements').update(payload).eq('id', id).select().single();
     sbCheck(error, 'updatePlacement');
     return data;
 }
 
 async function deletePlacement(id) {
-    const { error } = await _sb.from('placements').delete().eq('enrollment_number', id);
+    const { error } = await _sb.from('placements').delete().eq('id', id);
     sbCheck(error, 'deletePlacement');
-    // Reset student's placement_status back to 'No'
-    await _sb.from('students').update({ placement_status: 'No' }).eq('enrollment_number', id);
     return { success: true };
 }
 
@@ -214,8 +223,14 @@ async function importPlacements(fileOrFormData) {
     if (!file) throw new Error('No file provided.');
     const rows = await parseExcelFile(file, 'placements');
     if (!rows.length) throw new Error('No valid rows found in file. Check that your Excel headers match: Enrolment No., Company Name, Date, Salary (LPA), Status');
-    // Use upsert to allow re-importing
-    const { data, error } = await _sb.from('placements').upsert(rows, { onConflict: 'enrollment_number', ignoreDuplicates: false }).select();
+
+    // Smart Replacement: Delete old placements for these students to prevent duplicates
+    const enrollmentNumbers = [...new Set(rows.map(r => r.enrollment_number))];
+    if (enrollmentNumbers.length > 0) {
+        await _sb.from('placements').delete().in('enrollment_number', enrollmentNumbers);
+    }
+
+    const { data, error } = await _sb.from('placements').insert(rows).select();
     sbCheck(error, 'importPlacements');
     // Update student placement_status
     for (const p of data || []) {
@@ -233,14 +248,6 @@ async function getInternships(programme = '') {
     if (programme) query = query.eq('programme', programme);
     const { data, error } = await query;
     sbCheck(error, 'getInternships');
-
-    // Fetch students to map names
-    const { data: students, error: err2 } = await _sb.from('students').select('enrollment_number, student_name');
-    if (!err2 && students) {
-        const studentMap = {};
-        for (let s of students) studentMap[s.enrollment_number] = s.student_name;
-        return (data || []).map(i => ({ ...i, student_name: studentMap[i.enrollment_number] || '' }));
-    }
     return data || [];
 }
 
@@ -268,25 +275,23 @@ async function importInternships(fileOrFormData) {
     if (!file) throw new Error('No file provided.');
     const rows = await parseExcelFile(file, 'internships');
     if (!rows.length) throw new Error('No valid rows found in file. Check that your Excel headers match: Year, Enrolment No., Programme, Gender, Internship Place, Internship Place 02, Type of Organization');
-    // Simple insert — internships have auto-generated IDs, no unique constraint to conflict on
+
+    // Smart Replacement: Delete old internships for these students
+    const enrollmentNumbers = [...new Set(rows.map(r => r.enrollment_number))];
+    if (enrollmentNumbers.length > 0) {
+        await _sb.from('internships').delete().in('enrollment_number', enrollmentNumbers);
+    }
+
     const { data, error } = await _sb.from('internships').insert(rows).select();
     sbCheck(error, 'importInternships');
     return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} internship records.` };
 }
 // ─── FIELD VISITS ─────────────────────────────────────────────────────────────
-async function getFieldVisits(programme = '') {
+async function getFieldVisits(program = '') {
     let query = _sb.from('field_visits').select('*').order('created_at', { ascending: false });
-    if (programme) query = query.eq('programme', programme);
+    if (program) query = query.eq('program_name', program);
     const { data, error } = await query;
     sbCheck(error, 'getFieldVisits');
-
-    // Map student names
-    const { data: students, error: err2 } = await _sb.from('students').select('enrollment_number, student_name');
-    if (!err2 && students) {
-        const studentMap = {};
-        for (let s of students) studentMap[s.enrollment_number] = s.student_name;
-        return (data || []).map(i => ({ ...i, student_name: studentMap[i.enrollment_number] || '' }));
-    }
     return data || [];
 }
 
@@ -312,8 +317,10 @@ async function importFieldVisits(fileOrFormData) {
     const file = fileOrFormData instanceof File ? fileOrFormData
         : (fileOrFormData instanceof FormData ? fileOrFormData.get('file') : null);
     if (!file) throw new Error('No file provided.');
-    const rows = await parseExcelFile(file, 'field_visits');
+    const rows = await parseExcelFile(file, 'field_visited');
     if (!rows.length) throw new Error('No valid rows found in file.');
+
+    // For Field Visits, we insert all new rows (no specific student conflict)
     const { data, error } = await _sb.from('field_visits').insert(rows).select();
     sbCheck(error, 'importFieldVisits');
     return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} field visit records.` };
@@ -321,63 +328,164 @@ async function importFieldVisits(fileOrFormData) {
 
 // ─── REPORTS (computed client-side from raw data) ─────────────────────────────
 async function getStats(programme = '') {
-    const [students, placements, companies, internships] = await Promise.all([
-        getStudents(), getPlacements(programme), getCompanies(), getInternships(programme)
+    // Fetch all stats in parallel
+    const results = await Promise.allSettled([
+        _sb.from('students').select('*', { count: 'exact', head: true }).then(r => {
+            if (r.count > 0) return r.count;
+            return _sb.from('student').select('*', { count: 'exact', head: true }).then(c => c.count || 0);
+        }),
+        _sb.from('placements').select('*', { count: 'exact', head: true }).then(r => r.count || 0),
+        _sb.from('companies').select('*', { count: 'exact', head: true }).then(r => {
+            if (r.count > 0) return r.count;
+            return _sb.from('company').select('*', { count: 'exact', head: true }).then(c => c.count || 0);
+        }),
+        _sb.from('internships').select('*', { count: 'exact', head: true }).then(r => r.count || 0),
+        _sb.from('field_visits').select('*', { count: 'exact', head: true }).then(r => r.count || 0),
+        _sb.from('jobs').select('*', { count: 'exact', head: true }).then(r => r.count || 0)
     ]);
-    const filtered = programme ? students.filter(s => s.programme === programme) : students;
-    const placed   = filtered.filter(s => s.placement_status === 'Yes').length;
-    const rate     = filtered.length > 0 ? ((placed / filtered.length) * 100).toFixed(1) : 0;
-    const avgSalary = placements.length > 0
-        ? (placements.reduce((sum, p) => sum + (parseFloat(p.salary_lpa) || 0), 0) / placements.length).toFixed(2)
-        : 0;
+
+    const getValue = (idx) => results[idx].status === 'fulfilled' ? results[idx].value : 0;
+    const total_students = getValue(0);
+    const placed_students = getValue(1);
+
+    // Fallback counts for total students based on activity if tables are empty
+    let final_total_students = total_students;
+    if (final_total_students === 0) {
+        const [ps, is] = await Promise.all([getPlacements(programme), getInternships(programme)]);
+        const uniqueIds = new Set([
+            ...ps.map(x => x.enrollment_number || x.name || x.student_name),
+            ...is.map(x => x.enrolment_no || x.name_of_student || x.student_name)
+        ].filter(Boolean));
+        final_total_students = uniqueIds.size;
+    }
+
     return {
-        total_students: filtered.length,
-        placed_students: placed,
-        placement_rate: parseFloat(rate),
-        total_companies: companies.length,
-        total_internships: internships.length,
-        avg_salary: parseFloat(avgSalary)
+        total_students: final_total_students,
+        placed_students,
+        placement_rate: final_total_students ? Math.round((placed_students / final_total_students) * 100) : 0,
+        total_companies: getValue(2),
+        total_internships: getValue(3),
+        total_visits: getValue(4),
+        total_external_jobs: getValue(5)
     };
 }
 
 async function getDeptStats(programme = '') {
-    const students = await getStudents();
-    const filtered = programme ? students.filter(s => s.programme === programme) : students;
-    const deptMap = {};
-    filtered.forEach(s => {
-        const d = s.programme || 'Unknown';
-        if (!deptMap[d]) deptMap[d] = { total: 0, placed: 0 };
-        deptMap[d].total++;
-        if (s.placement_status === 'Yes') deptMap[d].placed++;
-    });
-    return Object.entries(deptMap).map(([dept, v]) => ({ department: dept, ...v }));
+    try {
+        const [students, placements] = await Promise.all([
+            getStudents().catch(() => []),
+            getPlacements().catch(() => [])
+        ]);
+
+        const deptMap = {};
+
+        // 1. Map from Students
+        students.forEach(s => {
+            const d = s.programme || 'Unknown';
+            if (programme && d !== programme) return;
+            if (!deptMap[d]) deptMap[d] = { total: 0, placed: 0 };
+            deptMap[d].total++;
+            if (s.placement_status === 'Yes') deptMap[d].placed++;
+        });
+
+        // 2. Fallback: If we have placements for a course not in students table
+        placements.forEach(p => {
+            const d = p.course || 'Other';
+            if (programme && d !== programme) return;
+            if (!deptMap[d]) {
+                deptMap[d] = { total: 1, placed: 1 };
+            } else if (deptMap[d].placed === 0) {
+                // If it existed in students but we found a placement, ensure it has at least as many total
+                deptMap[d].placed++;
+                if (deptMap[d].total < deptMap[d].placed) deptMap[d].total = deptMap[d].placed;
+            } else {
+                 // Already has placements, we can't easily count distinct without joining, 
+                 // but we ensure it stays visible.
+            }
+        });
+
+        return Object.entries(deptMap).map(([dept, v]) => ({
+            programme: dept, 
+            total: v.total,
+            placed: v.placed
+        }));
+    } catch (e) {
+        console.error('getDeptStats Error:', e);
+        return [];
+    }
 }
 
-async function getYearlyTrend(programme = '') {
-    const placements = await getPlacements(programme);
+async function getYearlyTrend(course = '') {
+    const placements = await getPlacements(course);
     const yearMap = {};
     placements.forEach(p => {
-        const y = (p.placement_date || '').split('-')[0] || (p.created_at || '').split('-')[0] || 'Unknown';
+        // Attempt to extract year from various date fields
+        const dateStr = p.created_at || '';
+        const yMatch = dateStr.match(/\b(20\d{2})\b/);
+        const y = yMatch ? yMatch[1] : (dateStr.split('-')[0] || 'Unknown');
         yearMap[y] = (yearMap[y] || 0) + 1;
     });
-    return Object.entries(yearMap)
-        .sort(([a], [b]) => a.localeCompare(b))
-        .map(([year, count]) => ({ year, count }));
+
+    const sortedEntries = Object.entries(yearMap)
+        .sort(([a], [b]) => a.localeCompare(b));
+
+    return {
+        labels: sortedEntries.map(([year]) => year),
+        data: sortedEntries.map(([_, count]) => count)
+    };
 }
 
 async function getStudentsYearly() {
     const students = await getStudents();
     const yearMap = {};
     students.forEach(s => {
-        const y = (s.created_at || '').split('-')[0] || 'Unknown';
-        yearMap[y] = (yearMap[y] || 0) + 1;
+        // Safe year extraction
+        const dateStr = s.created_at || '';
+        const yMatch = dateStr.match(/\b(20\d{2})\b/);
+        const y = yMatch ? yMatch[1] : (dateStr.split('-')[0] || 'Unknown');
+        
+        if (!yearMap[y]) yearMap[y] = { total: 0, placed: 0 };
+        yearMap[y].total++;
+        if (s.placement_status === 'Yes') yearMap[y].placed++;
     });
-    return Object.entries(yearMap).sort(([a], [b]) => a.localeCompare(b)).map(([year, count]) => ({ year, count }));
+
+    const entries = Object.entries(yearMap).sort(([a], [b]) => a.localeCompare(b));
+    return {
+        labels: entries.map(([y]) => y),
+        total: entries.map(([_, v]) => v.total),
+        placed: entries.map(([_, v]) => v.placed)
+    };
 }
 
 async function getSalaryDist() {
     const placements = await getPlacements();
-    return placements.map(p => ({ salary_lpa: p.salary_lpa, company: p.company }));
+    const ranges = {
+        '0-3 LPA': 0,
+        '3-6 LPA': 0,
+        '6-10 LPA': 0,
+        '10+ LPA': 0
+    };
+
+    const parseLPA = (s) => {
+        if (!s) return 0;
+        if (typeof s === 'number') return s;
+        // Strip non-numeric except decimal point
+        const clean = String(s).replace(/[^\d.]/g, '');
+        const val = parseFloat(clean);
+        // Handle "500,000" where it might be in rupees instead of LPA
+        if (val > 1000) return val / 100000;
+        return val;
+    };
+
+    placements.forEach(p => {
+        const ctc = parseLPA(p.ctc || p.salary_lpa || 0);
+        if (ctc > 0 && ctc <= 3) ranges['0-3 LPA']++;
+        else if (ctc > 3 && ctc <= 6) ranges['3-6 LPA']++;
+        else if (ctc > 6 && ctc <= 10) ranges['6-10 LPA']++;
+        else if (ctc > 10) ranges['10+ LPA']++;
+    });
+
+    return Object.entries(ranges).map(([range, count]) => ({ range, count }));
 }
 
 // ─── ADMIN PROFILE ────────────────────────────────────────────────────────────
@@ -389,12 +497,12 @@ async function getAdminProfile() {
 
 async function updateAdminProfile(payload) {
     const updates = {};
-    if (payload.email)  updates.admin_email  = payload.email;
+    if (payload.email) updates.admin_email = payload.email;
     if (payload.mobile) updates.admin_mobile = payload.mobile;
     const { data, error } = await _sb.from('settings').update(updates).eq('id', 1).select().single();
     sbCheck(error, 'updateAdminProfile');
     const user = getUser() || {};
-    if (payload.email)  user.email  = payload.email;
+    if (payload.email) user.email = payload.email;
     if (payload.mobile) user.mobile = payload.mobile;
     saveUser(user);
     return data;
@@ -433,9 +541,9 @@ async function exportData(type) {
     try {
         let rows = [];
         let sheetName = type;
-        if (type === 'students')    { rows = await getStudents();    sheetName = 'Students'; }
-        else if (type === 'placements')  { rows = await getPlacements();  sheetName = 'Placements'; }
-        else if (type === 'companies')   { rows = await getCompanies();   sheetName = 'Companies'; }
+        if (type === 'students') { rows = await getStudents(); sheetName = 'Students'; }
+        else if (type === 'placements') { rows = await getPlacements(); sheetName = 'Placements'; }
+        else if (type === 'companies') { rows = await getCompanies(); sheetName = 'Companies'; }
         else if (type === 'internships') { rows = await getInternships(); sheetName = 'Internships'; }
         else if (type === 'field_visits') { rows = await getFieldVisits(); sheetName = 'FieldVisits'; }
         else throw new Error(`Unknown export type: ${type}`);
@@ -452,7 +560,7 @@ async function exportData(type) {
         const ws = XLSX.utils.json_to_sheet(cleaned);
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, sheetName);
-        const filename = `${type}_export_${new Date().toISOString().slice(0,10)}.xlsx`;
+        const filename = `${type}_export_${new Date().toISOString().slice(0, 10)}.xlsx`;
         XLSX.writeFile(wb, filename);
     } catch (err) {
         alert('Export Error: ' + err.message);
@@ -474,65 +582,106 @@ async function parseExcelFile(file, type) {
                 const raw = XLSX.utils.sheet_to_json(ws, { defval: '' });
 
                 let rows = [];
-                // Helper: get first matching value from a row using multiple possible header names
-                function col(r, ...keys) {
-                    for (const k of keys) {
-                        if (r[k] !== undefined && r[k] !== '') return String(r[k]).trim();
+                // Helper: normalize keys
+                const normalizeRow = (r) => {
+                    const nr = {};
+                    for (const key in r) {
+                        if (r.hasOwnProperty(key)) {
+                            nr[key.trim().toLowerCase()] = r[key];
+                        }
+                    }
+                    return nr;
+                };
+
+                // Helper: get first matching value from a normalized row using lowercase keys
+                function col(nr, ...keys) {
+                    for (let k of keys) {
+                        k = k.trim().toLowerCase();
+                        if (nr[k] !== undefined && nr[k] !== '') {
+                            let val = nr[k];
+                            // Handle scientific notation for large numbers (like Enrolment No.)
+                            if (typeof val === 'number') {
+                                // If it's a very large number (likely an ID), prevent scientific notation
+                                if (val > 1000000) {
+                                    return val.toLocaleString('fullwide', { useGrouping: false });
+                                }
+                                return String(val).trim();
+                            }
+                            return String(val).trim();
+                        }
                     }
                     return '';
                 }
 
                 if (type === 'students') {
-                    rows = raw.map(r => ({
-                        enrollment_number:     col(r, 'Enrollment Number', 'Enrolment Number', 'Enrollment No.', 'Enrolment No.', 'Enrollment', 'enrollment_number'),
-                        student_name:          col(r, 'Student Name', 'Name', 'student_name'),
-                        student_email_id:      col(r, 'Email ID', 'Email Id', 'Email', 'student_email_id'),
-                        mobile_number:         col(r, 'Mobile Number', 'Mobile', 'Phone', 'mobile_number'),
-                        programme:             col(r, 'Programme', 'Program', 'programme'),
-                        higher_education_plan: col(r, 'Higher Education Plan', 'Higher Education', 'higher_education_plan') || 'No',
-                        placement_status:      col(r, 'Placement Status', 'placement_status') || 'No',
-                    })).filter(r => r.enrollment_number && r.student_name);
+                    rows = raw.map(r => {
+                        const nr = normalizeRow(r);
+                        return {
+                            enrollment_number: col(nr, 'Enrollment Number', 'Enrolment Number', 'Enrollment No.', 'Enrolment No.', 'Enrollment', 'enrollment_number', 'sr no.', 'sr no'),
+                            student_name: col(nr, 'Student Name', 'Name', 'student_name'),
+                            student_email_id: col(nr, 'Email ID', 'Email Id', 'Email', 'student_email_id'),
+                            mobile_number: col(nr, 'Mobile Number', 'Mobile', 'Phone', 'mobile_number'),
+                            programme: col(nr, 'Programme', 'Program', 'programme'),
+                            higher_education_plan: col(nr, 'Higher Education Plan', 'Higher Education', 'higher_education_plan') || 'No',
+                            placement_status: col(nr, 'Placement Status', 'placement_status') || 'No',
+                        };
+                    }).filter(r => r.enrollment_number && r.student_name);
 
                 } else if (type === 'companies') {
-                    rows = raw.map(r => ({
-                        company_name:   col(r, 'Company Name', 'Company', 'company_name'),
-                        role:           col(r, 'Role', 'role'),
-                        contact_person: col(r, 'Contact Person', 'Contact Name', 'contact_person'),
-                        contact:        col(r, 'Contact', 'Phone', 'Mobile', 'contact'),
-                    })).filter(r => r.company_name);
+                    rows = raw.map(r => {
+                        const nr = normalizeRow(r);
+                        return {
+                            company_name: col(nr, 'Company Name', 'Company', 'company_name'),
+                            role: col(nr, 'Role', 'role'),
+                            contact_person: col(nr, 'Contact Person', 'Contact Name', 'contact_person'),
+                            contact: col(nr, 'Contact', 'Phone', 'Mobile', 'contact'),
+                        };
+                    }).filter(r => r.company_name);
 
                 } else if (type === 'placements') {
-                    rows = raw.map(r => ({
-                        enrollment_number: col(r, 'Enrollment Number', 'Enrolment Number', 'Enrollment No.', 'Enrolment No.', 'enrollment_number'),
-                        student_name:      col(r, 'Student Name', 'Name', 'student_name'),
-                        company:           col(r, 'Company Name', 'Company', 'company'),
-                        salary_lpa:        parseFloat(col(r, 'Salary (LPA)', 'Salary LPA', 'Salary', 'salary_lpa', 'Package (LPA)', 'Package')) || null,
-                        location:          col(r, 'Location', 'Place', 'location'),
-                        role:              col(r, 'Role', 'Job Role', 'role'),
-                        designation:       col(r, 'Designation', 'designation'),
-                        placement_date:    col(r, 'Placement Date', 'Date', 'placement_date'),
-                        status:            col(r, 'Status', 'status') || 'Placed',
-                    })).filter(r => r.enrollment_number);
+                    rows = raw.map(r => {
+                        const nr = normalizeRow(r);
+                        return {
+                            course: col(nr, 'Course', 'programme', 'course'),
+                            name: col(nr, 'Name', 'Student Name', 'name'),
+                            remarks: col(nr, 'Remarks', 'remarks'),
+                            company: col(nr, 'Company', 'company'),
+                            city: col(nr, 'City', 'city'),
+                            ctc: col(nr, 'CTC', 'ctc')
+                        };
+                    }).filter(r => r.name || r.company);
 
                 } else if (type === 'internships') {
-                    rows = raw.map(r => ({
-                        enrollment_number:   col(r, 'Enrolment No.', 'Enrollment No.', 'Enrollment Number', 'Enrolment Number', 'enrollment_number'),
-                        year:                col(r, 'Year', 'year'),
-                        programme:           col(r, 'Programme', 'Program', 'programme'),
-                        gender:              col(r, 'Gender', 'gender'),
-                        internship_place:    col(r, 'Internship Place', 'internship_place'),
-                        internship_place_02: col(r, 'Internship Place 02', 'Internship Place 2', 'internship_place_02'),
-                        organization_type:   col(r, 'Type of Organization', 'Organization Type', 'organization_type'),
-                    })).filter(r => r.enrollment_number);
+                    rows = raw.map(r => {
+                        const nr = normalizeRow(r);
+                        return {
+                            enrollment_number: col(nr, 'Enrolment No.', 'Enrollment No.', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
+                            student_name: col(nr, 'Name of Student', 'Student Name', 'Name', 'student_name'),
+                            year: col(nr, 'Year', 'year'),
+                            programme: col(nr, 'Programme', 'Program', 'programme'),
+                            gender: col(nr, 'Gender', 'gender'),
+                            internship_place: col(nr, 'Internship Place', 'internship_place'),
+                            internship_place_02: col(nr, 'Internship Place 02', 'Internship Place 2', 'internship_place_02'),
+                            duration: col(nr, 'Duration', 'duration'),
+                            city: col(nr, 'City', 'Internship City', 'city'),
+                            organization_type: col(nr, 'Type of Organization', 'Organization Type', 'organization_type'),
+                            role: col(nr, 'Remarks', 'Role', 'role'),
+                            salary: col(nr, 'CTC', 'Salary', 'salary')
+                        };
+                    }).filter(r => r.enrollment_number);
                 } else if (type === 'field_visits') {
-                    rows = raw.map(r => ({
-                        enrollment_number:   col(r, 'Enrolment No.', 'Enrollment No.', 'Enrollment Number', 'Enrolment Number', 'enrollment_number'),
-                        visit_date:          col(r, 'Date', 'Visit Date', 'visit_date'),
-                        programme:           col(r, 'Programme', 'Program', 'programme'),
-                        organization_name:   col(r, 'Organization Name', 'Organization', 'Company', 'organization_name'),
-                        location:            col(r, 'Location', 'Place', 'location'),
-                        faculty_coordinator: col(r, 'Faculty Coordinator', 'Faculty', 'Coordinator', 'faculty_coordinator')
-                    })).filter(r => r.enrollment_number);
+                    rows = raw.map(r => {
+                        const nr = normalizeRow(r);
+                        return {
+                            field_visited: col(nr, 'Field_Visited', 'Department', 'Dept', 'Dept.', 'organization_name', 'field_visited'),
+                            visited_date: col(nr, 'Visited_Date', 'Date', 'Visit Date', 'visit_date'),
+                            no_of_student_visited: parseInt(col(nr, 'No_of_Student_Visited', 'No of Students', 'No of Student Visited', 'Students', 'students_visited') || 0),
+                            program_name: col(nr, 'Program_Name', 'Programme', 'programme', 'program'),
+                            no_of_staff_visited: parseInt(col(nr, 'No_of_Staff_Visited', 'No of Staff', 'No of Staff Visited', 'Staff', 'staff_visited') || 0),
+                            staff_name: col(nr, 'Staff_Name', 'Faculty Coordinator', 'Faculty', 'Coordinator', 'staff_name', 'faculty'),
+                            city: col(nr, 'City', 'Location', 'Place', 'city')
+                        };
+                    }).filter(r => r.field_visited && r.visited_date);
                 }
                 resolve(rows);
             } catch (err) {
@@ -548,15 +697,15 @@ async function parseExcelFile(file, type) {
 async function loadAdminProfileData() {
     try {
         const profile = await getAdminProfile();
-        const emailEl   = document.getElementById('email');
-        const phoneEl   = document.getElementById('phone');
+        const emailEl = document.getElementById('email');
+        const phoneEl = document.getElementById('phone');
         const usernameEl = document.getElementById('username') || document.getElementById('adminUsername');
-        if (emailEl)    emailEl.value   = profile.email   || '';
-        if (phoneEl)    phoneEl.value   = profile.mobile  || '';
+        if (emailEl) emailEl.value = profile.email || '';
+        if (phoneEl) phoneEl.value = profile.mobile || '';
         if (usernameEl) usernameEl.value = profile.username || 'admin';
         // Populate sidebar
         const user = getUser() || {};
-        user.email  = profile.email;
+        user.email = profile.email;
         user.mobile = profile.mobile;
         saveUser(user);
     } catch (e) {

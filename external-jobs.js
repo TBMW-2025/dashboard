@@ -56,14 +56,21 @@ async function fetchJobs() {
         updateStats();
 
     } catch (e) {
-        console.error("Fetch Error:", e);
+        console.error("OSINT Fetch Error:", e);
         // Fallback to simulated data on any error
         currentJobs = getSimulatedData();
         renderJobs(currentJobs);
         updateStats();
-        grid.insertAdjacentHTML('afterbegin', `<div class="error-state" style="grid-column:1/-1;padding:12px;background:#fff3cd;border-radius:8px;color:#856404;margin-bottom:12px;">
-            <i class="bi bi-exclamation-triangle"></i> Could not connect to live database. Showing sample jobs.
-        </div>`);
+        
+        const grid = document.getElementById('jobGrid');
+        if (grid) {
+            grid.insertAdjacentHTML('afterbegin', `<div class="error-state" style="grid-column:1/-1;padding:15px;background:rgba(245,158,11,0.1);border-radius:8px;color:var(--accent-orange);margin-bottom:20px;border:1px solid rgba(245,158,11,0.2);display:flex;align-items:center;gap:12px;">
+                <i class="bi bi-exclamation-triangle" style="font-size:1.2rem;"></i> 
+                <div>
+                    <strong>Intelligence Feed Offline:</strong> Connecting to secondary cache. Showing simulated opportunities.
+                </div>
+            </div>`);
+        }
     }
 }
 
@@ -122,22 +129,25 @@ function renderJobs(jobs) {
 
 // UPDATE FEED STATS
 function updateStats() {
+    const feedStats = document.getElementById('feedStats');
+    if (!feedStats) return;
+    
     const count = currentJobs.length;
     let label = 'Intelligence & Security';
     if (filters.sector === 'Govt') label = 'Government Sector';
     else if (filters.sector === 'Private') label = 'Private Sector';
     else if (filters.domain) label = filters.domain;
     else if (filters.jobType) label = filters.jobType + 's';
-    document.getElementById('feedStats').innerText = `Found ${count} active opportunities in ${label}`;
+    feedStats.innerText = `Found ${count} active opportunities in ${label}`;
 }
 
 // EVENT LISTENERS
 function setupEventListeners() {
-    // Domain & Filter menu items
-    document.querySelectorAll('.nav-item').forEach(item => {
+    // Domain & Filter tab items
+    document.querySelectorAll('.job-filter-tab').forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.querySelectorAll('.job-filter-tab').forEach(i => i.classList.remove('active'));
             item.classList.add('active');
 
             const filterType = item.getAttribute('data-filter');
@@ -191,7 +201,6 @@ function setupEventListeners() {
                 const res = await fetch('/api/jobs/scrape', { method: 'POST' });
                 if (res.ok) {
                     const result = await res.json();
-                    console.log('Scrape result:', result.message);
                 } else {
                     console.warn(`Scraper not available (${res.status}). Fetching from DB directly.`);
                 }

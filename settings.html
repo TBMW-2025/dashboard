@@ -7,7 +7,7 @@
         content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=fresh_final">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -32,10 +32,6 @@
                     <a href="students.html" class="nav-item ">
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
-                    </a>
-                    <a href="companies.html" class="nav-item ">
-                        <i class="bi bi-building"></i>
-                        <span>Companies</span>
                     </a>
                     <a href="internships.html" class="nav-item ">
                         <i class="bi bi-person-workspace"></i>
@@ -76,360 +72,400 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Header -->
-            <div class="header">
-                <div class="header-left">
-
-                    <div class="header-title">
-                        <h1>Placement Monitor Dashboard</h1>
-                        <div class="header-subtitle" id="headerSubtitle">Future Leaders and Security Intelligence</div>
-                    </div>
+        <div class="main-content dashboard-layout-container">
+            <!-- TOP HEADER ROW -->
+            <div class="top-header-row">
+                <div>
+                    <h1>System Settings</h1>
+                    <div class="subtitle">Future Leaders and Security Intelligence</div>
                 </div>
-                <div class="header-right">
-                    <input type="text" class="search-bar" placeholder="Search for anything...">
-                    <div class="header-icons">
-                        <button class="icon-btn notification-toggle">
-                            🔔
-                            <span class="notification-badge">1</span>
-                        </button>
-                    </div>
+                <div class="header-actions-unified">
+                    <input type="text" class="search-bar-unified" placeholder="Search settings...">
+                    <button class="select-unified" onclick="location.reload()" style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
+                    </button>
                 </div>
             </div>
 
-            <!-- Content Section -->
-            <div class="content-title">Settings</div>
+            <div class="widget-panel">
 
-            <!-- Settings Container -->
-            <div class="settings-container">
-                <!-- Settings Navigation -->
-                <div class="settings-nav">
-                    <div class="settings-option active" data-target="admin-profile" onclick="switchTab('admin-profile')">
-                        👤 Admin Profile
-                    </div>
-                    <div class="settings-option" data-target="admin-password" onclick="switchTab('admin-password')">
-                        🔐 Change Password
-                    </div>
-                    <div class="settings-option" data-target="student-password" onclick="switchTab('student-password')">
-                        🎓 Student Passwords
-                    </div>
-                    <div class="settings-option" data-target="notifications" onclick="switchTab('notifications')">
-                        🔔 Notifications
-                    </div>
-                    <div class="settings-option" data-target="security" onclick="switchTab('security')">
-                        🛡️ Security Settings
-                    </div>
-                </div>
-
-                <!-- Settings Content -->
-                <div class="settings-content-wrapper">
-
-                    <!-- Admin Profile -->
-                    <div id="admin-profile" class="settings-content active">
-                        <div class="settings-card">
-                            <div class="profile-header">
-                                <div class="profile-avatar">A</div>
-                                <div class="profile-info">
-                                    <h2>Arsh.G</h2>
-                                    <p>Admin User</p>
-                                    <p>arsh.g@university.edu</p>
-                                </div>
-                            </div>
-
-                            <div class="alert alert-success" id="profileAlert"></div>
-
-                            <div class="card-title">Personal Information</div>
-
-                            <div class="form-group-row">
-                                <div class="form-group">
-                                    <label class="form-label">First Name</label>
-                                    <input type="text" class="form-input" id="firstName" value="Arsh"
-                                        placeholder="Enter first name">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Last Name</label>
-                                    <input type="text" class="form-input" id="lastName" value="G"
-                                        placeholder="Enter last name">
-                                </div>
-                            </div>
-
-                            <div class="form-group-row">
-                                <div class="form-group">
-                                    <label class="form-label">Email Address</label>
-                                    <input type="email" class="form-input" id="email" value="arsh.g@university.edu"
-                                        placeholder="Enter email">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label">Phone Number</label>
-                                    <input type="tel" class="form-input" id="phone" value="+91 9876543210"
-                                        placeholder="Enter phone number">
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Department</label>
-                                <input type="text" class="form-input" value="Academic Affairs" disabled>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Role</label>
-                                <input type="text" class="form-input" value="Administrator" disabled>
-                            </div>
-
-                            <div class="button-group">
-                                <button class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
-                                <button class="btn btn-secondary" onclick="resetProfileForm()">Cancel</button>
-                            </div>
+                <!-- Settings Container -->
+                <div class="settings-container">
+                    <!-- Settings Navigation -->
+                    <div class="settings-nav">
+                        <div class="settings-option active" data-target="admin-profile"
+                            onclick="switchTab('admin-profile')">
+                            👤 Admin Profile
+                        </div>
+                        <div class="settings-option" data-target="admin-password" onclick="switchTab('admin-password')">
+                            🔐 Change Password
+                        </div>
+                        <div class="settings-option" data-target="student-password"
+                            onclick="switchTab('student-password')">
+                            🎓 Student Passwords
+                        </div>
+                        <div class="settings-option" data-target="notifications" onclick="switchTab('notifications')">
+                            🔔 Notifications
+                        </div>
+                        <div class="settings-option" data-target="security" onclick="switchTab('security')">
+                            🛡️ Security Settings
                         </div>
                     </div>
 
-                    <!-- Admin Password Change -->
-                    <div id="admin-password" class="settings-content">
-                        <div class="settings-card">
-                            <div class="card-title">Change Your Password</div>
+                    <!-- Settings Content -->
+                    <div class="settings-content-wrapper">
 
-                            <div class="alert alert-success" id="passwordAlert"></div>
-
-                            <div class="form-group">
-                                <label class="form-label">Current Password</label>
-                                <input type="password" class="form-input" id="currentPassword"
-                                    placeholder="Enter current password">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">New Password</label>
-                                <input type="password" class="form-input" id="newPassword"
-                                    placeholder="Enter new password" oninput="checkPasswordStrength()">
-                                <div class="password-strength" id="strengthIndicator">
-                                    <div class="strength-bar"></div>
-                                    <div class="strength-bar"></div>
-                                    <div class="strength-bar"></div>
+                        <!-- Admin Profile -->
+                        <div id="admin-profile" class="settings-content active">
+                            <div class="settings-card">
+                                <div class="profile-header">
+                                    <div class="profile-avatar">A</div>
+                                    <div class="profile-info">
+                                        <h2>Arsh.G</h2>
+                                        <p>Admin User</p>
+                                        <p>arsh.g@university.edu</p>
+                                    </div>
                                 </div>
-                                <div class="strength-text" id="strengthText">Password strength: Weak</div>
-                            </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Confirm Password</label>
-                                <input type="password" class="form-input" id="confirmPassword"
-                                    placeholder="Confirm new password">
-                            </div>
+                                <div class="alert alert-success" id="profileAlert"></div>
 
-                            <div
-                                style="background-color: rgba(107, 114, 128, 0.1); border: 1px solid #4b5563; border-radius: 6px; padding: 15px; margin-bottom: 20px; font-size: 13px; color: #aaa; line-height: 1.6;">
-                                <strong style="color: #fff; display: block; margin-bottom: 8px;">Password
-                                    Requirements:</strong>
-                                ✓ Minimum 8 characters<br>
-                                ✓ At least one uppercase letter<br>
-                                ✓ At least one number<br>
-                                ✓ At least one special character (!@#$%^&*)
-                            </div>
+                                <div class="card-title">Personal Information</div>
 
-                            <div class="button-group">
-                                <button class="btn btn-primary" onclick="updateAdminPassword()">Change Password</button>
-                                <button class="btn btn-secondary" onclick="resetPasswordForm()">Cancel</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Reset Student Password -->
-                    <div id="student-password" class="settings-content">
-                        <div class="settings-card">
-                            <div class="card-title">Reset Student Password</div>
-                            <p style="color: #888; font-size: 13px; margin-bottom: 20px;">Select a student and set a new
-                                temporary password for them.</p>
-
-                            <div class="alert alert-success" id="studentPasswordAlert"></div>
-
-                            <div class="form-group">
-                                <label class="form-label">Select Student</label>
-                                <select class="form-select" id="studentSelect" onchange="loadStudentDetails()">
-                                    <option value="">-- Select a student --</option>
-                                    
-                                </select>
-                            </div>
-
-                            <div id="studentDetails" style="display: none;">
-                                <div
-                                    style="background-color: #252b4a; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
-                                    <div style="margin-bottom: 10px;">
-                                        <span style="color: #888; font-size: 12px;">Name:</span>
-                                        <span style="color: #fff; font-weight: 600; display: block;"
-                                            id="studentName"></span>
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" class="form-input" id="firstName" value="Arsh"
+                                            placeholder="Enter first name">
                                     </div>
-                                    <div style="margin-bottom: 10px;">
-                                        <span style="color: #888; font-size: 12px;">Enrollment Number:</span>
-                                        <span style="color: #fff; font-weight: 600; display: block;"
-                                            id="studentEnrollment"></span>
+                                    <div class="form-group">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" class="form-input" id="lastName" value="G"
+                                            placeholder="Enter last name">
                                     </div>
-                                    <div>
-                                        <span style="color: #888; font-size: 12px;">Email:</span>
-                                        <span style="color: #fff; font-weight: 600; display: block;"
-                                            id="studentEmail"></span>
+                                </div>
+
+                                <div class="form-group-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Email Address</label>
+                                        <input type="email" class="form-input" id="email" value="arsh.g@university.edu"
+                                            placeholder="Enter email">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Phone Number</label>
+                                        <input type="tel" class="form-input" id="phone" value="+91 9876543210"
+                                            placeholder="Enter phone number">
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="form-label">New Temporary Password</label>
-                                    <input type="text" class="form-input" id="tempPassword"
-                                        placeholder="Enter temporary password (will be sent to student)">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-input" value="Academic Affairs" disabled>
                                 </div>
 
-                                <div
-                                    style="background-color: rgba(107, 114, 128, 0.1); border: 1px solid #4b5563; border-radius: 6px; padding: 15px; margin-bottom: 20px; font-size: 13px; color: #aaa;">
-                                    <strong style="color: #fff; display: block; margin-bottom: 8px;">ℹ️ Note:</strong>
-                                    The student will receive the temporary password via email and will be required to
-                                    change it on first login.
-                                </div>
-
-                                <div style="margin-bottom: 20px;">
-                                    <label
-                                        style="display: flex; align-items: center; gap: 10px; color: #aaa; font-size: 13px; cursor: pointer;">
-                                        <input type="checkbox" id="sendEmail" checked
-                                            style="width: 16px; height: 16px; cursor: pointer;">
-                                        Send temporary password via email
-                                    </label>
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" class="form-input" value="Administrator" disabled>
                                 </div>
 
                                 <div class="button-group">
-                                    <button class="btn btn-primary" onclick="resetStudentPassword(event)">Reset
+                                    <button class="btn btn-primary" onclick="updateProfile()">Save Changes</button>
+                                    <button class="btn btn-secondary" onclick="resetProfileForm()">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Password Change -->
+                        <div id="admin-password" class="settings-content">
+                            <div class="settings-card">
+                                <div class="card-title">Change Your Password</div>
+
+                                <div class="alert alert-success" id="passwordAlert"></div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" class="form-input" id="currentPassword"
+                                        placeholder="Enter current password">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" class="form-input" id="newPassword"
+                                        placeholder="Enter new password" oninput="checkPasswordStrength()">
+                                    <div class="password-strength" id="strengthIndicator">
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                        <div class="strength-bar"></div>
+                                    </div>
+                                    <div class="strength-text" id="strengthText">Password strength: Weak</div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-input" id="confirmPassword"
+                                        placeholder="Confirm new password">
+                                </div>
+
+                                <div
+                                    style="background-color: rgba(107, 114, 128, 0.1); border: 1px solid #4b5563; border-radius: 6px; padding: 15px; margin-bottom: 20px; font-size: 13px; color: #aaa; line-height: 1.6;">
+                                    <strong style="color: #fff; display: block; margin-bottom: 8px;">Password
+                                        Requirements:</strong>
+                                    ✓ Minimum 8 characters<br>
+                                    ✓ At least one uppercase letter<br>
+                                    ✓ At least one number<br>
+                                    ✓ At least one special character (!@#$%^&*)
+                                </div>
+
+                                <div class="button-group">
+                                    <button class="btn btn-primary" onclick="updateAdminPassword()">Change
                                         Password</button>
-                                    <button class="btn btn-secondary" onclick="clearStudentForm()">Cancel</button>
+                                    <button class="btn btn-secondary" onclick="resetPasswordForm()">Cancel</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Notifications -->
-                    <div id="notifications" class="settings-content">
-                        <div class="settings-card">
-                            <div class="card-title">Notification Preferences</div>
+                        <!-- Reset Student Password -->
+                        <div id="student-password" class="settings-content">
+                            <div class="settings-card">
+                                <div class="card-title">Reset Student Password</div>
+                                <p style="color: #888; font-size: 13px; margin-bottom: 20px;">Select a student and set a
+                                    new
+                                    temporary password for them.</p>
 
-                            <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <div>
-                                        <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Email
-                                            Notifications</div>
-                                        <div style="color: #888; font-size: 13px;">Receive email for important updates
-                                        </div>
-                                    </div>
-                                    <input type="checkbox" checked style="width: 18px; height: 18px; cursor: pointer;">
+                                <div class="alert alert-success" id="studentPasswordAlert"></div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Select Student</label>
+                                    <select class="form-select" id="studentSelect" onchange="loadStudentDetails()">
+                                        <option value="">-- Select a student --</option>
+
+                                    </select>
                                 </div>
-                            </div>
 
-                            <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <div>
-                                        <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Placement
-                                            Updates</div>
-                                        <div style="color: #888; font-size: 13px;">Get notified about new placements
-                                        </div>
-                                    </div>
-                                    <input type="checkbox" checked style="width: 18px; height: 18px; cursor: pointer;">
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <div>
-                                        <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Company Updates
-                                        </div>
-                                        <div style="color: #888; font-size: 13px;">Notifications about new company
-                                            registrations</div>
-                                    </div>
-                                    <input type="checkbox" checked style="width: 18px; height: 18px; cursor: pointer;">
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 20px;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <div>
-                                        <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Weekly Reports
-                                        </div>
-                                        <div style="color: #888; font-size: 13px;">Receive weekly placement reports
-                                        </div>
-                                    </div>
-                                    <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
-                                </div>
-                            </div>
-
-                            <div class="button-group">
-                                <button class="btn btn-primary" onclick="updateNotifications()">Save
-                                    Preferences</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Security -->
-                    <div id="security" class="settings-content">
-                        <div class="settings-card">
-                            <div class="card-title">Security Settings</div>
-
-                            <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                                    <div>
-                                        <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Two-Factor
-                                            Authentication</div>
-                                        <div style="color: #888; font-size: 13px;">Add an extra layer of security to
-                                            your account</div>
-                                    </div>
-                                    <button id="twoFaBtn" class="btn btn-secondary"
-                                        onclick="enableTwoFA()">Enable</button>
-                                </div>
-                            </div>
-
-                            <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
-                                <div style="color: #fff; font-weight: 600; margin-bottom: 15px;">Active Sessions</div>
-                                <div
-                                    style="background-color: var(--bg-panel); padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+                                <div id="studentDetails" style="display: none;">
                                     <div
-                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                        <div>
-                                            <div style="color: #aaa; font-size: 13px;">Chrome on Windows</div>
-                                            <div style="color: #888; font-size: 12px;">Last active: 2 minutes ago</div>
+                                        style="background-color: #252b4a; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+                                        <div style="margin-bottom: 10px;">
+                                            <span style="color: #888; font-size: 12px;">Name:</span>
+                                            <span style="color: #fff; font-weight: 600; display: block;"
+                                                id="studentName"></span>
                                         </div>
-                                        <span style="color: #4ade80; font-size: 12px; font-weight: 600;">Current</span>
-                                    </div>
-                                </div>
-                                <div
-                                    style="background-color: var(--bg-panel); padding: 15px; border-radius: 6px; margin-bottom: 10px;">
-                                    <div
-                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                        <div>
-                                            <div style="color: #aaa; font-size: 13px;">Safari on iPhone</div>
-                                            <div style="color: #888; font-size: 12px;">Last active: 1 hour ago</div>
+                                        <div style="margin-bottom: 10px;">
+                                            <span style="color: #888; font-size: 12px;">Enrollment Number:</span>
+                                            <span style="color: #fff; font-weight: 600; display: block;"
+                                                id="studentEnrollment"></span>
                                         </div>
-                                        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;"
-                                            onclick="revokeSession(event)">Revoke</button>
+                                        <div>
+                                            <span style="color: #888; font-size: 12px;">Email:</span>
+                                            <span style="color: #fff; font-weight: 600; display: block;"
+                                                id="studentEmail"></span>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
 
-                            <div>
-                                <div style="color: #fff; font-weight: 600; margin-bottom: 15px;">Danger Zone</div>
-                                <button class="btn btn-danger" onclick="openDeleteAccount()">Delete Account</button>
+                                    <div class="form-group">
+                                        <label class="form-label">New Temporary Password</label>
+                                        <input type="text" class="form-input" id="tempPassword"
+                                            placeholder="Enter temporary password (will be sent to student)">
+                                    </div>
+
+                                    <div
+                                        style="background-color: rgba(107, 114, 128, 0.1); border: 1px solid #4b5563; border-radius: 6px; padding: 15px; margin-bottom: 20px; font-size: 13px; color: #aaa;">
+                                        <strong style="color: #fff; display: block; margin-bottom: 8px;">ℹ️
+                                            Note:</strong>
+                                        The student will receive the temporary password via email and will be required
+                                        to
+                                        change it on first login.
+                                    </div>
+
+                                    <div style="margin-bottom: 20px;">
+                                        <label
+                                            style="display: flex; align-items: center; gap: 10px; color: #aaa; font-size: 13px; cursor: pointer;">
+                                            <input type="checkbox" id="sendEmail" checked
+                                                style="width: 16px; height: 16px; cursor: pointer;">
+                                            Send temporary password via email
+                                        </label>
+                                    </div>
+
+                                    <div class="button-group">
+                                        <button class="btn btn-primary" onclick="resetStudentPassword(event)">Reset
+                                            Password</button>
+                                        <button class="btn btn-secondary" onclick="clearStudentForm()">Cancel</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+
+                        <!-- Notifications -->
+                        <div id="notifications" class="settings-content">
+                            <div class="settings-card">
+                                <div class="card-title">Notification Preferences</div>
+
+                                <div
+                                    style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <div>
+                                            <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Email
+                                                Notifications</div>
+                                            <div style="color: #888; font-size: 13px;">Receive email for important
+                                                updates
+                                            </div>
+                                        </div>
+                                        <input type="checkbox" checked
+                                            style="width: 18px; height: 18px; cursor: pointer;">
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <div>
+                                            <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Placement
+                                                Updates</div>
+                                            <div style="color: #888; font-size: 13px;">Get notified about new placements
+                                            </div>
+                                        </div>
+                                        <input type="checkbox" checked
+                                            style="width: 18px; height: 18px; cursor: pointer;">
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <div>
+                                            <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Company
+                                                Updates
+                                            </div>
+                                            <div style="color: #888; font-size: 13px;">Notifications about new company
+                                                registrations</div>
+                                        </div>
+                                        <input type="checkbox" checked
+                                            style="width: 18px; height: 18px; cursor: pointer;">
+                                    </div>
+                                </div>
+
+                                <div style="margin-bottom: 20px;">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <div>
+                                            <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Weekly
+                                                Reports
+                                            </div>
+                                            <div style="color: #888; font-size: 13px;">Receive weekly placement reports
+                                            </div>
+                                        </div>
+                                        <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer;">
+                                    </div>
+                                </div>
+
+                                <div class="button-group">
+                                    <button class="btn btn-primary" onclick="updateNotifications()">Save
+                                        Preferences</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Security -->
+                        <div id="security" class="settings-content">
+                            <div class="settings-card">
+                                <div class="card-title">Security Settings</div>
+
+                                <div
+                                    style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                                        <div>
+                                            <div style="color: #fff; font-weight: 600; margin-bottom: 5px;">Two-Factor
+                                                Authentication</div>
+                                            <div style="color: #888; font-size: 13px;">Add an extra layer of security to
+                                                your account</div>
+                                        </div>
+                                        <button id="twoFaBtn" class="btn btn-secondary"
+                                            onclick="enableTwoFA()">Enable</button>
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #2a2f4a;">
+                                    <div style="color: #fff; font-weight: 600; margin-bottom: 15px;">Active Sessions
+                                    </div>
+                                    <div
+                                        style="background-color: var(--bg-panel); padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <div>
+                                                <div style="color: #aaa; font-size: 13px;">Chrome on Windows</div>
+                                                <div style="color: #888; font-size: 12px;">Last active: 2 minutes ago
+                                                </div>
+                                            </div>
+                                            <span
+                                                style="color: #4ade80; font-size: 12px; font-weight: 600;">Current</span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        style="background-color: var(--bg-panel); padding: 15px; border-radius: 6px; margin-bottom: 10px;">
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                            <div>
+                                                <div style="color: #aaa; font-size: 13px;">Safari on iPhone</div>
+                                                <div style="color: #888; font-size: 12px;">Last active: 1 hour ago</div>
+                                            </div>
+                                            <button class="btn btn-secondary"
+                                                style="padding: 6px 12px; font-size: 12px;"
+                                                onclick="revokeSession(event)">Revoke</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div style="color: #fff; font-weight: 600; margin-bottom: 15px;">Danger Zone</div>
+                                    <button class="btn btn-danger" onclick="openDeleteAccount()">Delete Account</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- FOOTER -->
+                        <footer class="app-footer"
+                            style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
+                            <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
+                                <div>
+                                    <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha
+                                        University</h3>
+                                    <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus,
+                                        Pondicherry
+                                        Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To
+                                        Mahalakshmi Nagar,
+                                        Murungapakkam, Puducherry – 605004</p>
+                                </div>
+                                <div>
+                                    <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Contact</h3>
+                                    <p style="font-size: 12px; color: #8b949e;">Email: pulse-r24@rru.ac.in</p>
+                                    <p style="font-size: 12px; color: #8b949e;">Phone: +91 79 XXXXXXXX</p>
+                                </div>
+                                <div>
+                                    <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Follow</h3>
+                                    <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                            style="color: inherit; text-decoration: none;">Instagram</a></p>
+                                    <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                            style="color: inherit; text-decoration: none;">LinkedIn</a></p>
+                                </div>
+                            </div>
+                        </footer>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <script src="auth-guard.js?v=9"></script>
-        <!-- CDN: Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- CDN: SheetJS for Excel import/export -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- Supabase config (change only this file when moving to a new host) -->
-    <script src="supabase-client.js"></script>
-    <script src="api.js"></script>
-    <script src="security.js?v=9"></script>
-    <script src="script.js?v=9"></script>
+            <script src="auth-guard.js?v=9"></script>
+            <!-- CDN: Supabase JS -->
+            <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+            <!-- CDN: SheetJS for Excel import/export -->
+            <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+            <!-- Supabase config (change only this file when moving to a new host) -->
+            <script src="supabase-client.js"></script>
+            <script src="api.js?v=6"></script>
+            <script src="security.js?v=9"></script>
+            <script src="script.js?v=9"></script>
 </body>
 
 </html>

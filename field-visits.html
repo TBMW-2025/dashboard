@@ -7,7 +7,7 @@
         content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Field Visits - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=fresh_final">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -32,10 +32,6 @@
                     <a href="students.html" class="nav-item ">
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
-                    </a>
-                    <a href="companies.html" class="nav-item ">
-                        <i class="bi bi-building"></i>
-                        <span>Companies</span>
                     </a>
                     <a href="field-visits.html" class="nav-item active">
                         <i class="bi bi-person-workspace"></i>
@@ -76,83 +72,44 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Header -->
-            <div class="header">
-                <div class="header-left">
-                    <div class="header-title">
-                        <h1>Placement Monitor Dashboard</h1>
-                        <div class="header-subtitle" id="headerSubtitle">Future Leaders and Security Intelligence</div>
-                    </div>
+        <div class="main-content dashboard-layout-container">
+            <!-- TOP HEADER ROW -->
+            <div class="top-header-row">
+                <div>
+                    <h1>Field Visits List</h1>
+                    <div class="subtitle">Future Leaders and Security Intelligence</div>
                 </div>
-                <div class="header-right">
-                    <input type="text" class="search-bar" placeholder="Search for anything...">
-                    <div class="header-icons">
-                        <button class="icon-btn notification-toggle">
-                            🔔
-                            <span class="notification-badge">1</span>
-                        </button>
-                    </div>
+                <div class="header-actions-unified">
+                    <input type="text" id="fieldSearchUnified" class="search-bar-unified" placeholder="Search field visits...">
+                    <button class="select-unified" onclick="document.getElementById('importFieldVisitModal').style.display='flex'" style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-file-earmark-excel"></i> Import
+                    </button>
+                    <button class="select-unified" onclick="exportData('field_visits')" style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                    <button class="select-unified" id="addStudentBtn" style="width: auto; padding: 10px 15px; background: var(--accent-blue);">
+                        + Add Field Visit
+                    </button>
                 </div>
             </div>
 
-            <!-- Content Section -->
-            <div class="content-header">
-                <div class="content-title">Field Visits</div>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <input type="text" id="searchInput" class="search-bar" placeholder="Search field_visits..."
-                        style="width: 250px;">
-                    <button onclick="document.getElementById('importFieldVisitModal').style.display='flex'"
-                        class="btn-import">
-                        <i class="bi bi-file-earmark-excel"></i> Import Excel
-                    </button>
-                    <button onclick="exportData('field_visits')" class="btn-export">
-                        <i class="bi bi-download"></i> Export to Excel
-                    </button>
-                    <button id="addStudentBtn" class="btn-add">+ Add Field Visit</button>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <div class="table-container">
-                <div class="table-header field_visits-header">
-                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Date <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Enrolment No. <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Name of Student <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Location <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Organization <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Faculty Coordinator <span class="dropdown-icon">▼</span></div>
+            <div class="widget-panel">
+                <div class="table-header" id="tableHeader">
+                    <div class="dropdown-header sno">Sr. No <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Organization Visited <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Visit Date <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Students <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Program <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Staff Count <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Lead Staff <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">City <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Actions <span class="dropdown-icon">▼</span></div>
                 </div>
                 <div class="table-body" id="tableBody">
                     <div style="padding:24px;text-align:center;opacity:0.5;">Loading field_visits…</div>
                 </div>
             </div>
-            <!-- ===================== FOOTER ===================== -->
-            <div class="footer">
-
-                <div>
-                    <h3>Rashtriya Raksha University</h3>
-                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
-                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
-                </div>
-
-                <div>
-                    <h3>Contact</h3>
-                    <p>Email: pulse-r24@rru.ac.in</p>
-                    <p>Phone: +91 79 XXXXXXXX</p>
-                    <p>Office:</p>
-                    <p>Web:</p>
-                </div>
-
-                <div>
-                    <h3>Follow</h3>
-                    <p>Instagram:</p>
-                    <p>LinkedIn:</p>
-                </div>
-
+            </div>
             </div>
         </div>
         </main>
@@ -168,40 +125,41 @@
                 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Student (Enrolment No.)</label>
-                        <select id="mi-student" class="form-select" required></select>
+                        <label class="form-label">Field Visited / Organization</label>
+                        <input type="text" id="mi-field_visited" class="form-input" placeholder="e.g. Police Station" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Date</label>
-                        <input type="text" id="mi-visit_date" class="form-input" placeholder="e.g. 2024" required>
+                        <label class="form-label">Visit Date</label>
+                        <input type="text" id="mi-visit_date" class="form-input" placeholder="e.g. 30.10.2023" required>
                     </div>
                 </div>
 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Programme</label>
-                        <input type="text" id="mi-programme" class="form-input" placeholder="e.g. PGDSDF" required>
+                        <label class="form-label">No. of Students Visited</label>
+                        <input type="number" id="mi-no_of_students" class="form-input" placeholder="e.g. 30" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Location</label>
-                        <input type="text" id="mi-location" class="form-input" placeholder="e.g. Mumbai" required>
+                        <label class="form-label">Program Name</label>
+                        <input type="text" id="mi-program_name" class="form-input" placeholder="e.g. BACPA" required>
                     </div>
                 </div>
 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Organization</label>
-                        <input type="text" id="mi-place" class="form-input" placeholder="Organization Name" required>
+                        <label class="form-label">No. of Staff Visited</label>
+                        <input type="number" id="mi-no_of_staff" class="form-input" placeholder="e.g. 2" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Faculty Coordinator</label>
-                        <input type="text" id="mi-place-02" class="form-input" placeholder="Secondary Organization (Optional)">
+                        <label class="form-label">City</label>
+                        <input type="text" id="mi-city" class="form-input" placeholder="e.g. Puducherry" required>
                     </div>
                 </div>
 
-
-
-                <!-- Hidden or Optional legacy fields -->
+                <div class="form-group">
+                    <label class="form-label">Staff Names</label>
+                    <input type="text" id="mi-staff_name" class="form-input" placeholder="Mr. Nethaji Subash I / Ms. Suriya P" required>
+                </div>
 
                 <div class="button-group">
                     <button type="submit" id="saveStudentBtn" class="btn btn-primary">Save Field Visit</button>
@@ -224,38 +182,41 @@
                 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Student</label>
-                        <input type="text" id="ei-student-name" class="form-input" disabled>
+                        <label class="form-label">Field Visited</label>
+                        <input type="text" id="ei-field_visited" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Date</label>
+                        <label class="form-label">Visit Date</label>
                         <input type="text" id="ei-visit_date" class="form-input" required>
                     </div>
                 </div>
 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Programme</label>
-                        <input type="text" id="ei-programme" class="form-input" required>
+                        <label class="form-label">No. of Students</label>
+                        <input type="number" id="ei-no_of_students" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Location</label>
-                        <input type="text" id="ei-location" class="form-input" required>
+                        <label class="form-label">Program Name</label>
+                        <input type="text" id="ei-program_name" class="form-input" required>
                     </div>
                 </div>
 
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Organization</label>
-                        <input type="text" id="ei-place" class="form-input" required>
+                        <label class="form-label">No. of Staff</label>
+                        <input type="number" id="ei-no_of_staff" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Faculty Coordinator</label>
-                        <input type="text" id="ei-place-02" class="form-input">
+                        <label class="form-label">City</label>
+                        <input type="text" id="ei-city" class="form-input" required>
                     </div>
                 </div>
 
-
+                <div class="form-group">
+                    <label class="form-label">Staff Name(s)</label>
+                    <input type="text" id="ei-staff_name" class="form-input" required>
+                </div>
 
                 <div class="button-group">
                     <button type="submit" id="editFieldVisitSubmitBtn" class="btn btn-primary">Save Changes</button>
@@ -274,7 +235,7 @@
             </div>
             <div style="padding: 20px;">
                 <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with headers:<br>
-                <strong>Date, Enrolment No., Programme, Gender, Organization, Faculty Coordinator, Type of Organization</strong></p>
+                <strong>Field_Visited, Visited_Date, No_of_Student_Visited, Program_Name, No_of_Staff_Visited, Staff_Name, City</strong></p>
                 <form id="importFieldVisitForm">
                     <div id="importInternError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;"></div>
                     <div class="form-group">
@@ -298,97 +259,83 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase config (change only this file when moving to a new host) -->
     <script src="supabase-client.js"></script>
-    <script src="api.js"></script>
-    <script src="script.js?v=3"></script>
+    <script src="api.js?v=6"></script>
     <script>
-        (function () {
+        (async () => {
             const tbody = document.getElementById('tableBody');
-            const searchEl = document.getElementById('searchInput');
-            let data = [];
+            let fieldVisitsData = [];
 
             async function load() {
                 try {
-                    data = await getFieldVisits() || [];
-                    render(data);
+                    fieldVisitsData = await getFieldVisits() || [];
+                    render(fieldVisitsData);
                 } catch (e) {
-                    if (tbody) tbody.innerHTML = `<div style="padding:24px;text-align:center;color:#f87171">${e.message}</div>`;
+                    tbody.innerHTML = `<div style="padding:24px;text-align:center;color:#f87171">${e.message}</div>`;
                 }
+            }
+
+            function render(list) {
+                if (!list.length) {
+                    tbody.innerHTML = '<div style="padding:24px;text-align:center;opacity:0.5;">No field visits found.</div>';
+                    return;
+                }
+                tbody.innerHTML = list.map((v, i) => `
+                <div class="table-row field_visits-row" data-id="${v.id}">
+                    <div class="sno">${i + 1}</div>
+                    <div style="color:#a78bfa;font-weight:500;">${esc(v.field_visited || '—')}</div>
+                    <div>${esc(v.visited_date || '—')}</div>
+                    <div>${esc(v.no_of_student_visited || '0')}</div>
+                    <div style="color:#94a3b8;">${esc(v.program_name || '—')}</div>
+                    <div>${esc(v.no_of_staff_visited || '0')}</div>
+                    <div>${esc(v.staff_name || '—')}</div>
+                    <div>${esc(v.city || '—')}</div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <button class="action-btn btn-edit" data-id="${v.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button class="action-btn btn-del" data-id="${v.id}" title="Delete"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>`).join('');
+
+                tbody.querySelectorAll('.btn-del').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const target = e.target.closest('.btn-del');
+                        if (!confirm('Delete this visit?')) return;
+                        try { await deleteFieldVisit(target.dataset.id); load(); }
+                        catch (e) { alert('Delete failed: ' + e.message); }
+                    });
+                });
+
+                tbody.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const target = e.target.closest('.btn-edit');
+                        const id = target.dataset.id;
+                        const v = fieldVisitsData.find(item => item.id == id);
+                        if (!v) return;
+                        document.getElementById('ei-id').value = v.id;
+                        document.getElementById('ei-field_visited').value = v.field_visited || '';
+                        document.getElementById('ei-visit_date').value = v.visited_date || '';
+                        document.getElementById('ei-no_of_students').value = v.no_of_student_visited || 0;
+                        document.getElementById('ei-program_name').value = v.program_name || '';
+                        document.getElementById('ei-no_of_staff').value = v.no_of_staff_visited || 0;
+                        document.getElementById('ei-staff_name').value = v.staff_name || '';
+                        document.getElementById('ei-city').value = v.city || '';
+                        document.getElementById('editFieldVisitModal').style.display = 'flex';
+                    });
+                });
             }
 
             function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-            function render(list) {
-                if (!tbody) return;
-                if (!list.length) {
-                    tbody.innerHTML = '<div style="padding:24px;text-align:center;opacity:0.5;">No field_visits found.</div>';
-                    return;
-                }
-                tbody.innerHTML = list.map((item, i) => `
-                    <div class="table-row field_visits-row" data-id="${item.id}" style="grid-template-columns: 60px 80px 140px 120px 200px 150px 200px 200px 80px;">
-                        <div>${i + 1}</div>
-                        <div>${esc(item.visit_date)}</div>
-                        <div style="font-family:monospace;">${esc(item.enrollment_number)}</div>
-                        <div>${esc(item.programme)}</div>
-                        <div class="student-name">${esc(item.student_name)}</div>
-                        <div>${esc(item.location)}</div>
-                        <div>${esc(item.organization_name)}</div>
-                        <div>${esc(item.faculty_coordinator)}</div>
-                        <div style="display:flex;gap:5px;">
-                            <button class="action-btn btn-edit-intern" data-id="${item.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                            <button class="action-btn btn-del-intern" data-id="${item.id}" title="Delete"><i class="bi bi-trash"></i></button>
-                        </div>
-                    </div>`
-                ).join('');
-
-                tbody.querySelectorAll('.btn-edit-intern').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const targetBtn = e.target.closest('.btn-edit-intern');
-                        const id = targetBtn.dataset.id;
-                        const item = data.find(x => x.id == id);
-                        if (!item) return;
-                        document.getElementById('ei-id').value = item.id;
-                        document.getElementById('ei-student-name').value = item.student_name;
-                        document.getElementById('ei-visit_date').value = item.visit_date || '';
-                        document.getElementById('ei-programme').value = item.programme || '';
-                        document.getElementById('ei-location').value = item.location || '';
-                        document.getElementById('ei-place').value = item.organization_name || '';
-                        document.getElementById('ei-place-02').value = item.faculty_coordinator || '';
-                        document.getElementById('editFieldVisitModal').style.display = 'flex';
-                    });
-                });
-
-                tbody.querySelectorAll('.btn-del-intern').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const targetBtn = e.target.closest('.btn-del-intern');
-                        if (!confirm('Delete this field_visit?')) return;
-                        try { await deleteFieldVisit(targetBtn.dataset.id); load(); }
-                        catch (err) { alert('Delete failed: ' + err.message); }
-                    });
-                });
-            }
-
-            if (searchEl) searchEl.addEventListener('input', () => {
-                const q = searchEl.value.toLowerCase();
-                render(data.filter(i =>
-                    (i.student_name || '').toLowerCase().includes(q) ||
-                    (i.enrollment_number || '').toLowerCase().includes(q) ||
-                    (i.organization_name || '').toLowerCase().includes(q)
+            document.getElementById('fieldSearchUnified').addEventListener('input', e => {
+                const q = e.target.value.toLowerCase();
+                render(fieldVisitsData.filter(v =>
+                    (v.field_visited || '').toLowerCase().includes(q) ||
+                    (v.program_name || '').toLowerCase().includes(q) ||
+                    (v.staff_name || '').toLowerCase().includes(q) ||
+                    (v.city || '').toLowerCase().includes(q)
                 ));
             });
 
-            document.addEventListener('DOMContentLoaded', async () => {
-                load();
-
-                // Populate Student Dropdown
-                try {
-                    const students = await getStudents();
-                    const stuSelect = document.getElementById('mi-student');
-                    if (stuSelect) {
-                        stuSelect.innerHTML = '<option value="">Select Student...</option>' +
-                            (students || []).map(s => `<option value="${s.enrollment_number}">${esc(s.student_name)} (${s.enrollment_number})</option>`).join('');
-                    }
-                } catch (e) { console.warn("Could not load dropdowns:", e); }
-            });
+            document.addEventListener('DOMContentLoaded', load);
 
             // Modal triggers
             document.getElementById('addStudentBtn').addEventListener('click', () => {
@@ -413,12 +360,13 @@
 
                 try {
                     await createFieldVisit({
-                        enrollment_number: document.getElementById('mi-student').value,
-                        visit_date: document.getElementById('mi-visit_date').value,
-                        programme: document.getElementById('mi-programme').value,
-                        location: document.getElementById('mi-location').value,
-                        organization_name: document.getElementById('mi-place').value,
-                        faculty_coordinator: document.getElementById('mi-place-02').value || ''
+                        field_visited: document.getElementById('mi-field_visited').value,
+                        visited_date: document.getElementById('mi-visit_date').value,
+                        no_of_student_visited: parseInt(document.getElementById('mi-no_of_students').value),
+                        program_name: document.getElementById('mi-program_name').value,
+                        no_of_staff_visited: parseInt(document.getElementById('mi-no_of_staff').value),
+                        staff_name: document.getElementById('mi-staff_name').value,
+                        city: document.getElementById('mi-city').value
                     });
                     const modal = document.getElementById('studentModal');
                     if (modal) modal.style.display = 'none';
@@ -442,11 +390,13 @@
 
                 try {
                     await updateFieldVisit(id, {
-                        visit_date: document.getElementById('ei-visit_date').value,
-                        programme: document.getElementById('ei-programme').value,
-                        location: document.getElementById('ei-location').value,
-                        organization_name: document.getElementById('ei-place').value,
-                        faculty_coordinator: document.getElementById('ei-place-02').value || ''
+                        field_visited: document.getElementById('ei-field_visited').value,
+                        visited_date: document.getElementById('ei-visit_date').value,
+                        no_of_student_visited: parseInt(document.getElementById('ei-no_of_students').value),
+                        program_name: document.getElementById('ei-program_name').value,
+                        no_of_staff_visited: parseInt(document.getElementById('ei-no_of_staff').value),
+                        staff_name: document.getElementById('ei-staff_name').value,
+                        city: document.getElementById('ei-city').value
                     });
                     document.getElementById('editFieldVisitModal').style.display = 'none';
                     load();
@@ -492,4 +442,5 @@
     </script>
 </body>
 
+</html>
 </html>

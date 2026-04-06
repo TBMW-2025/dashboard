@@ -7,7 +7,7 @@
         content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placements - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=fresh_final">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -32,10 +32,6 @@
                     <a href="students.html" class="nav-item ">
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
-                    </a>
-                    <a href="companies.html" class="nav-item ">
-                        <i class="bi bi-building"></i>
-                        <span>Companies</span>
                     </a>
                     <a href="internships.html" class="nav-item ">
                         <i class="bi bi-person-workspace"></i>
@@ -80,84 +76,73 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Header -->
-            <div class="header">
-                <div class="header-left">
-
-                    <div class="header-title">
-                        <h1>Placement Monitor Dashboard</h1>
-                        <div class="header-subtitle" id="headerSubtitle">Future Leaders and Security Intelligence</div>
-                    </div>
+        <div class="main-content dashboard-layout-container">
+            <!-- TOP HEADER ROW -->
+            <div class="top-header-row">
+                <div>
+                    <h1>Placements List</h1>
+                    <div class="subtitle">Future Leaders and Security Intelligence</div>
                 </div>
-                <div class="header-right">
-                    <input type="text" class="search-bar" placeholder="Search for anything...">
-                    <div class="header-icons">
-                        <button class="icon-btn notification-toggle">
-                            🔔
-                            <span class="notification-badge">1</span>
-                        </button>
-                    </div>
+                <div class="header-actions-unified">
+                    <input type="text" id="placementSearchUnified" class="search-bar-unified"
+                        placeholder="Search placements...">
+                    <button class="select-unified"
+                        onclick="document.getElementById('importPlacementModal').style.display='flex'"
+                        style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-file-earmark-excel"></i> Import
+                    </button>
+                    <button class="select-unified" onclick="exportData('placements')"
+                        style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-download"></i> Export
+                    </button>
+                    <button class="select-unified" id="openAddPlacementModal"
+                        style="width: auto; padding: 10px 15px; background: var(--accent-blue);">
+                        + Add Placement
+                    </button>
                 </div>
             </div>
 
-            <!-- Content Section -->
-            <div class="content-header">
-                <div class="content-title">Placements</div>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <input type="text" class="search-bar" placeholder="Search placements..." style="width: 250px;">
-                    <button onclick="document.getElementById('importPlacementModal').style.display='flex'" class="btn-import">
-                        <i class="bi bi-file-earmark-excel"></i> Import Excel
-                    </button>
-                    <button onclick="exportData('placements')" class="btn-export">
-                        <i class="bi bi-download"></i> Export to Excel
-                    </button>
-                    <button class="btn-add" id="openAddPlacementModal">+ Add Placement</button>
-                </div>
-            </div>
-
-            <!-- Table -->
-            <div class="table-container">
-                <div class="table-header placements-header">
-                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Company <span class="dropdown-icon">▼</span></div>
+            <div class="widget-panel">
+                <div class="table-header" id="tableHeader">
+                    <div class="dropdown-header sno">S. No <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Course <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Name <span class="dropdown-icon">▼</span></div>
                     <div class="dropdown-header">Role <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Placement Date <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Salary (LPA) <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Status <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Company <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">City <span class="dropdown-icon">▼</span></div>
+                    <div class="dropdown-header">Salary <span class="dropdown-icon">▼</span></div>
                     <div>Actions</div>
                 </div>
                 <div class="table-body" id="placementsTableBody">
                     <div style="padding:24px;text-align:center;opacity:0.5;">Loading placements…</div>
                 </div>
             </div>
-            <!-- ===================== FOOTER ===================== -->
-            <div class="footer">
-
-                <div>
-                    <h3>Rashtriya Raksha University</h3>
-                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
-                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
-                </div>
-
-                <div>
-                    <h3>Contact</h3>
-                    <p>Email: pulse-r24@rru.ac.in</p>
-                    <p>Phone: +91 79 XXXXXXXX</p>
-                    <p>Office:</p>
-                    <p>Web:</p>
-                </div>
-
-                <div>
-                    <h3>Follow</h3>
-                    <p>Instagram:</p>
-                    <p>LinkedIn:</p>
-                </div>
-
-            </div>
         </div>
+        <!-- FOOTER -->
+        <footer class="app-footer"
+            style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
+                <div>
+                    <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha University</h3>
+                    <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus, Pondicherry
+                        Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To Mahalakshmi Nagar,
+                        Murungapakkam, Puducherry – 605004</p>
+                </div>
+                <div>
+                    <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Contact</h3>
+                    <p style="font-size: 12px; color: #8b949e;">Email: pulse-r24@rru.ac.in</p>
+                    <p style="font-size: 12px; color: #8b949e;">Phone: +91 79 XXXXXXXX</p>
+                </div>
+                <div>
+                    <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Follow</h3>
+                    <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                            style="color: inherit; text-decoration: none;">Instagram</a></p>
+                    <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                            style="color: inherit; text-decoration: none;">LinkedIn</a></p>
+                </div>
+            </div>
+        </footer>
+    </div>
     </div>
 
     <!-- ADD PLACEMENT MODAL -->
@@ -168,31 +153,16 @@
                 <button class="close-modal" id="closePlacementModal">&times;</button>
             </div>
             <form class="modal-form" id="addPlacementForm">
-                <div id="placementModalError" style="color:#f87171;font-size:13px;margin-bottom:8px;display:none;">
+                <div class="form-group"><input type="text" id="mp-course" placeholder=" " required><label>Course</label>
                 </div>
-                <div class="form-group">
-                    <select id="mp-student" required>
-                        <option value="">Select Student...</option>
-                    </select>
-                    <label>Student</label>
-                </div>
-                <div class="form-group">
-                    <select id="mp-company" required>
-                        <option value="">Select Company...</option>
-                    </select>
-                    <label>Company</label>
-                </div>
-                <div class="form-group"><input type="date" id="mp-date"><label>Placement Date</label></div>
-                <div class="form-group"><input type="number" id="mp-salary" step="0.1" placeholder=" "><label>Salary
-                        (LPA)</label></div>
-                <div class="form-group">
-                    <select id="mp-status">
-                        <option value="Placed">Placed</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                    <label>Status</label>
-                </div>
+                <div class="form-group"><input type="text" id="mp-name" placeholder=" " required><label>Student
+                        Name</label></div>
+                <div class="form-group"><input type="text" id="mp-remarks" placeholder=" "><label>Remarks</label></div>
+                <div class="form-group"><input type="text" id="mp-company" placeholder=" "
+                        required><label>Company</label></div>
+                <div class="form-group"><input type="text" id="mp-city" placeholder=" "><label>City</label></div>
+                <div class="form-group"><input type="text" id="mp-ctc" placeholder=" "><label>CTC (e.g. ₹
+                        500,000)</label></div>
                 <div class="modal-buttons">
                     <button type="submit" class="add-btn" id="addPlacementSubmitBtn">Add Placement</button>
                 </div>
@@ -209,29 +179,16 @@
             </div>
             <form class="modal-form" id="editPlacementForm">
                 <input type="hidden" id="ep-id">
-                <div id="editPlacementModalError" style="color:#f87171;font-size:13px;margin-bottom:8px;display:none;">
+                <div class="form-group"><input type="text" id="ep-course" placeholder=" " required><label>Course</label>
                 </div>
-                <div class="form-group">
-                    <input type="text" id="ep-student" disabled>
-                    <label>Student</label>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="ep-company" disabled>
-                    <label>Company</label>
-                </div>
-                <div class="form-group"><input type="text" id="ep-role" placeholder=" "><label>Role</label></div>
-                <div class="form-group"><input type="date" id="ep-date"><label class="static-label">Placement
-                        Date</label></div>
-                <div class="form-group"><input type="number" id="ep-salary" step="0.1" placeholder=" "><label>Salary
-                        (LPA)</label></div>
-                <div class="form-group">
-                    <select id="ep-status">
-                        <option value="Placed">Placed</option>
-                        <option value="Pending">Pending</option>
-                        <option value="Rejected">Rejected</option>
-                    </select>
-                    <label>Status</label>
-                </div>
+                <div class="form-group"><input type="text" id="ep-name" placeholder=" " required><label>Student
+                        Name</label></div>
+                <div class="form-group"><input type="text" id="ep-remarks" placeholder=" "><label>Remarks</label></div>
+                <div class="form-group"><input type="text" id="ep-company" placeholder=" "
+                        required><label>Company</label></div>
+                <div class="form-group"><input type="text" id="ep-city" placeholder=" "><label>City</label></div>
+                <div class="form-group"><input type="text" id="ep-ctc" placeholder=" "><label>CTC (e.g. ₹
+                        500,000)</label></div>
                 <div class="modal-buttons">
                     <button type="submit" class="add-btn" id="editPlacementSubmitBtn">Save Changes</button>
                 </div>
@@ -244,22 +201,28 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Import Placements from Excel</h2>
-                <button class="close-modal" onclick="document.getElementById('importPlacementModal').style.display='none'">&times;</button>
+                <button class="close-modal"
+                    onclick="document.getElementById('importPlacementModal').style.display='none'">&times;</button>
             </div>
             <div style="padding: 20px;">
-                <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with the following headers:<br>
-                <strong>Enrolment No., Company Name, Date, Salary (LPA), Status</strong></p>
+                <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with
+                    the following headers:<br>
+                    <strong>S. No, Course, Name, Remarks, Company, City, CTC</strong>
+                </p>
                 <form id="importPlacementForm">
                     <div id="importError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;"></div>
                     <div class="form-group">
-                        <input type="file" id="importFile" accept=".xlsx, .xls" required style="border: 1px dashed #555; padding: 20px; width: 100%; border-radius: 8px;">
+                        <input type="file" id="importFile" accept=".xlsx, .xls" required
+                            style="border: 1px dashed #555; padding: 20px; width: 100%; border-radius: 8px;">
                     </div>
                     <div class="modal-buttons" style="margin-top: 20px;">
                         <button type="submit" class="add-btn" id="importSubmitBtn">Start Import</button>
                     </div>
                 </form>
                 <div id="importStatus" style="margin-top: 15px; font-size: 14px; display: none;">
-                    <div class="spinner" style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div class="spinner"
+                        style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+                    </div>
                     <span style="margin-left: 10px;">Processing file...</span>
                 </div>
             </div>
@@ -267,13 +230,13 @@
     </div>
 
     <script src="auth-guard.js?v=3"></script>
-        <!-- CDN: Supabase JS -->
+    <!-- CDN: Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- CDN: SheetJS for Excel import/export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase config (change only this file when moving to a new host) -->
     <script src="supabase-client.js"></script>
-    <script src="api.js"></script>
+    <script src="api.js?v=5"></script>
     <script src="script.js?v=3"></script>
     <script>
         const tbody = document.getElementById('placementsTableBody');
@@ -288,28 +251,34 @@
             }
         }
 
-        const statusClass = { 'Placed': 'placed', 'Pending': 'pending', 'Rejected': 'rejected' };
+        const statusClass = {
+            'Placed': 'placed',
+            'Pending': 'pending',
+            'Rejected': 'rejected',
+            'Awaiting for offer letter': 'pending'
+        };
 
         function renderPlacements(list) {
             if (!list.length) {
                 tbody.innerHTML = '<div style="padding:24px;text-align:center;opacity:0.5;">No placements found.</div>';
                 return;
             }
-            tbody.innerHTML = list.map((p, i) => `
-            <div class="table-row placements-row" data-id="${p.enrollment_number}">
-                <div class="sno">${i + 1}</div>
-                <div class="student-name">${escHtml(p.student_name || '')}</div>
-                <div class="department-course" style="color: #bbb;">${escHtml(p.programme || '')}</div>
-                <div class="company-name">${escHtml(p.company || '')}</div>
-                <div class="role">${escHtml(p.role || '')}</div>
-                <div class="placement-date">${escHtml(p.placement_date || 'TBD')}</div>
-                <div class="salary">${p.salary_lpa ? p.salary_lpa + ' LPA' : '—'}</div>
-                <div class="status ${statusClass[p.status] || 'pending'}">${escHtml(p.status)}</div>
-                <div style="display:flex;gap:5px;">
-                    <button class="action-btn btn-edit-placement" data-id="${p.enrollment_number}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                    <button class="action-btn btn-del-placement" data-id="${p.enrollment_number}" title="Delete"><i class="bi bi-trash"></i></button>
-                </div>
-            </div>`).join('');
+            tbody.innerHTML = list.map((p, i) => {
+                return `
+                <div class="table-row placements-row" data-id="${p.id}">
+                    <div class="sno">${i + 1}</div>
+                    <div style="color:#a78bfa;font-weight:500;">${escHtml(p.course || '—')}</div>
+                    <div class="student-name">${escHtml(p.name || '—')}</div>
+                    <div style="color:#94a3b8;font-style:italic;">${escHtml(p.remarks || '—')}</div>
+                    <div class="company-name">${escHtml(p.company || '—')}</div>
+                    <div>${escHtml(p.city || '—')}</div>
+                    <div class="salary">${escHtml(p.ctc || '—')}</div>
+                    <div style="display:flex;gap:6px;align-items:center;">
+                        <button class="action-btn btn-edit-placement" data-id="${p.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                        <button class="action-btn btn-del-placement" data-id="${p.id}" title="Delete"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>`;
+            }).join('');
 
             tbody.querySelectorAll('.btn-del-placement').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
@@ -326,10 +295,11 @@
 
         function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
-        document.querySelector('.search-bar').addEventListener('input', e => {
+        document.getElementById('placementSearchUnified').addEventListener('input', e => {
             const q = e.target.value.toLowerCase();
             renderPlacements(placementsData.filter(p =>
-                (p.student_name || '').toLowerCase().includes(q) ||
+                (p.name || '').toLowerCase().includes(q) ||
+                (p.course || '').toLowerCase().includes(q) ||
                 (p.company || '').toLowerCase().includes(q)
             ));
         });
@@ -360,27 +330,24 @@
             document.getElementById('addPlacementModal').style.display = 'none';
         });
 
-        // Form Submit
         document.getElementById('addPlacementForm').addEventListener('submit', async e => {
             e.preventDefault();
-            const errEl = document.getElementById('placementModalError');
             const btn = document.getElementById('addPlacementSubmitBtn');
-            errEl.style.display = 'none';
             btn.disabled = true; btn.textContent = 'Adding…';
             try {
                 await createPlacement({
-                    enrollment_number: document.getElementById('mp-student').value,
+                    course: document.getElementById('mp-course').value,
+                    name: document.getElementById('mp-name').value,
+                    remarks: document.getElementById('mp-remarks').value || '',
                     company: document.getElementById('mp-company').value,
-                    student_name: document.getElementById('mp-student').options[document.getElementById('mp-student').selectedIndex].text,
-                    placement_date: document.getElementById('mp-date').value || '',
-                    salary_lpa: document.getElementById('mp-salary').value || null,
-                    status: document.getElementById('mp-status').value
+                    city: document.getElementById('mp-city').value || '',
+                    ctc: document.getElementById('mp-ctc').value || ''
                 });
                 document.getElementById('addPlacementModal').style.display = 'none';
                 document.getElementById('addPlacementForm').reset();
                 loadPlacements();
             } catch (err) {
-                errEl.textContent = err.message; errEl.style.display = 'block';
+                alert(err.message);
             } finally { btn.disabled = false; btn.textContent = 'Add Placement'; }
         });
 
@@ -388,15 +355,15 @@
             const btn = e.target.closest('.btn-edit-placement');
             if (btn) {
                 const id = btn.dataset.id;
-                const placement = placementsData.find(p => p.enrollment_number == id);
-                if (!placement) return;
-                document.getElementById('ep-id').value = placement.enrollment_number;
-                document.getElementById('ep-student').value = placement.student_name;
-                document.getElementById('ep-company').value = placement.company || placement.company_name;
-                document.getElementById('ep-role').value = placement.role || '';
-                document.getElementById('ep-date').value = placement.placement_date ? placement.placement_date.split(' ')[0] : '';
-                document.getElementById('ep-salary').value = placement.salary_lpa || '';
-                document.getElementById('ep-status').value = placement.status;
+                const p = placementsData.find(item => item.id == id);
+                if (!p) return;
+                document.getElementById('ep-id').value = p.id;
+                document.getElementById('ep-course').value = p.course || '';
+                document.getElementById('ep-name').value = p.name || '';
+                document.getElementById('ep-remarks').value = p.remarks || '';
+                document.getElementById('ep-company').value = p.company || '';
+                document.getElementById('ep-city').value = p.city || '';
+                document.getElementById('ep-ctc').value = p.ctc || '';
                 document.getElementById('editPlacementModal').style.display = 'flex';
             }
         });
@@ -412,10 +379,12 @@
             btn.disabled = true; btn.textContent = 'Saving...';
             try {
                 await updatePlacement(id, {
-                    role: document.getElementById('ep-role').value,
-                    placement_date: document.getElementById('ep-date').value,
-                    salary_lpa: document.getElementById('ep-salary').value,
-                    status: document.getElementById('ep-status').value
+                    course: document.getElementById('ep-course').value,
+                    name: document.getElementById('ep-name').value,
+                    remarks: document.getElementById('ep-remarks').value || '',
+                    company: document.getElementById('ep-company').value,
+                    city: document.getElementById('ep-city').value || '',
+                    ctc: document.getElementById('ep-ctc').value || ''
                 });
                 document.getElementById('editPlacementModal').style.display = 'none';
                 loadPlacements();

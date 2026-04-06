@@ -7,7 +7,7 @@
         content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internships - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=fresh_final">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -32,10 +32,6 @@
                     <a href="students.html" class="nav-item ">
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
-                    </a>
-                    <a href="companies.html" class="nav-item ">
-                        <i class="bi bi-building"></i>
-                        <span>Companies</span>
                     </a>
                     <a href="internships.html" class="nav-item active">
                         <i class="bi bi-person-workspace"></i>
@@ -80,87 +76,83 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Header -->
-            <div class="header">
-                <div class="header-left">
-                    <div class="header-title">
-                        <h1>Placement Monitor Dashboard</h1>
-                        <div class="header-subtitle" id="headerSubtitle">Future Leaders and Security Intelligence</div>
-                    </div>
+        <div class="main-content dashboard-layout-container">
+            <!-- TOP HEADER ROW -->
+            <div class="top-header-row">
+                <div>
+                    <h1>Internships List</h1>
+                    <div class="subtitle">Future Leaders and Security Intelligence</div>
                 </div>
-                <div class="header-right">
-                    <input type="text" class="search-bar" placeholder="Search for anything...">
-                    <div class="header-icons">
-                        <button class="icon-btn notification-toggle">
-                            🔔
-                            <span class="notification-badge">1</span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Content Section -->
-            <div class="content-header">
-                <div class="content-title">Internships</div>
-                <div style="display: flex; gap: 15px; align-items: center;">
-                    <input type="text" id="searchInput" class="search-bar" placeholder="Search internships..."
-                        style="width: 250px;">
-                    <button onclick="document.getElementById('importInternshipModal').style.display='flex'"
-                        class="btn-import">
-                        <i class="bi bi-file-earmark-excel"></i> Import Excel
+                <div class="header-actions-unified">
+                    <input type="text" id="searchInput" class="search-bar-unified" placeholder="Search internships...">
+                    <button class="select-unified"
+                        onclick="document.getElementById('importInternshipModal').style.display='flex'"
+                        style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-file-earmark-excel"></i> Import
                     </button>
-                    <button onclick="exportData('internships')" class="btn-export">
-                        <i class="bi bi-download"></i> Export to Excel
+                    <button class="select-unified" onclick="exportData('internships')"
+                        style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-download"></i> Export
                     </button>
-                    <button id="addStudentBtn" class="btn-add">+ Add Internship</button>
+                    <button class="select-unified" id="addStudentBtn"
+                        style="width: auto; padding: 10px 15px; background: var(--accent-blue);">
+                        + Add Internship
+                    </button>
                 </div>
             </div>
 
-            <!-- Table -->
-            <div class="table-container">
-                <div class="table-header internships-header">
-                    <div class="dropdown-header">SR. NO. <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Year <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Enrolment No. <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Name of Student <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Gender <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Internship Place <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Internship Place 02 <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Type of Organization <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Actions <span class="dropdown-icon">▼</span></div>
+            <div class="widget-panel">
+                <div class="table-header" id="tableHeader">
+                    <div class="dropdown-header sno">SR.</div>
+                    <div class="dropdown-header">Year</div>
+                    <div class="dropdown-header">Enrolment</div>
+                    <div class="dropdown-header">Prog.</div>
+                    <div class="dropdown-header">Student Name</div>
+                    <div class="dropdown-header">Gender</div>
+                    <div class="dropdown-header">Role</div>
+                    <div class="dropdown-header">Salary</div>
+                    <div class="dropdown-header">P1</div>
+                    <div class="dropdown-header">D1</div>
+                    <div class="dropdown-header">C1</div>
                 </div>
-                <div class="table-body" id="tableBody">
-                    <div style="padding:24px;text-align:center;opacity:0.5;">Loading internships…</div>
-                </div>
+                <div class="dropdown-header">P2</div>
+                <div class="dropdown-header">D2</div>
+                <div class="dropdown-header">C2</div>
+                <div class="dropdown-header">Org Type</div>
+                <div class="dropdown-header">Actions</div>
             </div>
-            <!-- ===================== FOOTER ===================== -->
-            <div class="footer">
-
-                <div>
-                    <h3>Rashtriya Raksha University</h3>
-                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
-                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
-                </div>
-
-                <div>
-                    <h3>Contact</h3>
-                    <p>Email: pulse-r24@rru.ac.in</p>
-                    <p>Phone: +91 79 XXXXXXXX</p>
-                    <p>Office:</p>
-                    <p>Web:</p>
-                </div>
-
-                <div>
-                    <h3>Follow</h3>
-                    <p>Instagram:</p>
-                    <p>LinkedIn:</p>
-                </div>
-
+            <div class="table-body" id="tableBody">
+                <div style="padding:24px;text-align:center;opacity:0.5;">Loading internships…</div>
             </div>
         </div>
-        </main>
+    </div>
+    <!-- FOOTER -->
+    <footer class="app-footer" style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
+            <div>
+                <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha University</h3>
+                <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus, Pondicherry
+                    Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To Mahalakshmi Nagar,
+                    Murungapakkam, Puducherry – 605004</p>
+            </div>
+            <div>
+                <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Contact</h3>
+                <p style="font-size: 12px; color: #8b949e;">Email: pulse-r24@rru.ac.in</p>
+                <p style="font-size: 12px; color: #8b949e;">Phone: +91 79 XXXXXXXX</p>
+            </div>
+            <div>
+                <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Follow</h3>
+                <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                        style="color: inherit; text-decoration: none;">Instagram</a></p>
+                <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                        style="color: inherit; text-decoration: none;">LinkedIn</a></p>
+            </div>
+        </div>
+    </footer>
+    </div>
+    </div>
+    </div>
+    </main>
     <!-- Add Internship Modal -->
     <div id="studentModal" class="modal-overlay">
         <div class="modal-content" style="max-width: 800px;">
@@ -170,23 +162,27 @@
             </div>
             <form id="studentForm">
                 <div id="internModalError" class="alert alert-error"></div>
-                
                 <div class="form-group-row">
-                    <div class="form-group">
-                        <label class="form-label">Student (Enrolment No.)</label>
-                        <select id="mi-student" class="form-select" required></select>
-                    </div>
                     <div class="form-group">
                         <label class="form-label">Year</label>
                         <input type="text" id="mi-year" class="form-input" placeholder="e.g. 2024" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Enrolment No.</label>
+                        <input type="text" id="mi-enrolment" class="form-input" placeholder="e.g. 2.30171E+14" required>
+                    </div>
                 </div>
-
                 <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Programme</label>
                         <input type="text" id="mi-programme" class="form-input" placeholder="e.g. PGDSDF" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Name of Student</label>
+                        <input type="text" id="mi-name" class="form-input" placeholder="Enter student name" required>
+                    </div>
+                </div>
+                <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Gender</label>
                         <select id="mi-gender" class="form-select" required>
@@ -195,32 +191,57 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <input type="text" id="mi-role" class="form-input" placeholder="e.g. SDE Intern">
+                    </div>
                 </div>
-
                 <div class="form-group-row">
+                    <div class="form-group">
+                        <label class="form-label">Salary (CTC)</label>
+                        <input type="text" id="mi-salary" class="form-input" placeholder="e.g. ₹ 25,000">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Internship Place</label>
-                        <input type="text" id="mi-place" class="form-input" placeholder="Organization Name" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Internship Place 02</label>
-                        <input type="text" id="mi-place-02" class="form-input" placeholder="Secondary Organization (Optional)">
+                        <input type="text" id="mi-place" class="form-input" placeholder="Organization name" required>
                     </div>
                 </div>
-
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Type of Organization</label>
-                        <select id="mi-org-type" class="form-select" required>
+                        <label class="form-label">Duration 01</label>
+                        <input type="text" id="mi-duration" class="form-input" placeholder="e.g. 15 Days">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City 01</label>
+                        <input type="text" id="mi-city" class="form-input" placeholder="e.g. Puducherry">
+                    </div>
+                </div>
+                <div class="section-title">Second Internship (Optional)</div>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label class="form-label">Internship Place 02</label>
+                        <input type="text" id="mi-place-02" class="form-input" placeholder="Organization name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration 02</label>
+                        <input type="text" id="mi-duration-02" class="form-input" placeholder="e.g. 1 Week">
+                    </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label class="form-label">City 02</label>
+                        <input type="text" id="mi-city-02" class="form-input" placeholder="e.g. Chennai">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Org Type</label>
+                        <select id="mi-org-type" class="form-select">
+                            <option value="Govt.">Govt.</option>
                             <option value="Govt./Pvt">Govt./Pvt</option>
-                            <option value="Government">Government</option>
                             <option value="Private">Private</option>
                             <option value="NGO">NGO</option>
                         </select>
                     </div>
                 </div>
-
-                <!-- Hidden or Optional legacy fields -->
 
                 <div class="button-group">
                     <button type="submit" id="saveStudentBtn" class="btn btn-primary">Save Internship</button>
@@ -235,28 +256,33 @@
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
                 <h2>Edit Internship Record</h2>
-                <button class="close-modal" onclick="document.getElementById('editInternshipModal').style.display='none'">&times;</button>
+                <button class="close-modal"
+                    onclick="document.getElementById('editInternshipModal').style.display='none'">&times;</button>
             </div>
             <form id="editInternshipForm">
                 <input type="hidden" id="ei-id">
                 <div id="editInternModalError" class="alert alert-error"></div>
-                
                 <div class="form-group-row">
-                    <div class="form-group">
-                        <label class="form-label">Student</label>
-                        <input type="text" id="ei-student-name" class="form-input" disabled>
-                    </div>
                     <div class="form-group">
                         <label class="form-label">Year</label>
                         <input type="text" id="ei-year" class="form-input" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Enrolment No.</label>
+                        <input type="text" id="ei-enrolment" class="form-input" required>
+                    </div>
                 </div>
-
                 <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Programme</label>
                         <input type="text" id="ei-programme" class="form-input" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Name of Student</label>
+                        <input type="text" id="ei-name" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Gender</label>
                         <select id="ei-gender" class="form-select" required>
@@ -265,25 +291,52 @@
                             <option value="Other">Other</option>
                         </select>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Role</label>
+                        <input type="text" id="ei-role" class="form-input">
+                    </div>
                 </div>
-
                 <div class="form-group-row">
+                    <div class="form-group">
+                        <label class="form-label">Salary (CTC)</label>
+                        <input type="text" id="ei-salary" class="form-input">
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Internship Place</label>
                         <input type="text" id="ei-place" class="form-input" required>
                     </div>
+                </div>
+                <div class="form-group-row">
+                    <div class="form-group">
+                        <label class="form-label">Duration 01</label>
+                        <input type="text" id="ei-duration" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City 01</label>
+                        <input type="text" id="ei-city" class="form-input">
+                    </div>
+                </div>
+                <div class="section-title">Second Internship (Optional)</div>
+                <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Internship Place 02</label>
                         <input type="text" id="ei-place-02" class="form-input">
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration 02</label>
+                        <input type="text" id="ei-duration-02" class="form-input">
+                    </div>
                 </div>
-
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Type of Organization</label>
-                        <select id="ei-org-type" class="form-select" required>
+                        <label class="form-label">City 02</label>
+                        <input type="text" id="ei-city-02" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Org Type</label>
+                        <select id="ei-org-type" class="form-select">
+                            <option value="Govt.">Govt.</option>
                             <option value="Govt./Pvt">Govt./Pvt</option>
-                            <option value="Government">Government</option>
                             <option value="Private">Private</option>
                             <option value="NGO">NGO</option>
                         </select>
@@ -292,7 +345,8 @@
 
                 <div class="button-group">
                     <button type="submit" id="editInternshipSubmitBtn" class="btn btn-primary">Save Changes</button>
-                    <button type="button" class="btn btn-secondary" onclick="document.getElementById('editInternshipModal').style.display='none'">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        onclick="document.getElementById('editInternshipModal').style.display='none'">Cancel</button>
                 </div>
             </form>
         </div>
@@ -303,35 +357,44 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Import Internships from Excel</h2>
-                <button class="close-modal" onclick="document.getElementById('importInternshipModal').style.display='none'">&times;</button>
+                <button class="close-modal"
+                    onclick="document.getElementById('importInternshipModal').style.display='none'">&times;</button>
             </div>
             <div style="padding: 20px;">
-                <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with headers:<br>
-                <strong>Year, Enrolment No., Programme, Gender, Internship Place, Internship Place 02, Type of Organization</strong></p>
+                <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls)
+                    with headers:<br>
+                    <strong>Year, Enrolment No., Programme, Gender, Internship Place, Internship Place 02, Duration,
+                        City, Type of Organization</strong>
+                </p>
                 <form id="importInternshipForm">
-                    <div id="importInternError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;"></div>
+                    <div id="importInternError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;">
+                    </div>
                     <div class="form-group">
-                        <input type="file" id="importInternFile" accept=".xlsx, .xls" required style="border: 1px dashed #555; padding: 20px; width: 100%; border-radius: 8px; color: white;">
+                        <input type="file" id="importInternFile" accept=".xlsx, .xls" required
+                            style="border: 1px dashed #555; padding: 20px; width: 100%; border-radius: 8px; color: white;">
                     </div>
                     <div class="modal-buttons" style="margin-top: 20px;">
-                        <button type="submit" class="btn btn-primary" id="importInternSubmitBtn">Start Import</button>
+                        <button type="submit" class="btn btn-primary" id="importInternSubmitBtn">Start
+                            Import</button>
                     </div>
                 </form>
                 <div id="importInternStatus" style="margin-top: 15px; font-size: 14px; display: none;">
-                    <div class="spinner" style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div class="spinner"
+                        style="display: inline-block; width: 15px; height: 15px; border: 2px solid #4ade80; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;">
+                    </div>
                     <span style="margin-left: 10px;">Processing file...</span>
                 </div>
             </div>
         </div>
     </div>
     <script src="auth-guard.js?v=3"></script>
-        <!-- CDN: Supabase JS -->
+    <!-- CDN: Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- CDN: SheetJS for Excel import/export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase config (change only this file when moving to a new host) -->
     <script src="supabase-client.js"></script>
-    <script src="api.js"></script>
+    <script src="api.js?v=5"></script>
     <script src="script.js?v=3"></script>
     <script>
         (function () {
@@ -357,16 +420,22 @@
                     return;
                 }
                 tbody.innerHTML = list.map((item, i) => `
-                    <div class="table-row internships-row" data-id="${item.id}" style="grid-template-columns: 60px 80px 140px 120px 200px 80px 200px 200px 150px 80px;">
+                    <div class="table-row internships-row" data-id="${item.id}">
                         <div>${i + 1}</div>
                         <div>${esc(item.year)}</div>
-                        <div style="font-family:monospace;">${esc(item.enrollment_number)}</div>
+                        <div style="font-family:monospace;">${esc(item.enrolment_no)}</div>
                         <div>${esc(item.programme)}</div>
-                        <div class="student-name">${esc(item.student_name)}</div>
+                        <div class="student-name">${esc(item.name_of_student)}</div>
                         <div>${esc(item.gender)}</div>
-                        <div>${esc(item.internship_place)}</div>
+                        <div style="color:#bbb;">${esc(item.role || 'Intern')}</div>
+                        <div style="color:#22c55e;">${esc(item.salary || '-')}</div>
+                        <div>${esc(item.internship_place_01)}</div>
+                        <div>${esc(item.duration_of_intership_01)}</div>
+                        <div>${esc(item.city_of_intership_01)}</div>
                         <div>${esc(item.internship_place_02)}</div>
-                        <div>${esc(item.organization_type)}</div>
+                        <div>${esc(item.duration_of_intership_02)}</div>
+                        <div>${esc(item.city_of_intership_02)}</div>
+                        <div>${esc(item.type_of_organization)}</div>
                         <div style="display:flex;gap:5px;">
                             <button class="action-btn btn-edit-intern" data-id="${item.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
                             <button class="action-btn btn-del-intern" data-id="${item.id}" title="Delete"><i class="bi bi-trash"></i></button>
@@ -381,13 +450,20 @@
                         const item = data.find(x => x.id == id);
                         if (!item) return;
                         document.getElementById('ei-id').value = item.id;
-                        document.getElementById('ei-student-name').value = item.student_name;
                         document.getElementById('ei-year').value = item.year || '';
+                        document.getElementById('ei-enrolment').value = item.enrolment_no || '';
                         document.getElementById('ei-programme').value = item.programme || '';
+                        document.getElementById('ei-name').value = item.name_of_student || '';
                         document.getElementById('ei-gender').value = item.gender || 'Male';
-                        document.getElementById('ei-place').value = item.internship_place || '';
+                        document.getElementById('ei-role').value = item.role || '';
+                        document.getElementById('ei-salary').value = item.salary || '';
+                        document.getElementById('ei-place').value = item.internship_place_01 || '';
+                        document.getElementById('ei-duration').value = item.duration_of_intership_01 || '';
+                        document.getElementById('ei-city').value = item.city_of_intership_01 || '';
                         document.getElementById('ei-place-02').value = item.internship_place_02 || '';
-                        document.getElementById('ei-org-type').value = item.organization_type || 'Govt./Pvt';
+                        document.getElementById('ei-duration-02').value = item.duration_of_intership_02 || '';
+                        document.getElementById('ei-city-02').value = item.city_of_intership_02 || '';
+                        document.getElementById('ei-org-type').value = item.type_of_organization || 'Govt.';
                         document.getElementById('editInternshipModal').style.display = 'flex';
                     });
                 });
@@ -405,24 +481,14 @@
             if (searchEl) searchEl.addEventListener('input', () => {
                 const q = searchEl.value.toLowerCase();
                 render(data.filter(i =>
-                    (i.student_name || '').toLowerCase().includes(q) ||
-                    (i.enrollment_number || '').toLowerCase().includes(q) ||
-                    (i.internship_place || '').toLowerCase().includes(q)
+                    (i.name_of_student || '').toLowerCase().includes(q) ||
+                    (i.enrolment_no || '').toLowerCase().includes(q) ||
+                    (i.internship_place_01 || '').toLowerCase().includes(q)
                 ));
             });
 
             document.addEventListener('DOMContentLoaded', async () => {
                 load();
-
-                // Populate Student Dropdown
-                try {
-                    const students = await getStudents();
-                    const stuSelect = document.getElementById('mi-student');
-                    if (stuSelect) {
-                        stuSelect.innerHTML = '<option value="">Select Student...</option>' +
-                            (students || []).map(s => `<option value="${s.enrollment_number}">${esc(s.student_name)} (${s.enrollment_number})</option>`).join('');
-                    }
-                } catch (e) { console.warn("Could not load dropdowns:", e); }
             });
 
             // Modal triggers
@@ -448,13 +514,20 @@
 
                 try {
                     await createInternship({
-                        enrollment_number: document.getElementById('mi-student').value,
                         year: document.getElementById('mi-year').value,
+                        enrolment_no: document.getElementById('mi-enrolment').value,
                         programme: document.getElementById('mi-programme').value,
+                        name_of_student: document.getElementById('mi-name').value,
                         gender: document.getElementById('mi-gender').value,
-                        internship_place: document.getElementById('mi-place').value,
+                        role: document.getElementById('mi-role').value || '',
+                        salary: document.getElementById('mi-salary').value || '',
+                        internship_place_01: document.getElementById('mi-place').value,
+                        duration_of_intership_01: document.getElementById('mi-duration').value || '',
+                        city_of_intership_01: document.getElementById('mi-city').value || '',
                         internship_place_02: document.getElementById('mi-place-02').value || '',
-                        organization_type: document.getElementById('mi-org-type').value
+                        duration_of_intership_02: document.getElementById('mi-duration-02').value || '',
+                        city_of_intership_02: document.getElementById('mi-city-02').value || '',
+                        type_of_organization: document.getElementById('mi-org-type').value || ''
                     });
                     const modal = document.getElementById('studentModal');
                     if (modal) modal.style.display = 'none';
@@ -479,11 +552,19 @@
                 try {
                     await updateInternship(id, {
                         year: document.getElementById('ei-year').value,
+                        enrolment_no: document.getElementById('ei-enrolment').value,
                         programme: document.getElementById('ei-programme').value,
+                        name_of_student: document.getElementById('ei-name').value,
                         gender: document.getElementById('ei-gender').value,
-                        internship_place: document.getElementById('ei-place').value,
+                        role: document.getElementById('ei-role').value || '',
+                        salary: document.getElementById('ei-salary').value || '',
+                        internship_place_01: document.getElementById('ei-place').value,
+                        duration_of_intership_01: document.getElementById('ei-duration').value || '',
+                        city_of_intership_01: document.getElementById('ei-city').value || '',
                         internship_place_02: document.getElementById('ei-place-02').value || '',
-                        organization_type: document.getElementById('ei-org-type').value
+                        duration_of_intership_02: document.getElementById('ei-duration-02').value || '',
+                        city_of_intership_02: document.getElementById('ei-city-02').value || '',
+                        type_of_organization: document.getElementById('ei-org-type').value || ''
                     });
                     document.getElementById('editInternshipModal').style.display = 'none';
                     load();

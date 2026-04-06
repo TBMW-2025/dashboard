@@ -14,15 +14,15 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase config (change only this file when moving to a new host) -->
     <script src="supabase-client.js"></script>
-    <script src="api.js"></script>
+    <script src="api.js?v=6"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="styles.css?v=fresh_final">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
 <body>
     <!-- Sidebar Toggle Button -->
-    <button id="sidebarToggle" class="sidebar-toggle">☰</button>
+    <button id="sidebarToggle" class="sidebar-toggle">   </button>
 
     <!-- Sidebar Overlay (for mobile) -->
     <div class="sidebar-overlay"></div>
@@ -41,10 +41,6 @@
                     <a href="students.html" class="nav-item ">
                         <i class="bi bi-people-fill"></i>
                         <span>Students</span>
-                    </a>
-                    <a href="companies.html" class="nav-item ">
-                        <i class="bi bi-building"></i>
-                        <span>Companies</span>
                     </a>
                     <a href="internships.html" class="nav-item ">
                         <i class="bi bi-person-workspace"></i>
@@ -85,63 +81,59 @@
         </div>
 
         <!-- Main Content -->
-        <div class="main-content reports">
-            <!-- Top Header -->
-            <div class="header">
-                <div class="header-left">
-
-                    <div class="header-title">
-                        <h1>Placement Monitor Dashboard</h1>
-                        <div class="header-subtitle" id="headerSubtitle">Future Leaders and Security Intelligence</div>
-                    </div>
+        <div class="main-content dashboard-layout-container">
+            <!-- TOP HEADER ROW -->
+            <div class="top-header-row">
+                <div>
+                    <h1>Statistical Reports</h1>
+                    <div class="subtitle">Future Leaders and Security Intelligence</div>
                 </div>
-                <div class="header-right">
-                    <input type="text" class="search-bar" placeholder="Search for anything...">
-                    <div class="header-icons">
-                        <button class="icon-btn notification-toggle">
-                            🔔
-                            <span class="notification-badge">1</span>
-                        </button>
-                    </div>
+                <div class="header-actions-unified">
+                    <input type="text" class="search-bar-unified" placeholder="Search reports...">
+                    <button class="select-unified" onclick="window.print()" style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-printer"></i> Print Report
+                    </button>
                 </div>
             </div>
 
-            <!-- Content Section -->
-            <div class="content-title">Statistical Reports</div>
-
             <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">&#128101;</div>
-                    <div class="stat-label">Total Students</div>
-                    <div class="stat-value" id="rpt-total">—</div>
-                    <div class="stat-change" id="rpt-placed-pct">—</div>
+            <div class="stats-grid-4">
+                <div class="stat-card-new">
+                    <div class="card-icon" style="color: var(--accent-blue);">👥</div>
+                    <div class="card-label">Total Students</div>
+                    <div class="card-value" id="rpt-total">0</div>
+                    <div class="card-label" id="rpt-placed-pct" style="text-transform: none; font-size: 10px;">0% Placed</div>
+                    <div class="accent-line" style="background: var(--accent-blue);"></div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">&#10003;</div>
-                    <div class="stat-label">Total Placements</div>
-                    <div class="stat-value" id="rpt-placed">—</div>
-                    <div class="stat-change" id="rpt-pending">Pending: —</div>
+                <div class="stat-card-new">
+                    <div class="card-icon" style="color: var(--accent-green);">💼</div>
+                    <div class="card-label">Total Placements</div>
+                    <div class="card-value" id="rpt-placed">0</div>
+                    <div class="card-label" id="rpt-pending" style="text-transform: none; font-size: 10px;">Pending: 0</div>
+                    <div class="accent-line" style="background: var(--accent-green);"></div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">&#128202;</div>
-                    <div class="stat-label">Placement Rate</div>
-                    <div class="stat-value" id="rpt-rate">—</div>
-                    <div class="stat-change">Based on live data</div>
+                <div class="stat-card-new">
+                    <div class="card-icon" style="color: var(--accent-orange);">📈</div>
+                    <div class="card-label">Placement Rate</div>
+                    <div class="card-value" id="rpt-rate">0%</div>
+                    <div class="card-label" style="text-transform: none; font-size: 10px;">Based on live data</div>
+                    <div class="accent-line" style="background: var(--accent-orange);"></div>
                 </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">&#127970;</div>
-                    <div class="stat-label">Companies Visited</div>
-                    <div class="stat-value" id="rpt-companies">—</div>
-                    <div class="stat-change" id="rpt-internships">Internships: —</div>
+                <div class="stat-card-new">
+                    <div class="card-icon" style="color: var(--accent-purple);">🏢</div>
+                    <div class="card-label">Companies Visited</div>
+                    <div class="card-value" id="rpt-companies">0</div>
+                    <div class="card-label" id="rpt-internships" style="text-transform: none; font-size: 10px;">Internships: 0</div>
+                    <div class="accent-line" style="background: var(--accent-purple);"></div>
                 </div>
             </div>
 
             <!-- Charts Section -->
-            <div class="charts-section">
+            <div class="widget-panel">
+                <div class="charts-section">
                 <div class="chart-card">
                     <div class="chart-title">Placement Status Distribution</div>
                     <div class="chart-container">
@@ -169,292 +161,278 @@
                         <canvas id="salaryDistributionChart"></canvas>
                     </div>
                 </div>
+
+                <div class="chart-card">
+                    <div class="chart-title">Field Visits by Program</div>
+                    <div class="chart-container">
+                        <canvas id="fieldVisitChart"></canvas>
+                    </div>
+                </div>
+                </div>
             </div>
 
             <!-- Metrics Section -->
-            <div class="metrics-section">
+            <div class="widget-panel">
+                <div class="metrics-section">
                 <div class="metrics-card">
                     <div class="metrics-title">Key Metrics</div>
 
                     <div class="metric-row">
                         <span class="metric-label">Highest Package</span>
-                        <span class="metric-value success" id="km-highest">—</span>
+                        <span class="metric-value success" id="km-highest">   </span>
                     </div>
 
                     <div class="metric-row">
                         <span class="metric-label">Average Package</span>
-                        <span class="metric-value" id="km-avg">—</span>
+                        <span class="metric-value" id="km-avg">   </span>
                     </div>
 
                     <div class="metric-row">
                         <span class="metric-label">Lowest Package</span>
-                        <span class="metric-value" id="km-lowest">—</span>
+                        <span class="metric-value" id="km-lowest">   </span>
                     </div>
 
                     <div class="metric-row">
                         <span class="metric-label">Unplaced Students</span>
-                        <span class="metric-value" id="km-unplaced">—</span>
+                        <span class="metric-value" id="km-unplaced">   </span>
                     </div>
 
                     <div class="metric-row">
                         <span class="metric-label">Total Internships</span>
-                        <span class="metric-value success" id="km-internships">—</span>
+                        <span class="metric-value success" id="km-internships">   </span>
                     </div>
 
                     <div class="metric-row">
                         <span class="metric-label">Active Companies</span>
-                        <span class="metric-value" id="km-companies">—</span>
+                        <span class="metric-value" id="km-companies">   </span>
                     </div>
                 </div>
 
                 <div class="metrics-card">
                     <div class="metrics-title">Programme Distribution</div>
-                    <div id="deptBars"><div style="padding:12px;opacity:0.5;">Loading…</div></div>
+                    <div id="deptBars"><div style="padding:12px;opacity:0.5;">Loading   </div></div>
                 </div>
             </div>
-            <!-- ===================== FOOTER ===================== -->
-            <div class="footer">
-
-                <div>
-                    <h3>Rashtriya Raksha University</h3>
-                    <p>Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology[PIHMCT]</p>
-                    <p>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
+            <!-- FOOTER -->
+            <footer class="app-footer"
+                style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
+                    <div>
+                        <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha University</h3>
+                        <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus, Pondicherry
+                            Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To Mahalakshmi Nagar,
+                            Murungapakkam, Puducherry – 605004</p>
+                    </div>
+                    <div>
+                        <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Contact</h3>
+                        <p style="font-size: 12px; color: #8b949e;">Email: pulse-r24@rru.ac.in</p>
+                        <p style="font-size: 12px; color: #8b949e;">Phone: +91 79 XXXXXXXX</p>
+                    </div>
+                    <div>
+                        <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Follow</h3>
+                        <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                style="color: inherit; text-decoration: none;">Instagram</a></p>
+                        <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                style="color: inherit; text-decoration: none;">LinkedIn</a></p>
+                    </div>
                 </div>
-
-                <div>
-                    <h3>Contact</h3>
-                    <p>Email: pulse-r24@rru.ac.in</p>
-                    <p>Phone: +91 79 XXXXXXXX</p>
-                    <p>Office:</p>
-                    <p>Web:</p>
-                </div>
-
-                <div>
-                    <h3>Follow</h3>
-                    <p>Instagram:</p>
-                    <p>LinkedIn:</p>
-                </div>
-
-            </div>
+            </footer>
         </div>
     </div>
     <script src="script.js?v=3"></script>
     <script>
     document.addEventListener('DOMContentLoaded', async function() {
-        // ─ Stats cards
-        try {
-            const s = await getStats();
-            if(s) {
-                document.getElementById('rpt-total').textContent = s.total_students;
-                document.getElementById('rpt-placed').textContent = s.placed_students;
-                document.getElementById('rpt-rate').textContent = s.placement_rate + '%';
-                document.getElementById('rpt-companies').textContent = s.total_companies;
-                document.getElementById('rpt-placed-pct').textContent = `Placement rate: ${s.placement_rate}%`;
-                document.getElementById('rpt-pending').textContent = `Pending: ${s.pending_placements}`;
-                document.getElementById('rpt-internships').textContent = `Internships: ${s.total_internships}`;
+        async function loadReportsData() {
+            try {
+                const [stats, studentsRaw, placements, internships, fieldVisits] = await Promise.all([
+                    getStats().catch(() => ({ total_students: 0, placed_students: 0, total_companies: 0, total_internships: 0 })),
+                    getStudents().catch(() => []),
+                    getPlacements().catch(() => []),
+                    getInternships().catch(() => []),
+                    getFieldVisits().catch(() => [])
+                ]);
+
+                let totalStudents = stats.total_students;
+                if (totalStudents === 0) {
+                    const uniqueIds = new Set([
+                        ...placements.map(x => x.enrollment_number || x.name || x.student_name),
+                        ...internships.map(x => x.enrolment_no || x.name_of_student || x.student_name)
+                    ].filter(Boolean));
+                    totalStudents = uniqueIds.size || studentsRaw.length;
+                }
+
+                let totalCompanies = stats.total_companies;
+                const placedStudents = placements.length || stats.placed_students;
+                const placementRate = totalStudents ? Math.round((placedStudents / totalStudents) * 100) : 0;
+
+                const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+                
+                set('rpt-total', totalStudents);
+                set('rpt-placed', placedStudents);
+                set('rpt-rate', placementRate + '%');
+                set('rpt-companies', totalCompanies || new Set(placements.map(p => p.company)).size);
+                set('rpt-placed-pct', `Placement rate: ${placementRate}%`);
+                
+                const pendingCount = placements.filter(p => (p.status||'').toLowerCase().includes('pending')).length;
+                set('rpt-pending', `Pending: ${pendingCount}`);
+                set('rpt-internships', `Internships: ${internships.length}`);
+
+                const parseLPA = (s) => {
+                    if (!s) return 0;
+                    const clean = String(s).replace(/[^\d.]/g, '');
+                    const val = parseFloat(clean);
+                    return val > 1000 ? val / 100000 : val;
+                };
+
+                const salaries = placements.map(p => parseLPA(p.salary_lpa || p.ctc || 0)).filter(s => s > 0);
+                const highest = salaries.length ? Math.max(...salaries) : 0;
+                const lowest  = salaries.length ? Math.min(...salaries) : 0;
+                const avg     = salaries.length ? (salaries.reduce((a,b)=>a+b,0)/salaries.length) : 0;
+
+                set('km-highest', highest > 0 ? highest.toFixed(1) + ' LPA' : 'N/A');
+                set('km-avg', avg > 0 ? avg.toFixed(1) + ' LPA' : 'N/A');
+                set('km-lowest', lowest > 0 ? lowest.toFixed(1) + ' LPA' : 'N/A');
+                set('km-unplaced', Math.max(0, totalStudents - placedStudents));
+                set('km-internships', internships.length);
+                set('km-companies', totalCompanies || new Set(placements.map(p => p.company)).size);
+
+            } catch (e) {
+                console.error('Reports data load failed:', e);
             }
-        } catch(e) { console.warn('Stats error', e); }
+        }
 
-        // ─ Department bars (sidebar metrics card)
-        try {
-            const depts = await getDeptStats();
-            const barsEl = document.getElementById('deptBars');
-            if(depts && barsEl) {
-                const max = Math.max(...depts.map(d => d.total), 1);
-                barsEl.innerHTML = depts.map(d => `
-                    <div class="dept-item">
-                        <span class="dept-name">${d.programme}</span>
-                        <div class="dept-bar"><div class="dept-bar-fill" style="width:${(d.total/max*100).toFixed(0)}%"></div></div>
-                        <span class="dept-count">${d.placed}/${d.total}</span>
-                    </div>`).join('');
-            }
-        } catch(e) { console.warn('Dept error', e); }
+        async function renderCharts() {
+            try {
+                const [students, placements, depts, yearly, salaries, fieldVisits] = await Promise.all([
+                    getStudents().catch(() => []), 
+                    getPlacements().catch(() => []),
+                    getDeptStats().catch(() => []),
+                    getStudentsYearly().catch(() => ({ labels: [], total: [], placed: [] })),
+                    getSalaryDist().catch(() => []),
+                    getFieldVisits().catch(() => [])
+                ]);
 
-        // ─ Key Metrics (live from API) ─────────────────────────────────────
-        try {
-            const [students, placements, stats] = await Promise.all([
-                getStudents().catch(() => []),
-                getPlacements().catch(() => []),
-                getStats().catch(() => null)
-            ]);
-
-            const placed = placements.filter(p => p.salary_lpa && p.status === 'Placed');
-            const salaries = placed.map(p => parseFloat(p.salary_lpa)).filter(s => !isNaN(s) && s > 0);
-
-            const highest  = salaries.length ? Math.max(...salaries) : null;
-            const lowest   = salaries.length ? Math.min(...salaries) : null;
-            const avg      = salaries.length ? (salaries.reduce((a,b)=>a+b,0)/salaries.length) : null;
-            const unplaced = students.filter(s => s.placement_status !== 'Yes').length;
-
-            const fmt = v => v !== null ? v.toFixed(1) + ' LPA' : 'N/A';
-            const set = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val; };
-
-            set('km-highest',    fmt(highest));
-            set('km-avg',        fmt(avg));
-            set('km-lowest',     fmt(lowest));
-            set('km-unplaced',   unplaced);
-            set('km-internships', stats ? stats.total_internships : 'N/A');
-            set('km-companies',  stats ? stats.total_companies    : 'N/A');
-        } catch(e) { console.warn('Key metrics error', e); }
-
-        // ─── Chart 1: Placement Status Distribution (Doughnut) ────────────────
-        // Uses Student.placement_status directly (same source as Students page)
-        // Buckets: Placed (Yes), Not Placed (No / Not Placed)
-        try {
-            const students = await getStudents() || [];
-            const placed    = students.filter(s => s.placement_status === 'Yes').length;
-            const notPlaced = students.filter(s => s.placement_status !== 'Yes').length;
-
-            const statusCtx = document.getElementById('placementStatusChart');
-            if (statusCtx) {
-                new Chart(statusCtx.getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Placed', 'Not Placed'],
-                        datasets: [{
-                            data: [placed, notPlaced],
-                            backgroundColor: ['#22c55e', '#ef4444'],
-                            borderWidth: 2,
-                            borderColor: '#1a1f36'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: { color: '#aaa', font: { size: 12 }, padding: 16 }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: ctx => {
-                                        const total = placed + notPlaced;
-                                        const pct = total ? ((ctx.raw / total) * 100).toFixed(1) : 0;
-                                        return ` ${ctx.label}: ${ctx.raw} (${pct}%)`;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-        } catch(e) { console.warn('Status chart error', e); }
-
-        // ─── Chart 2: Department-wise Placement (Grouped Bar) ─────────────────
-        // Uses the /api/reports/department endpoint — same data the placements
-        // page references for student department_course breakdowns
-        try {
-            const depts = await getDeptStats();
-            const deptCtx = document.getElementById('deptPlacementChart');
-            if (depts && depts.length && deptCtx) {
-                new Chart(deptCtx.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: depts.map(d => d.programme),
-                        datasets: [
-                            {
-                                label: 'Placed',
-                                data: depts.map(d => d.placed),
-                                backgroundColor: '#22c55e',
-                                borderRadius: 4
-                            },
-                            {
-                                label: 'Total Students',
-                                data: depts.map(d => d.total),
-                                backgroundColor: '#3b82f6',
-                                borderRadius: 4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: { color: '#aaa', font: { size: 11 } }
-                            }
+                // Chart 1: Placement Distribution
+                const statusCtx = document.getElementById('placementStatusChart');
+                if (statusCtx) {
+                    const placed = placements.length;
+                    const total = Math.max(students.length, placed);
+                    if (window._statusChart) window._statusChart.destroy();
+                    window._statusChart = new Chart(statusCtx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Placed', 'Not Placed'],
+                            datasets: [{ data: [placed, Math.max(0, total - placed)], backgroundColor: ['#22c55e', '#ef4444'], borderWidth: 0 }]
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { color: '#888', precision: 0 },
-                                grid: { color: '#2a2f4a' }
-                            },
-                            x: {
-                                ticks: { color: '#888' },
-                                grid: { display: false }
-                            }
-                        }
-                    }
-                });
-            }
-        } catch(e) { console.warn('Dept chart error', e); }
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#aaa' } } } }
+                    });
+                }
 
-        // ─── Chart 3: Yearly Student & Placement Trend (Grouped Bar) ────────────
-        // Uses /api/reports/students-yearly — groups Student.created_at by year
-        // Shows total enrolled students vs placed students per year
-        try {
-            const yearly = await getStudentsYearly();
-            const yearlyCtx = document.getElementById('yearlyTrendChart');
-            if (yearly && yearlyCtx && yearly.labels && yearly.labels.length > 0) {
-                new Chart(yearlyCtx.getContext('2d'), {
-                    type: 'bar',
-                    data: {
-                        labels: yearly.labels,
-                        datasets: [
-                            {
-                                label: 'Total Students',
-                                data: yearly.total,
-                                backgroundColor: '#3b82f6',
-                                borderRadius: 4
-                            },
-                            {
-                                label: 'Placed',
-                                data: yearly.placed,
-                                backgroundColor: '#22c55e',
-                                borderRadius: 4
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: { color: '#aaa', font: { size: 11 } }
-                            }
+                // Chart 2: Programme-wise
+                const deptCtx = document.getElementById('deptPlacementChart');
+                if (deptCtx && depts.length) {
+                    if (window._deptChart) window._deptChart.destroy();
+                    window._deptChart = new Chart(deptCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: depts.map(d => d.programme),
+                            datasets: [
+                                { label: 'Placed', data: depts.map(d => d.placed), backgroundColor: '#22c55e' },
+                                { label: 'Total', data: depts.map(d => d.total), backgroundColor: '#3b82f6' }
+                            ]
                         },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { color: '#888', stepSize: 1, precision: 0 },
-                                grid: { color: '#2a2f4a' }
-                            },
-                            x: {
-                                ticks: { color: '#888' },
-                                grid: { display: false }
+                        options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } } }
+                    });
+                }
+
+                // Chart 3: Yearly Trend
+                const yearlyCtx = document.getElementById('yearlyTrendChart');
+                if (yearlyCtx && yearly.labels.length) {
+                    // Filter for years >= 2023
+                    const filteredIndices = yearly.labels
+                        .map((l, i) => parseInt(l) >= 2023 ? i : -1)
+                        .filter(i => i !== -1);
+                    
+                    const filteredLabels = filteredIndices.map(i => yearly.labels[i]);
+                    const filteredTotal  = filteredIndices.map(i => yearly.total[i]);
+                    const filteredPlaced = filteredIndices.map(i => yearly.placed[i]);
+
+                    if (window._yearlyChart) window._yearlyChart.destroy();
+                    window._yearlyChart = new Chart(yearlyCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: filteredLabels,
+                                datasets: [
+                                { label: 'Total Students', data: filteredTotal, backgroundColor: '#3b82f6', borderRadius: 4 },
+                                { label: 'Placed Students', data: filteredPlaced, backgroundColor: '#22c55e', borderRadius: 4 }
+                            ]
+                        },
+                        options: { 
+                            responsive: true, 
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: { beginAtZero: true, ticks: { color: '#888' } },
+                                x: { ticks: { color: '#888' } }
                             }
                         }
-                    }
-                });
-            } else if (yearlyCtx) {
-                yearlyCtx.parentElement.innerHTML = '<div style="padding:40px;text-align:center;opacity:0.5;">No student data available yet.</div>';
-            }
-        } catch(e) { console.warn('Yearly trend error', e); }
+                    });
+                }
 
-        // ─── Chart 4: Salary Range Distribution (Bar) ──────────────────────────
-        try {
-            const salaries = await getSalaryDist();
-            const salaryCtx = document.getElementById('salaryDistributionChart');
-            if(salaries && salaryCtx) {
-                new Chart(salaryCtx.getContext('2d'), {
-                    type: 'bar',
-                    data: { labels: salaries.map(s => s.range), datasets: [{ label: 'Students', data: salaries.map(s => s.count), backgroundColor: '#ff6b35', borderRadius: 5 }] },
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#aaa', font: { size: 11 } } } }, scales: { y: { ticks: { color: '#888' }, grid: { color: '#2a2f4a' }, beginAtZero: true }, x: { ticks: { color: '#888' }, grid: { color: 'transparent' } } } }
-                });
+                // Chart 4: Salary Distribution
+                const salaryCtx = document.getElementById('salaryDistributionChart');
+                if (salaryCtx && salaries.length) {
+                    if (window._salaryChart) window._salaryChart.destroy();
+                    window._salaryChart = new Chart(salaryCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: salaries.map(s => s.range),
+                            datasets: [{ label: 'Students', data: salaries.map(s => s.count), backgroundColor: '#ff6b35' }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false }
+                    });
+                }
+
+                // Chart 5: Field Visits by Program (NEW)
+                const visitCtx = document.getElementById('fieldVisitChart');
+                if (visitCtx && fieldVisits.length) {
+                    const visitMap = {};
+                    fieldVisits.forEach(v => {
+                        const p = v.program_name || 'Other';
+                        visitMap[p] = (visitMap[p] || 0) + 1;
+                    });
+                    const labels = Object.keys(visitMap);
+                    const counts = Object.values(visitMap);
+
+                    if (window._visitChart) window._visitChart.destroy();
+                    window._visitChart = new Chart(visitCtx, {
+                        type: 'pie',
+                        data: {
+                            labels: labels,
+                            datasets: [{ data: counts, backgroundColor: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'] }]
+                        },
+                        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#aaa' } } } }
+                    });
+                }
+
+                // Sidebar Bars
+                const barsEl = document.getElementById('deptBars');
+                if (depts.length && barsEl) {
+                    const max = Math.max(...depts.map(d => d.total), 1);
+                    barsEl.innerHTML = depts.map(d => `
+                        <div class="dept-item">
+                            <span class="dept-name" style="font-size:11px;">${d.programme}</span>
+                            <div class="dept-bar"><div class="dept-bar-fill" style="width:${(d.total/max*100).toFixed(0)}%"></div></div>
+                            <span class="dept-count">${d.placed}/${d.total}</span>
+                        </div>`).join('');
+                }
+
+            } catch (e) {
+                console.warn('Charts render failed:', e);
             }
-        } catch(e) { console.warn('Salary dist error', e); }
+        }
+
+        await loadReportsData();
+        await renderCharts();
     });
     </script>
 </body>

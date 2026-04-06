@@ -11,98 +11,138 @@
     <link rel="stylesheet" href="external-jobs.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <div class="brand">
-                <i class="bi bi-shield-lock-fill"></i>
-                <span>OSINT Jobs</span>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-top">
+                <img src="https://upload.wikimedia.org/wikipedia/en/b/bc/Rashtriya_Raksha_University_logo.png"
+                    alt="Logo" class="sidebar-img-logo">
+                <nav class="sidebar-nav">
+                    <a href="dashboard.html" class="nav-item">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="students.html" class="nav-item">
+                        <i class="bi bi-people-fill"></i>
+                        <span>Students</span>
+                    </a>
+                    <a href="internships.html" class="nav-item">
+                        <i class="bi bi-person-workspace"></i>
+                        <span>Internships</span>
+                    </a>
+                    <a href="field-visits.html" class="nav-item">
+                        <i class="bi bi-pin-map-fill"></i>
+                        <span>Field Visits</span>
+                    </a>
+                    <a href="placements.html" class="nav-item">
+                        <i class="bi bi-briefcase-fill"></i>
+                        <span>Placements</span>
+                    </a>
+                    <a href="external-jobs.html" class="nav-item active">
+                        <i class="bi bi-globe"></i>
+                        <span>External Jobs</span>
+                    </a>
+                    <a href="reports.html" class="nav-item">
+                        <i class="bi bi-bar-chart-fill"></i>
+                        <span>Reports</span>
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <i class="bi bi-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </nav>
             </div>
-            <nav class="nav-menu">
-                <a href="#" class="nav-item active" data-filter="">
-                    <i class="bi bi-grid-fill"></i> All Channels
-                </a>
-                <a href="#" class="nav-item" data-filter="Internship">
-                    <i class="bi bi-mortarboard"></i> Internships
-                </a>
-                <a href="#" class="nav-item" data-filter="Fresher">
-                    <i class="bi bi-briefcase"></i> Fresher Jobs
-                </a>
-                <div class="nav-label">Domains</div>
-                <a href="#" class="nav-item" data-filter="Cyber Security">
-                    <i class="bi bi-terminal"></i> Cyber Security
-                </a>
-                <a href="#" class="nav-item" data-filter="Digital Forensics">
-                    <i class="bi bi-search"></i> Digital Forensics
-                </a>
-                <a href="#" class="nav-item" data-filter="Criminology">
-                    <i class="bi bi-people"></i> Criminology
-                </a>
-                <a href="#" class="nav-item" data-filter="Intelligence">
-                    <i class="bi bi-eye"></i> Intelligence
-                </a>
-                <div class="nav-label">Job Sector</div>
-                <a href="#" class="nav-item" data-filter="Govt">
-                    <i class="bi bi-bank"></i> Govt Jobs
-                </a>
-                <a href="#" class="nav-item" data-filter="Private">
-                    <i class="bi bi-building-gear"></i> Private Sector
-                </a>
-            <div class="sidebar-footer">
-                <p>© 2026 Pulse-R24 Dashboard</p>
-                <div class="user-info">
+
+            <div class="sidebar-bottom">
+                <div class="bottom-icons">
+                    <a href="mailto:pulse-r24@rru.ac.in" class="icon-btn" title="Contact Us"><i
+                            class="bi bi-chat-left-text"></i></a>
+                </div>
+                <div class="user-profile" onclick="window.location.href='dashboard.html'">
                     <div class="avatar">A</div>
-                    <div class="username">Admin Support</div>
+                    <div>
+                        <div class="user-name">Arsh.G</div>
+                        <div class="user-role">Admin</div>
+                    </div>
                 </div>
             </div>
-        </aside>
+        </div>
 
         <!-- Main Content Area -->
-        <main class="main-content">
-            <header class="top-bar">
-                <div class="search-container">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="jobSearch" placeholder="Search roles, companies, or keywords...">
+        <div class="main-content dashboard-layout-container">
+            <!-- TOP HEADER ROW -->
+            <div class="top-header-row">
+                <div>
+                    <h1>OSINT Job Aggregator</h1>
+                    <div class="subtitle">Global Intelligence Gathering & Opportunity Feed</div>
                 </div>
-                <div class="actions">
-                    <button id="refreshBtn" class="btn-refresh" title="Fetch Latest Jobs">
-                        <i class="bi bi-arrow-clockwise"></i> Refresh Feed
+                <div class="header-actions-unified">
+                    <input type="text" id="jobSearch" class="search-bar-unified" style="width: 300px;" placeholder="Search roles, companies, keywords...">
+                    <button id="refreshBtn" class="select-unified" style="width: auto; padding: 10px 15px;">
+                        <i class="bi bi-arrow-clockwise"></i> Refresh
                     </button>
-                    <button class="btn-primary">
+                    <button class="select-unified" style="width: auto; padding: 10px 15px; background: var(--accent-blue);">
                         <i class="bi bi-bell"></i> Alerts
                     </button>
                 </div>
-            </header>
-
-            <section class="feed-header">
-                <div class="feed-info">
-                    <h1 id="feedTitle">Recent Job Opportunities</h1>
-                    <p id="feedStats">Loading intelligence feed...</p>
-                </div>
-                <div class="platform-filter">
-                    <button class="chip active" data-platform="">All Platforms</button>
-                    <button class="chip" data-platform="LinkedIn"><i class="bi bi-linkedin"></i> LinkedIn</button>
-                    <button class="chip" data-platform="Internshala">Internshala</button>
-                    <button class="chip" data-platform="Indeed">Indeed</button>
-                    <button class="chip govt-chip" data-platform="Govt Portal"><i class="bi bi-bank"></i> Govt Portal</button>
-                </div>
-            </section>
-
-            <!-- Job Grid -->
-            <div class="job-grid" id="jobGrid">
-                <!-- Skeleton Loading State -->
-                <div class="skeleton-card"></div>
-                <div class="skeleton-card"></div>
-                <div class="skeleton-card"></div>
             </div>
 
-            <!-- Empty State (Hidden) -->
-            <div id="emptyState" class="empty-state" style="display: none;">
-                <i class="bi bi-search-heart"></i>
-                <h3>No jobs matching your criteria</h3>
-                <p>Try adjusting your filters or search keywords.</p>
+            <div class="widget-panel" style="min-height: 80vh;">
+                <!-- Internal Job Filters (Modern Tabs) -->
+                <div class="domain-tabs" style="display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 1px solid var(--border-color); padding-bottom: 15px; overflow-x: auto;">
+                    <button class="job-filter-tab active" data-filter="">All Channels</button>
+                    <button class="job-filter-tab" data-filter="Internship">Internships</button>
+                    <button class="job-filter-tab" data-filter="Fresher">Full-Time</button>
+                    <span style="color: var(--text-dim); margin: 0 10px; align-self: center;">| Domains:</span>
+                    <button class="job-filter-tab" data-filter="Cyber Security">Cyber</button>
+                    <button class="job-filter-tab" data-filter="Digital Forensics">Forensics</button>
+                    <button class="job-filter-tab" data-filter="Intelligence">Intelligence</button>
+                </div>
+
+                <section class="feed-header">
+                    <div class="feed-info">
+                        <h2 id="feedTitle" style="color:white; font-size: 1.1rem; margin-bottom: 5px;">Active Opportunities</h2>
+                        <p id="feedStats" style="color:var(--text-dim); font-size: 0.9rem;">Gathering intelligence feed...</p>
+                    </div>
+                    <div class="platform-filter">
+                        <button class="chip active" data-platform="">All Platforms</button>
+                        <button class="chip" data-platform="LinkedIn"><i class="bi bi-linkedin"></i> LinkedIn</button>
+                        <button class="chip" data-platform="Internshala">Internshala</button>
+                        <button class="chip" data-platform="Indeed">Indeed</button>
+                        <button class="chip govt-chip" data-platform="Govt Portal"><i class="bi bi-bank"></i> Govt Portal</button>
+                    </div>
+                </section>
+
+                <!-- Job Grid -->
+                <div class="job-grid" id="jobGrid" style="margin-top: 25px;">
+                    <!-- Loading State -->
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+
+                <!-- Empty State (Hidden) -->
+                <div id="emptyState" class="empty-state" style="display: none; padding: 60px; text-align: center; flex-direction: column; align-items: center; gap: 15px;">
+                    <i class="bi bi-search-heart" style="font-size: 3rem; opacity: 0.2;"></i>
+                    <h3>No intelligence match found</h3>
+                    <p style="color: var(--text-dim);">Try adjusting your filters or refine your keywords.</p>
+                </div>
             </div>
-        </main>
+
+            <footer class="app-footer">
+                <div class="app-footer-grid">
+                    <div>
+                        <h3>Rashtriya Raksha University</h3>
+                        <p>Puducherry Campus, PIHMCT</p>
+                        <p>Murungapakkam, Puducherry – 605004</p>
+                    </div>
+                    <div style="margin-top: 10px;">
+                        <p><strong>Email:</strong> pulse-r24@rru.ac.in</p>
+                        <p><strong>Office:</strong> Intelligence Feed</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </div>
 
     <!-- Scripts -->
@@ -113,6 +153,6 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase config (change only this file when moving to a new host) -->
     <script src="supabase-client.js"></script>
-    <script src="api.js"></script>
+    <script src="api.js?v=6"></script>
 </body>
 </html>
