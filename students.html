@@ -104,7 +104,7 @@
                 <div class="table-container">
 
 
-                    <div class="table-header" id="tableHeader">
+                    <div class="table-header students-header" id="tableHeader">
                         <div class="dropdown-header sno">SNo <span class="dropdown-icon">▼</span></div>
                         <div class="dropdown-header">Enrollment No <span class="dropdown-icon">▼</span></div>
                         <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
@@ -402,6 +402,7 @@
 
             // Fit layout
             setTimeout(() => { if (typeof autoFitTables === 'function') autoFitTables(); }, 100);
+            if (window.innerWidth < 1200) { document.querySelector('.table-container').style.overflowX = 'auto'; }
         }
 
         function renderPagination(totalItems) {

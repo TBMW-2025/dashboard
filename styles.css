@@ -627,9 +627,9 @@ body {
 .internships-header,
 .internships-row {
     display: grid !important;
-    grid-template-columns: 40px 60px 140px 100px 180px 70px 150px 100px 160px 90px 100px 160px 90px 100px 100px 70px !important;
-    min-width: 1710px;
-    font-size: 11px;
+    grid-template-columns: 40px 50px 100px 80px 140px 60px 120px 80px 120px 80px 120px 80px 120px 80px 80px 70px !important;
+    min-width: unset !important;
+    font-size: 9.5px !important;
     align-items: center;
 }
 
@@ -637,9 +637,9 @@ body {
 .field_visits-header,
 .field_visits-row {
     display: grid !important;
-    grid-template-columns: 50px 220px 120px 200px 160px 160px 250px 140px 100px !important;
-    min-width: 1400px;
-    font-size: 11px;
+    grid-template-columns: 50px 1.5fr 1fr 1fr 1fr 1fr 1.5fr 1fr 100px !important;
+    min-width: unset !important;
+    font-size: 10.5px !important;
     align-items: center;
 }
 
@@ -647,9 +647,9 @@ body {
 .students-header,
 .students-row {
     display: grid !important;
-    grid-template-columns: 40px 170px 130px 180px 105px 125px 115px 90px 105px !important;
-    min-width: 1060px;
-    font-size: 10px;
+    grid-template-columns: 40px 130px 110px 130px 100px 100px 100px 80px 90px !important;
+    min-width: unset !important;
+    font-size: 10px !important;
     align-items: center;
 }
 
@@ -2312,6 +2312,3 @@ tbody tr:hover {
     margin: 0 15px;
 }
 
-font-size: 14px;
-margin: 0 15px;
-}
