@@ -618,9 +618,13 @@ body {
     min-width: unset;
 }
 
+.placements-header,
 .placements-row {
-    grid-template-columns: 50px 1.5fr 1.7fr 1.5fr 1fr 1fr 1fr 1fr 100px;
-    min-width: unset;
+    display: grid !important;
+    grid-template-columns: 50px 1fr 1fr 1.5fr 1fr 1fr 1fr 100px !important;
+    min-width: unset !important;
+    font-size: 11px !important;
+    align-items: center;
 }
 
 /* Internships Page Grid */
