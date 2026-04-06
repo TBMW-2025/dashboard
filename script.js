@@ -71,8 +71,11 @@ function autoFitTables() {
         container.style.transform = 'none';
         container.style.width = '100%';
         
-        const parentWidth = container.parentElement.clientWidth - 40; // minus some padding
-        const minOptimalWidth = 1100; // The threshold where the 9-column generic table looks acceptable
+        const parentWidth = container.parentElement.clientWidth - 40;
+        
+        // 16-column tables need more room than standard tables
+        let minOptimalWidth = 1150; 
+        if (container.querySelector('.internships-header')) minOptimalWidth = 1600;
         
         // If the viewport is smaller than the optimal width, intelligently scale down the container
         if (parentWidth > 0 && parentWidth < minOptimalWidth) {

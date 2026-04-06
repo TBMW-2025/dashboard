@@ -641,16 +641,17 @@ body {
 .internships-header {
     display: grid !important;
     grid-template-columns: 40px 60px 100px 80px 1.5fr 60px 120px 80px 1fr 80px 1fr 80px 1fr 80px 80px 100px !important;
-    min-width: fit-content !important;
-    font-size: 12px !important;
+    min-width: 1600px !important;
+    font-size: 11px !important;
     font-weight: 600;
     align-items: center;
+    white-space: nowrap;
 }
 
 .internships-row {
     display: grid !important;
     grid-template-columns: 40px 60px 100px 80px 1.5fr 60px 120px 80px 1fr 80px 1fr 80px 1fr 80px 80px 100px !important;
-    min-width: fit-content !important;
+    min-width: 1600px !important;
     font-size: 10.5px !important;
     align-items: center;
 }
