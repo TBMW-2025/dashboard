@@ -425,7 +425,7 @@
                     <div class="table-row internships-row" data-id="${item.id}">
                         <div>${i + 1}</div>
                         <div>${esc(item.year)}</div>
-                        <div style="font-family:monospace;">${esc(item.enrolment_no)}</div>
+                        <div style="font-family:monospace; color:#a78bfa;">${String(item.enrolment_no || '')}</div>
                         <div>${esc(item.programme)}</div>
                         <div class="student-name">${esc(item.name_of_student)}</div>
                         <div>${esc(item.gender)}</div>

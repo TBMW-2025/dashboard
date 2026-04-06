@@ -640,8 +640,8 @@ body {
 /* Internships Page Grid */
 .internships-header {
     display: grid !important;
-    grid-template-columns: 40px 60px 100px 80px 1.5fr 60px 120px 80px 1fr 80px 1fr 80px 1fr 80px 80px 100px !important;
-    min-width: 1600px !important;
+    grid-template-columns: 50px 70px 140px 100px 1.5fr 80px 100px 90px 1.5fr 90px 1fr 1.5fr 90px 1fr 100px 100px !important;
+    min-width: 1700px !important;
     font-size: 11px !important;
     font-weight: 600;
     align-items: center;
@@ -650,8 +650,8 @@ body {
 
 .internships-row {
     display: grid !important;
-    grid-template-columns: 40px 60px 100px 80px 1.5fr 60px 120px 80px 1fr 80px 1fr 80px 1fr 80px 80px 100px !important;
-    min-width: 1600px !important;
+    grid-template-columns: 50px 70px 140px 100px 1.5fr 80px 100px 90px 1.5fr 90px 1fr 1.5fr 90px 1fr 100px 100px !important;
+    min-width: 1700px !important;
     font-size: 10.5px !important;
     align-items: center;
 }
