@@ -143,7 +143,7 @@ function setupSessionTimeout() {
 function validateSessionIntegrity() {
     const token = localStorage.getItem('pd_token');
     const user = localStorage.getItem('pd_user');
-    
+
     // If we have a user but no token, or vice versa, the session is corrupted
     if ((user && !token) || (!user && token)) {
         logSecurityEvent('Session Integrity Violation', { action: 'logout', reason: 'Token/User mismatch' });
@@ -263,11 +263,11 @@ function logSecurityEvent(eventType, details = {}) {
         userAgent: navigator.userAgent,
         ...details
     };
-    
+
     // In production, this can be sent to a Supabase logging table
     // For now, we use a distinct security log format
     const logMsg = `[SECURITY_EVENT][${timestamp}] ${eventType}: ${JSON.stringify(details)}`;
-    
+
     // We intentionally don't clear these from production as they are auditing logs
     if (eventType.includes('Blocked') || eventType.includes('Violation')) {
         console.error(logMsg);
@@ -290,7 +290,7 @@ function verifyIntegrity() {
         { name: 'Chart', label: 'Chart.js' },
         { name: 'L', label: 'Leaflet.js' }
     ];
-    
+
     requiredGlobals.forEach(lib => {
         if (typeof window[lib.name] === 'undefined') {
             // Only alert for dashboard/stats pages where these are critical

@@ -379,9 +379,8 @@
             tbody.innerHTML = paginatedItems.map((s, i) => `
                 <div class="table-row students-row" data-id="${s.enrollment_number}">
                     <div class="sno" style="color: white;">${start + i + 1}</div>
-                    <div class="student-name">${escHtml(s.student_name)}</div>
                     <div style="font-family:monospace; font-size:12px;">${escHtml(s.enrollment_number)}</div>
-                    <div class="student-email">${escHtml(s.student_email_id || '')}</div>
+                    <div class="student-name">${escHtml(s.student_name)}</div>
                     <div class="student-phone">${escHtml(s.mobile_number || '')}</div>
                     <div class="programme" style="color:#ddd">${escHtml(s.programme || '')}</div>
                     <div class="higher-ed">${escHtml(s.higher_education_plan || 'No')}</div>
