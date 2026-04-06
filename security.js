@@ -12,41 +12,61 @@
  *  A09:2021 – Logging and Monitoring     → Security event logger
  *  A10:2021 – SSRF / Open Redirect       → safeRedirect()
 // ─────────────────────────────────────────────────────────────────────────────
-// A05 Directory Exposure & Path Obfuscation
+// A04: IDOR Protection & Route Obfuscation
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Mitigates Directory Exposure bugs and masks internal file paths.
- * - Redirects trailing slash directory access to prevent listing.
- * - Cleans .html extension from the URL bar for a professional, opaque path.
+ * Implements Direct Object Reference (IDOR) protection by validating 
+ * resource ownership before allowing view/edit access.
  */
-function mitigateDirectoryExposure() {
-    const path = window.location.pathname;
-
-    // 1. Prevent Directory Browsing: Redirect trailing slashes to the main dashboard or current index
-    // Note: Some servers interpret / as directory listing. We enforce file-based access.
-    if (path !== '/' && path !== '' && path.endsWith('/')) {
-        window.location.href = path.slice(0, -1) || 'index.html';
-        return;
+function validateIDOR(resourceId, allowedIds = []) {
+    const user = JSON.parse(localStorage.getItem('pd_user') || '{}');
+    // If not admin, restrict to self-owned IDs
+    if (user.role !== 'admin' && !allowedIds.includes(resourceId)) {
+        logSecurityEvent('IDOR Violation Attempted', { resourceId });
+        window.location.href = 'dashboard';
+        return false;
     }
+    return true;
+}
 
-    // 2. Hide Exposure: Use history API to remove .html from the address bar (Masking)
-    if (path.endsWith('.html')) {
-        const cleanPath = path.replace('.html', '');
-        window.history.replaceState(null, '', cleanPath + window.location.search);
+/**
+ * Obfuscates internal routes to hide the directory structure.
+ * Maps literal file names to opaque session-based aliases.
+ */
+const ROUTE_MAP = {
+    'dashboard.html': 'node-insights',
+    'students.html': 'user-directory',
+    'internships.html': 'field-records',
+    'field-visits.html': 'site-audit',
+    'placements.html': 'success-metrics',
+    'reports.html': 'data-analytics',
+    'settings.html': 'system-config'
+};
+
+function obfuscateRoute() {
+    const path = window.location.pathname.split('/').pop();
+    const alias = ROUTE_MAP[path];
+    if (alias) {
+        window.history.replaceState(null, '', alias + window.location.search);
+    } else if (path.endsWith('.html')) {
+        const clean = path.replace('.html', '');
+        window.history.replaceState(null, '', clean + window.location.search);
     }
 }
 
-// Global Navigation Interceptor: Clean URLs on every click
+// Global Obfuscator Trigger
+document.addEventListener('DOMContentLoaded', () => {
+    obfuscateRoute();
+    mitigateDirectoryExposure();
+});
+
+// Intercept clicks to mask the URL instantly
 document.addEventListener('click', (e) => {
-    const link = e.target.closest('a');
-    if (link && link.href && link.href.includes(window.location.origin)) {
-        setTimeout(mitigateDirectoryExposure, 10);
+    if (e.target.closest('a')) {
+        setTimeout(obfuscateRoute, 10);
     }
 }, { passive: true });
-
-document.addEventListener('DOMContentLoaded', mitigateDirectoryExposure);
-mitigateDirectoryExposure();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // A03 XSS — Input Sanitization
