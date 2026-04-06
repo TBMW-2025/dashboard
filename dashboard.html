@@ -233,17 +233,17 @@
                 </div>
             </footer>
         </div>
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script src="auth-guard.js?v=3"></script>
         <!-- CDN: Supabase JS -->
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <!-- CDN: SheetJS for Excel import/export -->
         <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-        <!-- Supabase config (change only this file when moving to a new host) -->
+        <!-- Supabase config -->
         <script src="supabase-client.js"></script>
-        <script src="api.js?v=6"></script>
+        <script src="api.js?v=7"></script>
+        <script src="security.js?v=12"></script>
         <script src="https://d3js.org/d3.v7.min.js"></script>
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
         <script>
@@ -379,6 +379,7 @@
                              <div class="table-row" style="display: grid; grid-template-columns: 60px 2.5fr 1.5fr 1.2fr 1fr 1fr; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; font-size: 13px;">
                                  <div style="color: #666;">${String(i + 1).padStart(2, '0')}</div>
                                  <div style="font-weight: 600; color: #fff;">${esc(item.student_name || item.name_of_student)}</div>
+                                 <div style="font-size: 11px; font-family: monospace; color: #a78bfa;">${!isNaN(item.enrolment_no) ? Number(item.enrolment_no).toLocaleString('fullwide', {useGrouping:false}) : esc(item.enrolment_no || '')}</div>
                                  <div style="color: var(--accent-blue);">${esc(item.company_name || item.internship_place || item.internship_place_01)}</div>
                                  <div style="color: #bbb;">${esc(item.role || 'Intern')}</div>
                                  <div style="color: #22c55e;">${esc(item.salary || '-')}</div>
@@ -447,7 +448,7 @@
             }
 
             async function initCityMap(prog = '') {
-                const indiaBounds = [[6.46, 68.10], [35.51, 97.40]];
+                const indiaBounds = [[6, 68], [36, 98]];
 
                 if (!_map) {
                     _map = L.map('india-city-map', {
@@ -456,27 +457,38 @@
                         maxBounds: indiaBounds,
                         maxBoundsViscosity: 1.0,
                         minZoom: 4
-                    }).setView([22, 78], 5);
+                    }).setView([22.5, 80], 4.5);
 
                     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}{r}.png').addTo(_map);
                     _markers.addTo(_map);
 
-                    // CREATE HIGH-Z-INDEX MASK PANE
-                    _map.createPane('mask-pane');
-                    _map.getPane('mask-pane').style.zIndex = 650;
-                    _map.getPane('mask-pane').style.pointerEvents = 'none';
+                    // FETCH AND RENDER CORRECT INDIA GEOJSON
+                    // Source: Official-spec India States GeoJSON with correct J&K boundaries
+                    fetch('https://raw.githubusercontent.com/jbrobst/india-maps/master/indian_states.geojson')
+                        .then(res => res.json())
+                        .then(geo => {
+                            // National Boundary (Outer)
+                            L.geoJSON(geo, {
+                                style: {
+                                    color: '#ffffff',
+                                    weight: 1.8,
+                                    opacity: 0.6,
+                                    fillColor: 'transparent'
+                                },
+                                interactive: false
+                            }).addTo(_map);
 
-                    // Robust India-Only Masking (Nested Rings: World - India)
-                    const worldRing = [[-90, -180], [-90, 180], [90, 180], [90, -180], [-90, -180]];
-                    const indiaRing = [[6.46, 68.10], [35.51, 68.10], [35.51, 97.40], [6.46, 97.40], [6.46, 68.10]];
-
-                    L.polygon([worldRing, indiaRing], {
-                        pane: 'mask-pane',
-                        color: 'transparent',
-                        fillColor: '#000000', // Absolute Blackout
-                        fillOpacity: 1,
-                        interactive: false
-                    }).addTo(_map);
+                            // State Boundaries (Faint)
+                            L.geoJSON(geo, {
+                                style: {
+                                    color: 'rgba(255,255,255,0.15)',
+                                    weight: 0.6,
+                                    fillColor: 'transparent'
+                                },
+                                interactive: false
+                            }).addTo(_map);
+                        })
+                        .catch(err => console.error('Map Boundary Fetch Error:', err));
 
                     setTimeout(() => _map.invalidateSize(), 500);
                 }
@@ -607,8 +619,6 @@
             });
         </script>
     </div>
+    </div>
 </body>
-
-</html>
-
 </html>

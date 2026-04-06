@@ -11,9 +11,33 @@
  *  A08:2021 – Software/Data Integrity    → CDN verification checks
  *  A09:2021 – Logging and Monitoring     → Security event logger
  *  A10:2021 – SSRF / Open Redirect       → safeRedirect()
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// A05 Directory Exposure & Path Obfuscation
+// ─────────────────────────────────────────────────────────────────────────────
 
-'use strict';
+/**
+ * Mitigates Directory Exposure bugs and masks internal file paths.
+ * - Redirects trailing slash directory access to prevent listing.
+ * - Cleans .html extension from the URL bar for a professional, opaque path.
+ */
+function mitigateDirectoryExposure() {
+    const path = window.location.pathname;
+
+    // 1. Prevent Directory Browsing: Redirect trailing slashes to the main dashboard or current index
+    // Note: Some servers interpret / as directory listing. We enforce file-based access.
+    if (path !== '/' && path !== '' && path.endsWith('/')) {
+        window.location.href = path.slice(0, -1) || 'index.html';
+        return;
+    }
+
+    // 2. Hide Exposure: Use history API to remove .html from the address bar (Masking)
+    if (path.endsWith('.html')) {
+        const cleanPath = path.replace('.html', '');
+        window.history.replaceState(null, '', cleanPath + window.location.search);
+    }
+}
+
+mitigateDirectoryExposure();
 
 // ─────────────────────────────────────────────────────────────────────────────
 // A03 XSS — Input Sanitization

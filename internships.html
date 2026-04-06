@@ -425,7 +425,10 @@
                     <div class="table-row internships-row" data-id="${item.id}">
                         <div>${i + 1}</div>
                         <div>${esc(item.year)}</div>
-                        <div style="font-family:monospace; color:#a78bfa;">${String(item.enrolment_no || '')}</div>
+                        <div style="font-family:monospace; color:#a78bfa;">${
+                            // Robust numeric formatting: ensure large enrolment numbers never appear in scientific notation
+                            !isNaN(item.enrolment_no) ? Number(item.enrolment_no).toLocaleString('fullwide', {useGrouping:false}) : esc(item.enrolment_no)
+                        }</div>
                         <div>${esc(item.programme)}</div>
                         <div class="student-name">${esc(item.name_of_student)}</div>
                         <div>${esc(item.gender)}</div>
