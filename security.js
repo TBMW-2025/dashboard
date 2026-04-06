@@ -37,6 +37,15 @@ function mitigateDirectoryExposure() {
     }
 }
 
+// Global Navigation Interceptor: Clean URLs on every click
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('a');
+    if (link && link.href && link.href.includes(window.location.origin)) {
+        setTimeout(mitigateDirectoryExposure, 10);
+    }
+}, { passive: true });
+
+document.addEventListener('DOMContentLoaded', mitigateDirectoryExposure);
 mitigateDirectoryExposure();
 
 // ─────────────────────────────────────────────────────────────────────────────
