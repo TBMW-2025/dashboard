@@ -620,17 +620,33 @@ body {
     min-width: unset;
 }
 
-.placements-header,
+.placements-header {
+    display: grid !important;
+    grid-template-columns: 50px 1.2fr 1.5fr 2fr 1.5fr 1fr 1fr 100px !important;
+    min-width: unset !important;
+    font-size: 13px !important;
+    font-weight: 600;
+    align-items: center;
+}
+
 .placements-row {
     display: grid !important;
     grid-template-columns: 50px 1.2fr 1.5fr 2fr 1.5fr 1fr 1fr 100px !important;
     min-width: unset !important;
-    font-size: 11px !important;
+    font-size: 10.5px !important;
     align-items: center;
 }
 
 /* Internships Page Grid */
-.internships-header,
+.internships-header {
+    display: grid !important;
+    grid-template-columns: 40px 60px 100px 80px 1.5fr 60px 120px 80px 1fr 80px 1fr 80px 1fr 80px 80px 100px !important;
+    min-width: fit-content !important;
+    font-size: 12px !important;
+    font-weight: 600;
+    align-items: center;
+}
+
 .internships-row {
     display: grid !important;
     grid-template-columns: 40px 60px 100px 80px 1.5fr 60px 120px 80px 1fr 80px 1fr 80px 1fr 80px 80px 100px !important;
@@ -640,22 +656,38 @@ body {
 }
 
 /* Field Visits Page Grid */
-.field_visits-header,
+.field_visits-header {
+    display: grid !important;
+    grid-template-columns: 50px 2fr 1fr 1fr 1.5fr 1fr 1.5fr 1fr 100px !important;
+    min-width: unset !important;
+    font-size: 13px !important;
+    font-weight: 600;
+    align-items: center;
+}
+
 .field_visits-row {
     display: grid !important;
     grid-template-columns: 50px 2fr 1fr 1fr 1.5fr 1fr 1.5fr 1fr 100px !important;
     min-width: unset !important;
-    font-size: 11px !important;
+    font-size: 10.5px !important;
     align-items: center;
 }
 
 /* Students Page Grid */
-.students-header,
+.students-header {
+    display: grid !important;
+    grid-template-columns: 50px 160px 1.5fr 1.2fr 1.5fr 120px 110px 100px !important;
+    min-width: unset !important;
+    font-size: 13px !important;
+    font-weight: 600;
+    align-items: center;
+}
+
 .students-row {
     display: grid !important;
     grid-template-columns: 50px 160px 1.5fr 1.2fr 1.5fr 120px 110px 100px !important;
     min-width: unset !important;
-    font-size: 11px !important;
+    font-size: 10.5px !important;
     align-items: center;
 }
 
