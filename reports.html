@@ -175,6 +175,34 @@
                             <canvas id="fieldVisitChart"></canvas>
                         </div>
                     </div>
+
+                    <div class="chart-card">
+                        <div class="chart-title">Programme-wise Student Count</div>
+                        <div class="chart-container">
+                            <canvas id="studentProgrammeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-title">Programme-wise Internship Count</div>
+                        <div class="chart-container">
+                            <canvas id="internshipProgrammeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-title">Government vs Private Visits</div>
+                        <div class="chart-container">
+                            <canvas id="fieldVisitAreaChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-title">Placed vs Non-Placed by Programme</div>
+                        <div class="chart-container">
+                            <canvas id="placedNonProgrammeChart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -320,7 +348,8 @@
                             getDeptStats().catch(() => []),
                             getStudentsYearly().catch(() => ({ labels: [], total: [], placed: [] })),
                             getSalaryDist().catch(() => []),
-                            getFieldVisits().catch(() => [])
+                            getFieldVisits().catch(() => []),
+                            getInternships().catch(() => [])
                         ]);
 
                         // Chart 1: Placement Distribution
@@ -422,6 +451,86 @@
                                     datasets: [{ data: counts, backgroundColor: ['#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'] }]
                                 },
                                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#aaa' } } } }
+                            });
+                        }
+
+                        // Chart 6: Programme-wise Student Count (Pie 3D-ish)
+                        const spCtx = document.getElementById('studentProgrammeChart');
+                        if (spCtx && students.length) {
+                            const map = {};
+                            students.forEach(s => { const p = s.programme || 'Other'; map[p] = (map[p] || 0) + 1; });
+                            if (window._spChart) window._spChart.destroy();
+                            window._spChart = new Chart(spCtx, {
+                                type: 'pie',
+                                data: {
+                                    labels: Object.keys(map),
+                                    datasets: [{ 
+                                        data: Object.values(map), 
+                                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+                                        borderWidth: 2,
+                                        borderColor: '#1e1e2e'
+                                    }]
+                                },
+                                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom', labels: { color: '#aaa' } } } }
+                            });
+                        }
+
+                        // Chart 7: Programme-wise Internship Count (Doughnut)
+                        const ipCtx = document.getElementById('internshipProgrammeChart');
+                        if (ipCtx && internships.length) {
+                            const map = {};
+                            internships.forEach(i => { const p = i.programme || 'Other'; map[p] = (map[p] || 0) + 1; });
+                            if (window._ipChart) window._ipChart.destroy();
+                            window._ipChart = new Chart(ipCtx, {
+                                type: 'doughnut',
+                                data: {
+                                    labels: Object.keys(map),
+                                    datasets: [{ data: Object.values(map), backgroundColor: ['#ec4899', '#f43f5e', '#f97316', '#eab308', '#22c55e'] }]
+                                },
+                                options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { color: '#aaa' } } } }
+                            });
+                        }
+
+                        // Chart 8: Government vs Private Visits (Area)
+                        const areaCtx = document.getElementById('fieldVisitAreaChart');
+                        if (areaCtx && fieldVisits.length) {
+                            const yearMap = {};
+                            fieldVisits.forEach(v => {
+                                let y = (v.visited_date || '').split('.').pop() || 'Unknown';
+                                if (y.length === 2) y = '20' + y;
+                                if (!yearMap[y]) yearMap[y] = { Govt: 0, Private: 0 };
+                                const type = (v.visit_type || '').toLowerCase().includes('private') ? 'Private' : 'Govt';
+                                yearMap[y][type]++;
+                            });
+                            const labels = Object.keys(yearMap).sort();
+                            if (window._areaChart) window._areaChart.destroy();
+                            window._areaChart = new Chart(areaCtx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [
+                                        { label: 'Government', data: labels.map(l => yearMap[l].Govt), borderColor: '#3b82f6', fill: true, backgroundColor: 'rgba(59, 130, 246, 0.2)', tension: 0.4 },
+                                        { label: 'Private', data: labels.map(l => yearMap[l].Private), borderColor: '#f43f5e', fill: true, backgroundColor: 'rgba(244, 63, 94, 0.2)', tension: 0.4 }
+                                    ]
+                                },
+                                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } } }
+                            });
+                        }
+
+                        // Chart 9: Placed vs Non-Placed by Programme (Grouped Bar)
+                        const pnCtx = document.getElementById('placedNonProgrammeChart');
+                        if (pnCtx && depts.length) {
+                            if (window._pnChart) window._pnChart.destroy();
+                            window._pnChart = new Chart(pnCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: depts.map(d => d.programme),
+                                    datasets: [
+                                        { label: 'Placed', data: depts.map(d => d.placed), backgroundColor: '#10b981' },
+                                        { label: 'Non-Placed', data: depts.map(d => Math.max(0, d.total - d.placed)), backgroundColor: '#ef4444' }
+                                    ]
+                                },
+                                options: { responsive: true, maintainAspectRatio: false, scales: { y: { stacked: false, ticks: { color: '#888' } }, x: { ticks: { color: '#888' } } } }
                             });
                         }
 

@@ -662,6 +662,7 @@ async function parseExcelFile(file, type) {
                         return {
                             field_visited: col(nr, 'Field_Visited', 'Department', 'Dept', 'Dept.', 'organization_name', 'field_visited'),
                             visited_date: col(nr, 'Visited_Date', 'Date', 'Visit Date', 'visit_date'),
+                            visit_type: col(nr, 'Visit Type', 'Type', 'type', 'visit_type') || 'Government',
                             no_of_student_visited: parseInt(col(nr, 'No_of_Student_Visited', 'No of Students', 'No of Student Visited', 'Students', 'students_visited') || 0),
                             program_name: col(nr, 'Program_Name', 'Programme', 'programme', 'program'),
                             no_of_staff_visited: parseInt(col(nr, 'No_of_Staff_Visited', 'No of Staff', 'No of Staff Visited', 'Staff', 'staff_visited') || 0),

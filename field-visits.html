@@ -113,6 +113,7 @@
                                 <th>PROGRAM</th>
                                 <th>STAFF COUNT</th>
                                 <th>LEAD STAFF</th>
+                                <th class="no-wrap">TYPE</th>
                                 <th>CITY</th>
                                 <th>ACTIONS</th>
                             </tr>
@@ -177,6 +178,13 @@
                         <input type="number" id="mi-no_of_staff" class="form-input" placeholder="e.g. 2" required>
                     </div>
                     <div class="form-group">
+                        <label class="form-label">Visit Type</label>
+                        <select id="mi-visit_type" class="form-select">
+                            <option value="Government">Government</option>
+                            <option value="Private">Private</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
                         <label class="form-label">City</label>
                         <input type="text" id="mi-city" class="form-input" placeholder="e.g. Puducherry" required>
                     </div>
@@ -234,6 +242,13 @@
                     <div class="form-group">
                         <label class="form-label">No. of Staff</label>
                         <input type="number" id="ei-no_of_staff" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Visit Type</label>
+                        <select id="ei-visit_type" class="form-select">
+                            <option value="Government">Government</option>
+                            <option value="Private">Private</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">City</label>
@@ -346,7 +361,8 @@
                     <td>${esc(v.no_of_student_visited || '0')}</td>
                     <td style="color:#94a3b8;">${esc(v.program_name || '—')}</td>
                     <td>${esc(v.no_of_staff_visited || '0')}</td>
-                    <td>${esc(v.staff_name || '—')}</td>
+                    <td style="font-weight:600;">${esc(v.staff_name || '—')}</td>
+                    <td><span class="status-pill ${String(v.visit_type || '').toLowerCase() === 'private' ? 'not-placed' : 'placed'}" style="font-size:10px; padding: 2px 8px;">${esc(v.visit_type || 'Government')}</span></td>
                     <td>${esc(v.city || '—')}</td>
                     <td>
                         <div style="display:flex;gap:6px;justify-content:center; align-items:center;">
@@ -382,6 +398,7 @@
                         document.getElementById('ei-program_name').value = v.program_name || '';
                         document.getElementById('ei-no_of_staff').value = v.no_of_staff_visited || 0;
                         document.getElementById('ei-staff_name').value = v.staff_name || '';
+                        document.getElementById('ei-visit_type').value = v.visit_type || 'Government';
                         document.getElementById('ei-city').value = v.city || '';
                         document.getElementById('editFieldVisitModal').style.display = 'flex';
                     });
@@ -426,6 +443,7 @@
                 try {
                     await createFieldVisit({
                         field_visited: document.getElementById('mi-field_visited').value,
+                        visit_type: document.getElementById('mi-visit_type').value,
                         visited_date: document.getElementById('mi-visit_date').value,
                         no_of_student_visited: parseInt(document.getElementById('mi-no_of_students').value),
                         program_name: document.getElementById('mi-program_name').value,
@@ -456,6 +474,7 @@
                 try {
                     await updateFieldVisit(id, {
                         field_visited: document.getElementById('ei-field_visited').value,
+                        visit_type: document.getElementById('ei-visit_type').value,
                         visited_date: document.getElementById('ei-visit_date').value,
                         no_of_student_visited: parseInt(document.getElementById('ei-no_of_students').value),
                         program_name: document.getElementById('ei-program_name').value,
