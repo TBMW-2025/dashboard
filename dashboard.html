@@ -358,11 +358,11 @@
                         rpBody.innerHTML = recent.map((p, i) => `
                             <div class="table-row" style="display: grid; grid-template-columns: 60px 2fr 1.5fr 1.5fr 1fr 1fr; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; font-size: 13px;">
                                 <div style="color: #666;">${String(i + 1).padStart(2, '0')}</div>
-                                <div style="font-weight: 600; color: #fff;">${esc(p.student_name || p.name || 'Student')}</div>
+                                <div style="font-weight: 600; color: #fff;">${esc(p.student_name || 'Student')}</div>
                                 <div style="color: var(--accent-green);">${esc(p.company || p.company_name || p.organization_name)}</div>
-                                <div style="color: #bbb;">${esc(p.remarks || p.role || '-')}</div>
+                                <div style="color: #bbb;">${esc(p.role || p.remarks || '-')}</div>
                                 <div style="color: #888; font-size: 11px;">${(p.created_at || '').split('T')[0]}</div>
-                                <div style="font-weight: 600; color: #fff;">${p.salary_lpa ? p.salary_lpa + ' LPA' : '-'}</div>
+                                <div style="font-weight: 600; color: #fff;">${p.package || p.salary_lpa || '-'}</div>
                             </div>
                         `).join('');
                     }
@@ -379,11 +379,11 @@
                              <div class="table-row" style="display: grid; grid-template-columns: 60px 2.5fr 1.5fr 1.2fr 1fr 1fr; padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); align-items: center; font-size: 13px;">
                                  <div style="color: #666;">${String(i + 1).padStart(2, '0')}</div>
                                  <div style="font-weight: 600; color: #fff;">${esc(item.student_name || item.name_of_student)}</div>
-                                 <div style="font-size: 11px; font-family: monospace; color: #a78bfa;">${item.enrollment_number ? BigInt(String(item.enrollment_number).split('.')[0].replace(/[^0-9]/g, '')).toString() : '-'}</div>
-                                 <div style="color: var(--accent-blue);">${esc(item.company_name || item.internship_place || item.internship_place_01)}</div>
+                                 <div style="font-size: 11px; font-family: monospace; color: #a78bfa;">${esc(item.enrollment_number || '-')}</div>
+                                 <div style="color: var(--accent-blue);">${esc(item.internship_place_01 || item.company_name || item.internship_place)}</div>
                                  <div style="color: #bbb;">${esc(item.role || 'Intern')}</div>
                                  <div style="color: #22c55e;">${esc(item.salary || '-')}</div>
-                                 <div style="color: #888; font-size: 11px;">${item.duration_months || item.duration || '-'}</div>
+                                 <div style="color: #888; font-size: 11px;">${item.duration_of_intership_01 || item.duration_months || item.duration || '-'}</div>
                              </div>
                         `).join('');
                     }
@@ -498,8 +498,8 @@
 
                 try {
                     const results = await Promise.all([
-                        _sb.from('placements').select('city, course, name, company'),
-                        _sb.from('internships').select('city_of_intership_01, programme, name_of_student, internship_place_01'),
+                        _sb.from('placements').select('city, programme, student_name, company, role, package'),
+                        _sb.from('internships').select('city_of_intership_01, programme, student_name, internship_place_01, role, salary, enrollment_number, duration_of_intership_01'),
                         _sb.from('field_visits').select('city, program_name, staff_name, field_visited, visited_date')
                     ]);
 
@@ -507,7 +507,7 @@
 
                     if (prog) {
                         const pTrim = prog.trim().toLowerCase();
-                        p = p.filter(d => (d.course || '').trim().toLowerCase().includes(pTrim));
+                        p = p.filter(d => (d.programme || d.course || '').trim().toLowerCase().includes(pTrim));
                         i = i.filter(d => (d.programme || '').trim().toLowerCase().includes(pTrim));
                         f = f.filter(d => (d.program_name || '').trim().toLowerCase().includes(pTrim));
                     }

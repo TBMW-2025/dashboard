@@ -103,24 +103,21 @@
             <div class="widget-panel">
                 <div class="table-container data-table-container">
                     <table class="premium-table">
-                        <colgroup>
                             <col style="width: 25px;">  <!-- SR -->
-                            <col style="width: 35px;">  <!-- Year -->
-                            <col style="width: 85px;">  <!-- Enrolment -->
-                            <col style="width: 50px;">  <!-- Prog -->
-                            <col style="width: 120px;"> <!-- Name -->
+                            <col style="width: 40px;">  <!-- Year -->
+                            <col style="width: 140px;"> <!-- Enrolment (Widened) -->
+                            <col style="width: 60px;">  <!-- Prog -->
+                            <col style="width: 150px;"> <!-- Name -->
                             <col style="width: 45px;">  <!-- Gender -->
                             <col style="width: 60px;">  <!-- Role -->
-                            <col style="width: 60px;">  <!-- Salary -->
-                            <col style="width: 110px;"> <!-- P1 -->
-                            <col style="width: 50px;">  <!-- D1 -->
-                            <col style="width: 70px;">  <!-- C1 -->
-                            <col style="width: 110px;"> <!-- P2 -->
-                            <col style="width: 50px;">  <!-- D2 -->
-                            <col style="width: 70px;">  <!-- C2 -->
-                            <col style="width: 60px;">  <!-- Org Type -->
+                            <col style="width: 130px;"> <!-- P1 -->
+                            <col style="width: 60px;">  <!-- D1 -->
+                            <col style="width: 80px;">  <!-- C1 -->
+                            <col style="width: 130px;"> <!-- P2 -->
+                            <col style="width: 60px;">  <!-- D2 -->
+                            <col style="width: 80px;">  <!-- C2 -->
+                            <col style="width: 70px;">  <!-- Org Type -->
                             <col style="width: 55px;">  <!-- Actions -->
-                        </colgroup>
                         <thead>
                             <tr>
                                 <th>SR.</th>
@@ -130,7 +127,6 @@
                                 <th>Student Name</th>
                                 <th>Gender</th>
                                 <th>Role</th>
-                                <th>Salary</th>
                                 <th>P1</th>
                                 <th>D1</th>
                                 <th>C1</th>
@@ -142,7 +138,7 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <tr><td colspan="16" style="text-align:center;padding:40px;opacity:0.5;">Loading internships...</td></tr>
+                                <tr><td colspan="15" style="text-align:center;padding:40px;opacity:0.5;">Loading internships...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -472,22 +468,19 @@
                 document.getElementById('nextPage').disabled = (currentPage === totalPages || totalPages === 0);
 
                 if (!totalItems) {
-                    tbody.innerHTML = '<tr><td colspan="16" style="padding:40px;text-align:center;opacity:0.5;">No internships found.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="15" style="padding:40px;text-align:center;opacity:0.5;">No internships found.</td></tr>';
                     return;
                 }
 
                 tbody.innerHTML = paginatedItems.map((item, i) => `
                     <tr data-id="${item.id}">
                         <td style="text-align:center;">${start + i + 1}</td>
-                        <td style="font-family:monospace; color:#a78bfa;">${
-                            item.enrollment_number ? String(item.enrollment_number).split('.')[0].replace(/[^0-9]/g, '') : '-'
-                        }</td>
+                        <td style="font-family:monospace; color:#a78bfa;">${esc(item.enrollment_number || '-')}</td>
                         <td>${esc(item.year)}</td>
                         <td>${esc(item.programme)}</td>
-                        <td style="font-weight:600;">${esc(item.name_of_student)}</td>
+                        <td style="font-weight:600;">${esc(item.student_name || item.name_of_student)}</td>
                         <td>${esc(item.gender)}</td>
                         <td style="color:#bbb;">${esc(item.role || 'Intern')}</td>
-                        <td style="color:#22c55e;">${esc(item.salary || '-')}</td>
                         <td>${esc(item.internship_place_01)}</td>
                         <td>${esc(item.duration_of_intership_01)}</td>
                         <td>${esc(item.city_of_intership_01)}</td>
@@ -546,7 +539,7 @@
             if (searchEl) searchEl.addEventListener('input', () => {
                 const q = searchEl.value.toLowerCase();
                 render(data.filter(i =>
-                    (i.name_of_student || '').toLowerCase().includes(q) ||
+                    (i.student_name || i.name_of_student || '').toLowerCase().includes(q) ||
                     (i.enrollment_number || '').toLowerCase().includes(q) ||
                     (i.internship_place_01 || '').toLowerCase().includes(q)
                 ));
@@ -582,7 +575,7 @@
                         year: document.getElementById('mi-year').value,
                         enrollment_number: document.getElementById('mi-enrolment').value,
                         programme: document.getElementById('mi-programme').value,
-                        name_of_student: document.getElementById('mi-name').value,
+                        student_name: document.getElementById('mi-name').value,
                         gender: document.getElementById('mi-gender').value,
                         role: document.getElementById('mi-role').value || '',
                         salary: document.getElementById('mi-salary').value || '',
@@ -619,7 +612,7 @@
                         year: document.getElementById('ei-year').value,
                         enrollment_number: document.getElementById('ei-enrolment').value,
                         programme: document.getElementById('ei-programme').value,
-                        name_of_student: document.getElementById('ei-name').value,
+                        student_name: document.getElementById('ei-name').value,
                         gender: document.getElementById('ei-gender').value,
                         role: document.getElementById('ei-role').value || '',
                         salary: document.getElementById('ei-salary').value || '',

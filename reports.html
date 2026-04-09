@@ -266,8 +266,8 @@
                         let totalStudents = stats.total_students;
                         if (totalStudents === 0) {
                             const uniqueIds = new Set([
-                                ...placements.map(x => x.enrollment_number || x.name || x.student_name),
-                                ...internships.map(x => x.enrolment_no || x.name_of_student || x.student_name)
+                                ...placements.map(x => x.enrollment_number || x.student_name || x.name),
+                                ...internships.map(x => x.enrollment_number || x.student_name || x.name_of_student)
                             ].filter(Boolean));
                             totalStudents = uniqueIds.size || studentsRaw.length;
                         }
@@ -295,7 +295,7 @@
                             return val > 1000 ? val / 100000 : val;
                         };
 
-                        const salaries = placements.map(p => parseLPA(p.salary_lpa || p.ctc || 0)).filter(s => s > 0);
+                        const salaries = placements.map(p => parseLPA(p.package || p.salary_lpa || p.ctc || 0)).filter(s => s > 0);
                         const highest = salaries.length ? Math.max(...salaries) : 0;
                         const lowest = salaries.length ? Math.min(...salaries) : 0;
                         const avg = salaries.length ? (salaries.reduce((a, b) => a + b, 0) / salaries.length) : 0;

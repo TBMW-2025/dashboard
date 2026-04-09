@@ -106,20 +106,18 @@
                     <table class="premium-table">
                         <colgroup>
                             <col style="width: 30px;">  <!-- SR -->
-                            <col style="width: 80px;">  <!-- Enrollment -->
                             <col style="width: 150px;"> <!-- Org -->
                             <col style="width: 80px;">  <!-- Date -->
                             <col style="width: 60px;">  <!-- Students -->
                             <col style="width: 80px;">  <!-- Program -->
                             <col style="width: 60px;">  <!-- Staff Count -->
-                            <col style="width: 150px;"> <!-- Lead Staff -->
+                            <col style="width: 250px;"> <!-- Lead Staff (Expanded) -->
                             <col style="width: 80px;">  <!-- City -->
                             <col style="width: 60px;">  <!-- Actions -->
                         </colgroup>
                         <thead>
                             <tr>
                                 <th>SR. NO</th>
-                                <th>ENROLLMENT</th>
                                 <th>ORGANIZATION VISITED</th>
                                 <th>VISIT DATE</th>
                                 <th>STUDENTS</th>
@@ -354,7 +352,6 @@
                 tbody.innerHTML = paginatedItems.map((v, i) => `
                 <tr data-id="${v.id}">
                     <td style="text-align:center;">${start + i + 1}</td>
-                    <td style="font-family:monospace; font-size:11px; color:#a78bfa;">${esc(v.enrollment_number || '—')}</td>
                     <td style="color:#a78bfa;font-weight:600;">${esc(v.field_visited || '—')}</td>
                     <td>${esc(v.visited_date || '—')}</td>
                     <td>${esc(v.no_of_student_visited || '0')}</td>

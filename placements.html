@@ -319,12 +319,12 @@
                     <tr data-id="${p.enrollment_number || p.id}">
                         <td style="text-align:center;">${start + i + 1}</td>
                         <td style="font-family:monospace;">${escHtml(p.enrollment_number || '—')}</td>
-                        <td style="color:#a78bfa;font-weight:600;">${escHtml(p.course || '—')}</td>
-                        <td style="font-weight:600;">${escHtml(p.name || '—')}</td>
-                        <td style="color:#94a3b8;font-style:italic;">${escHtml(p.remarks || '—')}</td>
+                        <td style="color:#a78bfa;font-weight:600;">${escHtml(p.programme || p.course || '—')}</td>
+                        <td style="font-weight:600;">${escHtml(p.student_name || p.name || '—')}</td>
+                        <td style="color:#94a3b8;font-style:italic;">${escHtml(p.role || p.remarks || '—')}</td>
                         <td style="font-weight:600;">${escHtml(p.company || '—')}</td>
                         <td>${escHtml(p.city || '—')}</td>
-                        <td style="color:#22c55e;">${escHtml(p.ctc || '—')}</td>
+                        <td style="color:#22c55e;">${escHtml(p.package || p.ctc || '—')}</td>
                         <td>
                             <div style="display:flex;gap:8px;justify-content:center;">
                                 <button class="action-icon btn-edit-placement" data-id="${p.enrollment_number || p.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
@@ -356,8 +356,8 @@
         document.getElementById('placementSearchUnified').addEventListener('input', e => {
             const q = e.target.value.toLowerCase();
             renderPlacements(placementsData.filter(p =>
-                (p.name || '').toLowerCase().includes(q) ||
-                (p.course || '').toLowerCase().includes(q) ||
+                (p.student_name || p.name || '').toLowerCase().includes(q) ||
+                (p.programme || p.course || '').toLowerCase().includes(q) ||
                 (p.company || '').toLowerCase().includes(q)
             ));
         });
@@ -398,12 +398,12 @@
             try {
                 await createPlacement({
                     enrollment_number: document.getElementById('mp-enrollment').value,
-                    course: document.getElementById('mp-course').value,
-                    name: document.getElementById('mp-name').value,
-                    remarks: document.getElementById('mp-remarks').value || '',
+                    programme: document.getElementById('mp-course').value,
+                    student_name: document.getElementById('mp-name').value,
+                    role: document.getElementById('mp-remarks').value || '',
                     company: document.getElementById('mp-company').value,
                     city: document.getElementById('mp-city').value || '',
-                    ctc: document.getElementById('mp-ctc').value || ''
+                    package: document.getElementById('mp-ctc').value || ''
                 });
                 document.getElementById('addPlacementModal').style.display = 'none';
                 document.getElementById('addPlacementForm').reset();
@@ -421,12 +421,12 @@
                 if (!p) return;
                 document.getElementById('ep-id').value = p.id || '';
                 document.getElementById('ep-enrollment').value = p.enrollment_number || '';
-                document.getElementById('ep-course').value = p.course || '';
-                document.getElementById('ep-name').value = p.name || '';
-                document.getElementById('ep-remarks').value = p.remarks || '';
+                document.getElementById('ep-course').value = p.programme || p.course || '';
+                document.getElementById('ep-name').value = p.student_name || p.name || '';
+                document.getElementById('ep-remarks').value = p.role || p.remarks || '';
                 document.getElementById('ep-company').value = p.company || '';
                 document.getElementById('ep-city').value = p.city || '';
-                document.getElementById('ep-ctc').value = p.ctc || '';
+                document.getElementById('ep-ctc').value = p.package || p.ctc || '';
                 document.getElementById('editPlacementModal').style.display = 'flex';
             }
         });
@@ -443,12 +443,12 @@
             try {
                 await updatePlacement(id, {
                     enrollment_number: document.getElementById('ep-enrollment').value,
-                    course: document.getElementById('ep-course').value,
-                    name: document.getElementById('ep-name').value,
-                    remarks: document.getElementById('ep-remarks').value || '',
+                    programme: document.getElementById('ep-course').value,
+                    student_name: document.getElementById('ep-name').value,
+                    role: document.getElementById('ep-remarks').value || '',
                     company: document.getElementById('ep-company').value,
                     city: document.getElementById('ep-city').value || '',
-                    ctc: document.getElementById('ep-ctc').value || ''
+                    package: document.getElementById('ep-ctc').value || ''
                 });
                 document.getElementById('editPlacementModal').style.display = 'none';
                 loadPlacements();
