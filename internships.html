@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
+        content="default-src 'self' https: data:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com; img-src 'self' https: data: blob: *; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://raw.githubusercontent.com; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Internships - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=303">
+    <link rel="stylesheet" href="styles.css?v=400">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -41,6 +41,10 @@
                         <i class="bi bi-pin-map-fill"></i>
                         <span>Field Visits</span>
                     </a>
+                    <a href="industrial-visits.html" class="nav-item ">
+                        <i class="bi bi-buildings-fill"></i>
+                        <span>Industrial Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item ">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
@@ -65,7 +69,7 @@
                     <a href="mailto:pulse-r24@rru.ac.in" class="icon-btn" title="Contact Us"><i
                             class="bi bi-chat-left-text"></i></a>
                 </div>
-                <div class="user-profile" >
+                <div class="user-profile">
                     <div class="avatar">A</div>
                     <div>
                         <div class="user-name">Arsh.G</div>
@@ -120,20 +124,29 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                                <tr><td colspan="15" style="text-align:center;padding:40px;opacity:0.5;">Loading internships...</td></tr>
+                            <tr>
+                                <td colspan="15" style="text-align:center;padding:40px;opacity:0.5;">Loading
+                                    internships...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <!-- PAGINATION CONTROLS -->
-                <div class="pagination-controls" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
+                <div class="pagination-controls"
+                    style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
                     <div class="pagination-info" style="font-size: 13px; opacity: 0.6;">
-                        Showing <span id="startIndex">0</span> - <span id="endIndex">0</span> of <span id="totalItems">0</span> internships
+                        Showing <span id="startIndex">0</span> - <span id="endIndex">0</span> of <span
+                            id="totalItems">0</span> internships
                     </div>
                     <div class="pagination-btns" style="display: flex; gap: 10px;">
-                        <button id="prevPage" class="select-unified" style="padding: 5px 15px; width: auto;"><i class="bi bi-chevron-left"></i> Prev</button>
-                        <span id="currentPageIndicator" style="display: flex; align-items: center; font-size: 13px; font-weight: 600; min-width: 60px; justify-content: center;">Page 1</span>
-                        <button id="nextPage" class="select-unified" style="padding: 5px 15px; width: auto;">Next <i class="bi bi-chevron-right"></i></button>
+                        <button id="prevPage" class="select-unified" style="padding: 5px 15px; width: auto;"><i
+                                class="bi bi-chevron-left"></i> Prev</button>
+                        <span id="currentPageIndicator"
+                            style="display: flex; align-items: center; font-size: 13px; font-weight: 600; min-width: 60px; justify-content: center;">Page
+                            1</span>
+                        <button id="nextPage" class="select-unified" style="padding: 5px 15px; width: auto;">Next <i
+                                class="bi bi-chevron-right"></i></button>
                     </div>
                 </div>
             </div>
@@ -396,7 +409,7 @@
 
             function render(list) {
                 if (!tbody) return;
-                
+
                 const totalItems = list.length;
                 const totalPages = Math.ceil(totalItems / pageSize);
                 if (currentPage > totalPages) currentPage = totalPages || 1;
@@ -410,7 +423,7 @@
                 document.getElementById('startIndex').textContent = totalItems === 0 ? 0 : start + 1;
                 document.getElementById('endIndex').textContent = Math.min(end, totalItems);
                 document.getElementById('currentPageIndicator').textContent = `Page ${currentPage} / ${totalPages || 1}`;
-                
+
                 document.getElementById('prevPage').disabled = (currentPage === 1);
                 document.getElementById('nextPage').disabled = (currentPage === totalPages || totalPages === 0);
 
@@ -422,7 +435,7 @@
                 tbody.innerHTML = paginatedItems.map((item, i) => `
                     <tr data-id="${item.id}">
                         <td style="text-align:center;">${start + i + 1}</td>
-                        <td class="no-wrap" style="font-family:monospace; color:#a78bfa;">${esc(item.enrollment_number || '-')}</td>
+                        <td class="no-wrap" style="font-family:monospace; color:#a78bfa; white-space:nowrap;">${esc(item.enrollment_number || '-')}</td>
                         <td>${esc(item.year)}</td>
                         <td>${esc(item.batch || '-')}</td>
                         <td>${esc(item.programme)}</td>
@@ -442,8 +455,8 @@
                 ).join('');
 
                 // Pagination listeners
-                document.getElementById('prevPage').onclick = () => { if(currentPage > 1) { currentPage--; render(list); }};
-                document.getElementById('nextPage').onclick = () => { if(currentPage < totalPages) { currentPage++; render(list); }};
+                document.getElementById('prevPage').onclick = () => { if (currentPage > 1) { currentPage--; render(list); } };
+                document.getElementById('nextPage').onclick = () => { if (currentPage < totalPages) { currentPage++; render(list); } };
 
                 tbody.querySelectorAll('.btn-edit-intern').forEach(btn => {
                     btn.addEventListener('click', (e) => {
@@ -603,6 +616,7 @@
                     statusEl.style.display = 'none';
                     btn.disabled = false;
                 }
+            });
             document.addEventListener('DOMContentLoaded', () => {
                 load();
                 subscribeAllChanges(() => {

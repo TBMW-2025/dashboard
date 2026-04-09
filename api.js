@@ -195,11 +195,19 @@ async function importCompanies(fileOrFormData) {
 
 // ─── PLACEMENTS ───────────────────────────────────────────────────────────────
 async function getPlacements(course = '') {
-    let query = _sb.from('placements').select('*').order('created_at', { ascending: false });
-    if (course) query = query.ilike('course', `%${course.trim()}%`);
-    const { data, error } = await query;
-    sbCheck(error, 'getPlacements');
-    return data || [];
+    try {
+        let query = _sb.from('placements').select('*');
+        if (course) query = query.ilike('course', `%${course.trim()}%`);
+        const { data, error } = await query;
+        if (error) throw error;
+        return data || [];
+    } catch (e) {
+        console.warn('[api] getPlacements filtered failed, fallback:', e);
+        const { data, error } = await _sb.from('placements').select('*');
+        if (error) { sbCheck(error, 'getPlacements'); return []; }
+        if (!course) return data || [];
+        return (data || []).filter(p => (p.course || p.programme || '').toLowerCase().includes(course.toLowerCase()));
+    }
 }
 
 async function createPlacement(payload) {
@@ -246,12 +254,20 @@ async function importPlacements(fileOrFormData) {
 }
 
 // ─── INTERNSHIPS ──────────────────────────────────────────────────────────────
-async function getInternships(programme = '') {
-    let query = _sb.from('internships').select('*').order('created_at', { ascending: false });
-    if (programme) query = query.ilike('programme', `%${programme.trim()}%`);
-    const { data, error } = await query;
-    sbCheck(error, 'getInternships');
-    return data || [];
+async function getInternships(prog = '') {
+    try {
+        let query = _sb.from('internships').select('*');
+        if (prog) query = query.ilike('programme', `%${prog.trim()}%`);
+        const { data, error } = await query;
+        if (error) throw error;
+        return data || [];
+    } catch (e) {
+        console.warn('[api] getInternships filtered failed, falling back to all then filter:', e);
+        const { data, error } = await _sb.from('internships').select('*');
+        if (error) { sbCheck(error, 'getInternships'); return []; }
+        if (!prog) return data || [];
+        return (data || []).filter(i => (i.programme || i.course || '').toLowerCase().includes(prog.toLowerCase()));
+    }
 }
 
 async function createInternship(payload) {
@@ -291,7 +307,7 @@ async function importInternships(fileOrFormData) {
 }
 // ─── FIELD VISITS ─────────────────────────────────────────────────────────────
 async function getFieldVisits(program = '') {
-    let query = _sb.from('field_visits').select('*').order('created_at', { ascending: false });
+    let query = _sb.from('field_visits').select('*');
     if (program) query = query.ilike('program_name', `%${program.trim()}%`);
     const { data, error } = await query;
     sbCheck(error, 'getFieldVisits');
@@ -331,7 +347,7 @@ async function importFieldVisits(fileOrFormData) {
 
 // ─── INDUSTRIAL VISITS ────────────────────────────────────────────────────────
 async function getIndustrialVisits(program = '') {
-    let query = _sb.from('industrial_visits').select('*').order('created_at', { ascending: false });
+    let query = _sb.from('industrial_visits').select('*');
     if (program) query = query.ilike('program_name', `%${program.trim()}%`);
     const { data, error } = await query;
     sbCheck(error, 'getIndustrialVisits');
@@ -370,10 +386,21 @@ async function importIndustrialVisits(fileOrFormData) {
 // ─── REPORTS (computed client-side from raw data) ─────────────────────────────
 async function getStats(programme = '') {
     // Helper to build filtered count query
-    const buildCount = (table, col = 'programme') => {
+    const buildCount = (table, colHint = 'programme') => {
         let q = _sb.from(table).select('*', { count: 'exact', head: true });
-        if (programme) q = q.ilike(col, `%${programme.trim()}%`);
-        return q.then(r => r.count || 0);
+        if (programme) {
+            // If filtering fails (e.g. column doesn't exist), we return the unfiltered count 
+            // as a last resort to avoid 0s on the UI, or 0 if truly empty.
+            if (table === 'placements') q = q.ilike('course', `%${programme.trim()}%`);
+            else if (table === 'internships') q = q.ilike('programme', `%${programme.trim()}%`);
+            else if (table === 'field_visits' || table === 'industrial_visits') q = q.ilike('program_name', `%${programme.trim()}%`);
+            else q = q.ilike(colHint, `%${programme.trim()}%`);
+        }
+        return q.then(r => r.count || 0).catch(err => {
+            console.warn(`[api] buildCount failed for ${table}:`, err);
+            // Fallback: get total count if filtered one failed
+            return _sb.from(table).select('*', { count: 'exact', head: true }).then(r => r.count || 0).catch(() => 0);
+        });
     };
 
     const results = await Promise.allSettled([

@@ -58,7 +58,7 @@ function obfuscateRoute() {
 // Global Obfuscator Trigger
 document.addEventListener('DOMContentLoaded', () => {
     obfuscateRoute();
-    mitigateDirectoryExposure();
+    // mitigateDirectoryExposure();
 });
 
 // Intercept clicks to mask the URL instantly

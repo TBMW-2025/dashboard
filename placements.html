@@ -4,10 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
+        content="default-src 'self' https: data:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://unpkg.com; img-src 'self' https: data: blob: *; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://raw.githubusercontent.com; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placements - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=303">
+    <link rel="stylesheet" href="styles.css?v=400">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -41,6 +41,10 @@
                         <i class="bi bi-pin-map-fill"></i>
                         <span>Field Visits</span>
                     </a>
+                    <a href="industrial-visits.html" class="nav-item ">
+                        <i class="bi bi-buildings-fill"></i>
+                        <span>Industrial Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item active">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
@@ -65,7 +69,7 @@
                     <a href="mailto:pulse-r24@rru.ac.in" class="icon-btn" title="Contact Us"><i
                             class="bi bi-chat-left-text"></i></a>
                 </div>
-                <div class="user-profile" >
+                <div class="user-profile">
                     <div class="avatar">A</div>
                     <div>
                         <div class="user-name">Arsh.G</div>
@@ -118,30 +122,42 @@
                             </tr>
                         </thead>
                         <tbody id="placementsTableBody">
-                            <tr><td colspan="9" style="text-align:center;padding:40px;opacity:0.5;">Loading placements...</td></tr>
+                            <tr>
+                                <td colspan="9" style="text-align:center;padding:40px;opacity:0.5;">Loading
+                                    placements...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
                 <!-- PAGINATION CONTROLS -->
-                <div class="pagination-controls" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
+                <div class="pagination-controls"
+                    style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
                     <div class="pagination-info" style="font-size: 13px; opacity: 0.6;">
-                        Showing <span id="startIndex">0</span> - <span id="endIndex">0</span> of <span id="totalItems">0</span> placements
+                        Showing <span id="startIndex">0</span> - <span id="endIndex">0</span> of <span
+                            id="totalItems">0</span> placements
                     </div>
                     <div class="pagination-btns" style="display: flex; gap: 10px;">
-                        <button id="prevPage" class="select-unified" style="padding: 5px 15px; width: auto;"><i class="bi bi-chevron-left"></i> Prev</button>
-                        <span id="currentPageIndicator" style="display: flex; align-items: center; font-size: 13px; font-weight: 600; min-width: 60px; justify-content: center;">Page 1</span>
-                        <button id="nextPage" class="select-unified" style="padding: 5px 15px; width: auto;">Next <i class="bi bi-chevron-right"></i></button>
+                        <button id="prevPage" class="select-unified" style="padding: 5px 15px; width: auto;"><i
+                                class="bi bi-chevron-left"></i> Prev</button>
+                        <span id="currentPageIndicator"
+                            style="display: flex; align-items: center; font-size: 13px; font-weight: 600; min-width: 60px; justify-content: center;">Page
+                            1</span>
+                        <button id="nextPage" class="select-unified" style="padding: 5px 15px; width: auto;">Next <i
+                                class="bi bi-chevron-right"></i></button>
                     </div>
                 </div>
             </div>
-            
+
             <!-- FOOTER -->
-            <footer class="app-footer" style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
+            <footer class="app-footer"
+                style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
                 <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
                     <div>
                         <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha University</h3>
-                        <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus, Pondicherry Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To Mahalakshmi Nagar, Murungapakkam, Puducherry – 605004</p>
+                        <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus, Pondicherry
+                            Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To Mahalakshmi Nagar,
+                            Murungapakkam, Puducherry – 605004</p>
                     </div>
                     <div>
                         <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Contact</h3>
@@ -150,8 +166,10 @@
                     </div>
                     <div>
                         <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Follow</h3>
-                        <p style="font-size: 12px; color: #8b949e;"><a href="#" style="color: inherit; text-decoration: none;">Instagram</a></p>
-                        <p style="font-size: 12px; color: #8b949e;"><a href="#" style="color: inherit; text-decoration: none;">LinkedIn</a></p>
+                        <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                style="color: inherit; text-decoration: none;">Instagram</a></p>
+                        <p style="font-size: 12px; color: #8b949e;"><a href="#"
+                                style="color: inherit; text-decoration: none;">LinkedIn</a></p>
                     </div>
                 </div>
             </footer>
@@ -166,7 +184,8 @@
                 <button class="close-modal" id="closePlacementModal">&times;</button>
             </div>
             <form class="modal-form" id="addPlacementForm">
-                <div class="form-group"><input type="text" id="mp-enrollment" placeholder=" " required><label>Enrollment Number</label></div>
+                <div class="form-group"><input type="text" id="mp-enrollment" placeholder=" " required><label>Enrollment
+                        Number</label></div>
                 <div class="form-group"><input type="text" id="mp-course" placeholder=" " required><label>Course</label>
                 </div>
                 <div class="form-group"><input type="text" id="mp-name" placeholder=" " required><label>Student
@@ -193,7 +212,8 @@
             </div>
             <form class="modal-form" id="editPlacementForm">
                 <input type="hidden" id="ep-id">
-                <div class="form-group"><input type="text" id="ep-enrollment" placeholder=" " required><label>Enrollment Number</label></div>
+                <div class="form-group"><input type="text" id="ep-enrollment" placeholder=" " required><label>Enrollment
+                        Number</label></div>
                 <div class="form-group"><input type="text" id="ep-course" placeholder=" " required><label>Course</label>
                 </div>
                 <div class="form-group"><input type="text" id="ep-name" placeholder=" " required><label>Student
@@ -274,40 +294,40 @@
             'Awaiting for offer letter': 'pending'
         };
 
-            let currentPage = 1;
-            const pageSize = 20;
+        let currentPage = 1;
+        const pageSize = 20;
 
-            function renderPlacements(list) {
-                if (!tbody) return;
-                
-                const totalItems = list.length;
-                const totalPages = Math.ceil(totalItems / pageSize);
-                if (currentPage > totalPages) currentPage = totalPages || 1;
-                if (currentPage < 1) currentPage = 1;
+        function renderPlacements(list) {
+            if (!tbody) return;
 
-                const start = (currentPage - 1) * pageSize;
-                const end = start + pageSize;
-                const paginatedItems = list.slice(start, end);
+            const totalItems = list.length;
+            const totalPages = Math.ceil(totalItems / pageSize);
+            if (currentPage > totalPages) currentPage = totalPages || 1;
+            if (currentPage < 1) currentPage = 1;
 
-                // Update pagination info
-                document.getElementById('totalItems').textContent = totalItems;
-                document.getElementById('startIndex').textContent = totalItems === 0 ? 0 : start + 1;
-                document.getElementById('endIndex').textContent = Math.min(end, totalItems);
-                document.getElementById('currentPageIndicator').textContent = `Page ${currentPage} / ${totalPages || 1}`;
-                
-                document.getElementById('prevPage').disabled = (currentPage === 1);
-                document.getElementById('nextPage').disabled = (currentPage === totalPages || totalPages === 0);
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
+            const paginatedItems = list.slice(start, end);
 
-                if (!totalItems) {
-                    tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;opacity:0.5;">No placements found.</td></tr>';
-                    return;
-                }
+            // Update pagination info
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('startIndex').textContent = totalItems === 0 ? 0 : start + 1;
+            document.getElementById('endIndex').textContent = Math.min(end, totalItems);
+            document.getElementById('currentPageIndicator').textContent = `Page ${currentPage} / ${totalPages || 1}`;
 
-                tbody.innerHTML = paginatedItems.map((p, i) => {
-                    return `
+            document.getElementById('prevPage').disabled = (currentPage === 1);
+            document.getElementById('nextPage').disabled = (currentPage === totalPages || totalPages === 0);
+
+            if (!totalItems) {
+                tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;opacity:0.5;">No placements found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = paginatedItems.map((p, i) => {
+                return `
                     <tr data-id="${p.enrollment_number || p.id}">
                         <td style="text-align:center;">${start + i + 1}</td>
-                        <td class="no-wrap" style="font-family:monospace;">${escHtml(p.enrollment_number || '—')}</td>
+                        <td class="no-wrap" style="font-family:monospace; white-space:nowrap;">${escHtml(p.enrollment_number || '—')}</td>
                         <td style="color:#a78bfa;font-weight:600;">${escHtml(p.course || p.programme || '—')}</td>
                         <td style="font-weight:600;">${escHtml(p.name || p.student_name || '—')}</td>
                         <td style="color:#94a3b8;font-style:italic;">${escHtml(p.remarks || p.role || '—')}</td>
@@ -321,11 +341,11 @@
                             </div>
                         </td>
                     </tr>`;
-                }).join('');
+            }).join('');
 
-                // Pagination listeners
-                document.getElementById('prevPage').onclick = () => { if(currentPage > 1) { currentPage--; renderPlacements(list); }};
-                document.getElementById('nextPage').onclick = () => { if(currentPage < totalPages) { currentPage++; renderPlacements(list); }};
+            // Pagination listeners
+            document.getElementById('prevPage').onclick = () => { if (currentPage > 1) { currentPage--; renderPlacements(list); } };
+            document.getElementById('nextPage').onclick = () => { if (currentPage < totalPages) { currentPage++; renderPlacements(list); } };
 
             tbody.querySelectorAll('.btn-del-placement').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
@@ -360,11 +380,11 @@
                 const studentDataList = document.createElement('datalist');
                 studentDataList.id = 'studentList';
                 document.body.appendChild(studentDataList);
-                
-                studentDataList.innerHTML = (students || []).map(s => 
+
+                studentDataList.innerHTML = (students || []).map(s =>
                     `<option value="${s.enrollment_number}">${escHtml(s.student_name)}</option>`
                 ).join('');
-                
+
                 // Attach datalist to the enrollment inputs
                 document.getElementById('mp-enrollment').setAttribute('list', 'studentList');
                 document.getElementById('ep-enrollment').setAttribute('list', 'studentList');
@@ -481,6 +501,7 @@
                 statusEl.style.display = 'none';
                 btn.disabled = false;
             }
+        });
         document.addEventListener('DOMContentLoaded', () => {
             loadPlacements();
             subscribeAllChanges(() => {
