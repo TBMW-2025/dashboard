@@ -108,12 +108,12 @@
                                             <th>SNo</th>
                                             <th>Year</th>
                                             <th>Student Name</th>
-                                            <th style="white-space: nowrap;">Enrollment</th>
+                                            <th class="no-wrap">Enrollment</th>
                                             <th>Programme</th>
                                             <th>Batch</th>
                                             <th>RRU Email</th>
                                             <th>Personal Email</th>
-                                            <th style="white-space: nowrap;">Mobile</th>
+                                            <th class="no-wrap">Mobile</th>
                                             <th>Remark</th>
                                             <th>Opted?</th>
                                             <th>Status</th>
@@ -434,12 +434,12 @@
                     <td style="text-align:center;">${start + i + 1}</td>
                     <td>${escHtml(s.admitted_year || '-')}</td>
                     <td style="font-weight:600;">${escHtml(s.student_name)}</td>
-                    <td style="font-family:monospace; white-space: nowrap;">${escHtml(s.enrollment_number)}</td>
+                    <td class="no-wrap" style="font-family:monospace;">${escHtml(s.enrollment_number)}</td>
                     <td>${escHtml(s.programme || '-')}</td>
                     <td>${escHtml(s.batch || '-')}</td>
                     <td>${escHtml(s.student_email_id || '-')}</td>
                     <td>${escHtml(s.personal_email_id || '-')}</td>
-                    <td style="white-space: nowrap;">${escHtml(s.mobile_number || '-')}</td>
+                    <td class="no-wrap">${escHtml(s.mobile_number || '-')}</td>
                     <td>${escHtml(s.remark || '-')}</td>
                     <td style="text-align:center;">
                         <button class="toggle-btn ${s.opted_for_placement === 'Yes' ? 'opted-yes' : 'opted-no'}" 

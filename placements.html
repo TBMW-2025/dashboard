@@ -107,7 +107,7 @@
                         <thead>
                             <tr>
                                 <th>S. NO</th>
-                                <th>ENROLLMENT</th>
+                                <th class="no-wrap">ENROLLMENT</th>
                                 <th>COURSE</th>
                                 <th>NAME</th>
                                 <th>ROLE / REMARKS</th>
@@ -307,7 +307,7 @@
                     return `
                     <tr data-id="${p.enrollment_number || p.id}">
                         <td style="text-align:center;">${start + i + 1}</td>
-                        <td style="font-family:monospace;">${escHtml(p.enrollment_number || '—')}</td>
+                        <td class="no-wrap" style="font-family:monospace;">${escHtml(p.enrollment_number || '—')}</td>
                         <td style="color:#a78bfa;font-weight:600;">${escHtml(p.programme || p.course || '—')}</td>
                         <td style="font-weight:600;">${escHtml(p.student_name || p.name || '—')}</td>
                         <td style="color:#94a3b8;font-style:italic;">${escHtml(p.role || p.remarks || '—')}</td>

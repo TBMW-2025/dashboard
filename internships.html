@@ -106,7 +106,7 @@
                         <thead>
                             <tr>
                                 <th>SR.</th>
-                                <th>Enrolment</th>
+                                <th class="no-wrap">Enrolment</th>
                                 <th>Year</th>
                                 <th>Prog.</th>
                                 <th>Student Name</th>
@@ -460,7 +460,7 @@
                 tbody.innerHTML = paginatedItems.map((item, i) => `
                     <tr data-id="${item.id}">
                         <td style="text-align:center;">${start + i + 1}</td>
-                        <td style="font-family:monospace; color:#a78bfa;">${esc(item.enrollment_number || '-')}</td>
+                        <td class="no-wrap" style="font-family:monospace; color:#a78bfa;">${esc(item.enrollment_number || '-')}</td>
                         <td>${esc(item.year)}</td>
                         <td>${esc(item.programme)}</td>
                         <td style="font-weight:600;">${esc(item.student_name || item.name_of_student)}</td>

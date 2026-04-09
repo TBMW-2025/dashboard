@@ -712,13 +712,17 @@ body {
     padding: 10px 8px;
     vertical-align: middle;
     word-break: break-word;
-    white-space: normal !important;
+    white-space: normal;
 }
 
 .premium-table thead th {
     padding: 12px 8px;
     vertical-align: middle;
-    white-space: normal !important;
+    white-space: normal;
+}
+
+.no-wrap {
+    white-space: nowrap !important;
 }
 
 .status-pill {
