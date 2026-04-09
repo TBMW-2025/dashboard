@@ -625,7 +625,7 @@ body {
     display: grid !important;
     grid-template-columns: 50px 1.2fr 1.5fr 2fr 1.5fr 1fr 1fr 100px !important;
     min-width: unset !important;
-    font-size: 13px !important;
+    font-size: 12.5px !important;
     font-weight: 600;
     align-items: center;
 }
@@ -634,7 +634,7 @@ body {
     display: grid !important;
     grid-template-columns: 50px 1.2fr 1.5fr 2fr 1.5fr 1fr 1fr 100px !important;
     min-width: unset !important;
-    font-size: 10.5px !important;
+    font-size: 12.5px !important;
     align-items: center;
 }
 
@@ -643,7 +643,7 @@ body {
     display: grid !important;
     grid-template-columns: 50px 70px 140px 100px 1.5fr 80px 100px 90px 1.5fr 90px 1fr 1.5fr 90px 1fr 100px 100px !important;
     min-width: 1700px !important;
-    font-size: 11px !important;
+    font-size: 12.5px !important;
     font-weight: 600;
     align-items: center;
     white-space: nowrap;
@@ -653,7 +653,7 @@ body {
     display: grid !important;
     grid-template-columns: 50px 70px 140px 100px 1.5fr 80px 100px 90px 1.5fr 90px 1fr 1.5fr 90px 1fr 100px 100px !important;
     min-width: 1700px !important;
-    font-size: 10.5px !important;
+    font-size: 12.5px !important;
     align-items: center;
 }
 
@@ -662,7 +662,7 @@ body {
     display: grid !important;
     grid-template-columns: 50px 2fr 1fr 1fr 1.5fr 1fr 1.5fr 1fr 100px !important;
     min-width: unset !important;
-    font-size: 13px !important;
+    font-size: 12.5px !important;
     font-weight: 600;
     align-items: center;
 }
@@ -671,7 +671,7 @@ body {
     display: grid !important;
     grid-template-columns: 50px 2fr 1fr 1fr 1.5fr 1fr 1.5fr 1fr 100px !important;
     min-width: unset !important;
-    font-size: 10.5px !important;
+    font-size: 12.5px !important;
     align-items: center;
 }
 
@@ -682,10 +682,12 @@ body {
     border-collapse: collapse;
     background: #0f172a;
     color: #e2e8f0;
-    font-size: 8px !important; /* Increased for better visibility */
+    font-size: 12.5px !important; 
     table-layout: fixed !important; 
     word-break: break-all;
     letter-spacing: -0.1px;
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .premium-table thead th {
@@ -711,7 +713,7 @@ body {
 }
 
 .premium-table td {
-    padding: 2px 2px;
+    padding: 12px 8px;
     vertical-align: middle;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
@@ -719,7 +721,7 @@ body {
 }
 
 .premium-table thead th {
-    padding: 5px 2px;
+    padding: 14px 8px;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
     white-space: nowrap !important;
@@ -2241,7 +2243,7 @@ body {
 }
 
 .user-name {
-    font-size: 10.5px !important;
+    font-size: 12.5px !important;
     font-weight: 600 !important;
     color: #fff !important;
     white-space: nowrap !important;
