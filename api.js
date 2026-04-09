@@ -196,7 +196,7 @@ async function importCompanies(fileOrFormData) {
 // ─── PLACEMENTS ───────────────────────────────────────────────────────────────
 async function getPlacements(course = '') {
     let query = _sb.from('placements').select('*').order('created_at', { ascending: false });
-    if (course) query = query.or(`programme.ilike.%${course.trim()}%,course.ilike.%${course.trim()}%`);
+    if (course) query = query.ilike('course', `%${course.trim()}%`);
     const { data, error } = await query;
     sbCheck(error, 'getPlacements');
     return data || [];
@@ -378,8 +378,8 @@ async function getStats(programme = '') {
 
     const results = await Promise.allSettled([
         buildCount('students', 'programme'),
-        buildCount('placements', 'programme'),
-        buildCount('companies', 'company_name'), // (Usually not filtered by program)
+        buildCount('placements', 'course'),
+        buildCount('companies', 'company_name'),
         buildCount('internships', 'programme'),
         buildCount('field_visits', 'program_name'),
         buildCount('industrial_visits', 'program_name'),
@@ -691,14 +691,14 @@ async function parseExcelFile(file, type) {
                         const nr = normalizeRow(r);
                         return {
                             enrollment_number: col(nr, 'Enrollment_No', 'Enrollment No', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
-                            programme: col(nr, 'Course', 'programme', 'course', 'program'),
-                            student_name: col(nr, 'Name', 'Student Name', 'name', 'student_name'),
+                            course: col(nr, 'Course', 'programme', 'course', 'program'),
+                            name: col(nr, 'Name', 'Student Name', 'name', 'student_name'),
                             remarks: col(nr, 'Remarks', 'remarks', 'role'),
                             company: col(nr, 'Company', 'company', 'organization_name'),
                             city: col(nr, 'City', 'city'),
-                            package: col(nr, 'CTC', 'ctc', 'package', 'salary')
+                            ctc: col(nr, 'CTC', 'ctc', 'package', 'salary')
                         };
-                    }).filter(r => r.student_name || r.company);
+                    }).filter(r => r.enrollment_number);
 
                 } else if (type === 'internships') {
                     rows = raw.map(r => {
@@ -706,16 +706,17 @@ async function parseExcelFile(file, type) {
                         return {
                             enrollment_number: col(nr, 'Enrollment_No', 'Enrolment No.', 'Enrollment No', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
                             year: col(nr, 'Year', 'year'),
-                            batch: col(nr, 'Batch', 'batch'),
                             programme: col(nr, 'Programme', 'Program', 'programme'),
-                            student_name: col(nr, 'Name of Student', 'Student Name', 'Name', 'student_name'),
+                            name_of_student: col(nr, 'Name of Student', 'Student Name', 'Name', 'student_name', 'name_of_student'),
                             gender: col(nr, 'Gender', 'gender'),
-                            internship_place: col(nr, 'Internship Place', 'internship_place', 'Internship Place 01', 'organization'),
-                            duration_of_intership: col(nr, 'Duration', 'duration', 'duration_of_intership', 'Duration 01'),
-                            city_of_intership: col(nr, 'City', 'Internship City', 'city', 'city_of_intership', 'City 01'),
+                            role: col(nr, 'Role', 'role', 'internship_role'),
+                            salary: col(nr, 'Salary', 'salary', 'stipend'),
+                            internship_place_01: col(nr, 'Internship Place', 'internship_place', 'Internship Place 01', 'organization'),
+                            duration_of_intership_01: col(nr, 'Duration', 'duration', 'duration_of_intership', 'Duration 01'),
+                            city_of_intership_01: col(nr, 'City', 'Internship City', 'city', 'city_of_intership', 'City 01'),
                             type_of_organization: col(nr, 'Type of Organization', 'Organization Type', 'organization_type', 'type_of_organization')
                         };
-                    }).filter(r => r.enrollment_number || r.student_name);
+                    }).filter(r => r.enrollment_number);
                 } else if (type === 'field_visits') {
                     rows = raw.map(r => {
                         const nr = normalizeRow(r);
