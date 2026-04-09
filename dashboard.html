@@ -650,6 +650,7 @@
 
             document.addEventListener('DOMContentLoaded', () => {
                 loadDashboardData();
+                subscribeAllChanges(loadDashboardData);
                 document.getElementById('dashboardProgrammeFilter')?.addEventListener('change', (e) => loadDashboardData(e.target.value));
             });
         </script>

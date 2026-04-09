@@ -20,6 +20,25 @@ function clearSession() {
 }
 function isLoggedIn() { return !!getUser(); }
 
+// ─── REALTIME UPDATES ────────────────────────────────────────────────────────
+function subscribeAllChanges(callback) {
+    if (typeof _sb === 'undefined' || !_sb) {
+        console.warn('[Realtime] Supabase client not initialized yet.');
+        return null;
+    }
+    const channel = _sb.channel('pd-realtime-updates')
+        .on('postgres_changes', { event: '*', schema: 'public' }, (payload) => {
+            console.log(`[Realtime] ${payload.eventType} on ${payload.table}`);
+            callback(payload);
+        })
+        .subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log('[Realtime] Subscribed to live database changes.');
+            }
+        });
+    return channel;
+}
+
 // ─── AUTH ─────────────────────────────────────────────────────────────────────
 async function sha256(str) {
     const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));

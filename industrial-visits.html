@@ -471,7 +471,13 @@
                 }
             };
 
-            load();
+            document.addEventListener('DOMContentLoaded', () => {
+                load();
+                subscribeAllChanges(() => {
+                    console.log('[Realtime] Refreshing industrial visits...');
+                    load();
+                });
+            });
         })();
     </script>
 </body>

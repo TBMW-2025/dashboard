@@ -734,7 +734,14 @@
             }
         });
 
-        document.addEventListener('DOMContentLoaded', loadStudents);
+            document.addEventListener('DOMContentLoaded', () => {
+                loadStudents();
+                // Realtime Auto-Refresh
+                subscribeAllChanges(() => {
+                    console.log('[Realtime] Refreshing student list...');
+                    loadStudents();
+                });
+            });
     </script>
 </body>
 

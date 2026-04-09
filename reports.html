@@ -559,6 +559,13 @@
 
                 await loadReportsData();
                 await renderCharts();
+
+                // Enable Realtime Auto-Refresh for Reports
+                subscribeAllChanges(async () => {
+                    console.log('[Realtime] Refreshing charts and metrics...');
+                    await loadReportsData();
+                    await renderCharts();
+                });
             });
         </script>
 </body>

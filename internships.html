@@ -603,6 +603,12 @@
                     statusEl.style.display = 'none';
                     btn.disabled = false;
                 }
+            document.addEventListener('DOMContentLoaded', () => {
+                load();
+                subscribeAllChanges(() => {
+                    console.log('[Realtime] Refreshing internship list...');
+                    load();
+                });
             });
         })();
     </script>
