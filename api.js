@@ -310,6 +310,44 @@ async function importFieldVisits(fileOrFormData) {
     return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} field visit records.` };
 }
 
+// ─── INDUSTRIAL VISITS ────────────────────────────────────────────────────────
+async function getIndustrialVisits(program = '') {
+    let query = _sb.from('industrial_visits').select('*').order('created_at', { ascending: false });
+    if (program) query = query.ilike('program_name', `%${program.trim()}%`);
+    const { data, error } = await query;
+    sbCheck(error, 'getIndustrialVisits');
+    return data || [];
+}
+
+async function createIndustrialVisit(payload) {
+    const { data, error } = await _sb.from('industrial_visits').insert(payload).select().single();
+    sbCheck(error, 'createIndustrialVisit');
+    return data;
+}
+
+async function updateIndustrialVisit(id, payload) {
+    const { data, error } = await _sb.from('industrial_visits').update(payload).eq('id', id).select().single();
+    sbCheck(error, 'updateIndustrialVisit');
+    return data;
+}
+
+async function deleteIndustrialVisit(id) {
+    const { error } = await _sb.from('industrial_visits').delete().eq('id', id);
+    sbCheck(error, 'deleteIndustrialVisit');
+    return { success: true };
+}
+
+async function importIndustrialVisits(fileOrFormData) {
+    const file = fileOrFormData instanceof File ? fileOrFormData
+        : (fileOrFormData instanceof FormData ? fileOrFormData.get('file') : null);
+    if (!file) throw new Error('No file provided.');
+    const rows = await parseExcelFile(file, 'industrial_visited');
+    if (!rows.length) throw new Error('No valid rows found in file.');
+    const { data, error } = await _sb.from('industrial_visits').insert(rows).select();
+    sbCheck(error, 'importIndustrialVisits');
+    return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} industrial visit records.` };
+}
+
 // ─── REPORTS (computed client-side from raw data) ─────────────────────────────
 async function getStats(programme = '') {
     // Helper to build filtered count query
@@ -325,7 +363,8 @@ async function getStats(programme = '') {
         buildCount('companies', 'company_name'), // (Usually not filtered by program)
         buildCount('internships', 'programme'),
         buildCount('field_visits', 'program_name'),
-        buildCount('jobs', 'title') // (OSINT)
+        buildCount('industrial_visits', 'program_name'),
+        buildCount('jobs', 'title') 
     ]);
 
     const getValue = (idx) => results[idx].status === 'fulfilled' ? results[idx].value : 0;
@@ -349,8 +388,10 @@ async function getStats(programme = '') {
         placement_rate: final_total_students ? Math.round((placed_students / final_total_students) * 100) : 0,
         total_companies: getValue(2),
         total_internships: getValue(3),
-        total_visits: getValue(4),
-        total_external_jobs: getValue(5)
+        total_field_visits: getValue(4),
+        total_industrial_visits: getValue(5),
+        total_visits: getValue(4) + getValue(5),
+        total_external_jobs: getValue(6)
     };
 }
 
@@ -670,6 +711,20 @@ async function parseExcelFile(file, type) {
                             city: col(nr, 'City', 'Location', 'Place', 'city')
                         };
                     }).filter(r => r.field_visited && r.visited_date);
+                } else if (type === 'industrial_visited') {
+                    rows = raw.map(r => {
+                        const nr = normalizeRow(r);
+                        return {
+                            organization_name: col(nr, 'Organization_Visited', 'Organization Name', 'Organization', 'organization_name', 'field_visited'),
+                            visited_date: col(nr, 'Visited_Date', 'Date', 'Visit Date', 'visit_date'),
+                            visit_type: col(nr, 'Visit Type', 'Type', 'type', 'visit_type') || 'Private',
+                            no_of_student_visited: parseInt(col(nr, 'No_of_Student_Visited', 'No of Students', 'No of Student Visited', 'Students', 'students_visited') || 0),
+                            program_name: col(nr, 'Program_Name', 'Programme', 'programme', 'program'),
+                            no_of_staff_visited: parseInt(col(nr, 'No_of_Staff_Visited', 'No of Staff', 'No of Staff Visited', 'Staff', 'staff_visited') || 0),
+                            staff_name: col(nr, 'Staff_Name', 'Faculty Coordinator', 'Faculty', 'Coordinator', 'staff_name', 'faculty'),
+                            city: col(nr, 'City', 'Location', 'Place', 'city')
+                        };
+                    }).filter(r => r.organization_name && r.visited_date);
                 }
                 resolve(rows);
             } catch (err) {

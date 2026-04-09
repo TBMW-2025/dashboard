@@ -51,6 +51,10 @@
                         <i class="bi bi-pin-map-fill"></i>
                         <span>Field Visits</span>
                     </a>
+                    <a href="industrial-visits.html" class="nav-item ">
+                        <i class="bi bi-buildings-fill"></i>
+                        <span>Industrial Visits</span>
+                    </a>
                     <a href="placements.html" class="nav-item ">
                         <i class="bi bi-briefcase-fill"></i>
                         <span>Placements</span>
@@ -121,20 +125,19 @@
                 </div>
 
                 <div class="stat-card-new">
-                    <div class="card-icon" style="color: var(--accent-orange);">📈</div>
-                    <div class="card-label">Placement Rate</div>
-                    <div class="card-value" id="rpt-rate">0%</div>
-                    <div class="card-label" style="text-transform: none; font-size: 10px;">Based on live data</div>
+                    <div class="card-icon" style="color: var(--accent-orange);">📍</div>
+                    <div class="card-label">Field Visits</div>
+                    <div class="card-value" id="rpt-field-visits">0</div>
+                    <div class="card-label" style="text-transform: none; font-size: 10px;">Org engagement</div>
                     <div class="accent-line" style="background: var(--accent-orange);"></div>
                 </div>
 
                 <div class="stat-card-new">
-                    <div class="card-icon" style="color: var(--accent-purple);">🏢</div>
-                    <div class="card-label">Companies Visited</div>
-                    <div class="card-value" id="rpt-companies">0</div>
-                    <div class="card-label" id="rpt-internships" style="text-transform: none; font-size: 10px;">
-                        Internships: 0</div>
-                    <div class="accent-line" style="background: var(--accent-purple);"></div>
+                    <div class="card-icon" style="color: #f59e0b;">🏭</div>
+                    <div class="card-label">Industrial Visits</div>
+                    <div class="card-value" id="rpt-industrial-visits">0</div>
+                    <div class="card-label" style="text-transform: none; font-size: 10px;">Industry exposure</div>
+                    <div class="accent-line" style="background: #f59e0b;"></div>
                 </div>
             </div>
 
@@ -288,7 +291,8 @@
                             getStudents().catch(() => []),
                             getPlacements().catch(() => []),
                             getInternships().catch(() => []),
-                            getFieldVisits().catch(() => [])
+                            getFieldVisits().catch(() => []),
+                            getIndustrialVisits().catch(() => [])
                         ]);
 
                         let totalStudents = stats.total_students;
@@ -315,6 +319,8 @@
                         const pendingCount = placements.filter(p => (p.status || '').toLowerCase().includes('pending')).length;
                         set('rpt-pending', `Pending: ${pendingCount}`);
                         set('rpt-internships', `Internships: ${internships.length}`);
+                        set('rpt-field-visits', fieldVisits.length);
+                        set('rpt-industrial-visits', (industrialVisits || []).length);
 
                         const parseLPA = (s) => {
                             if (!s) return 0;
