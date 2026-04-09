@@ -116,7 +116,6 @@
                                             <th class="no-wrap">Mobile</th>
                                             <th>Remark</th>
                                             <th>Opted?</th>
-                                            <th>Status</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -446,11 +445,6 @@
                                 onclick="toggleOptedStatus('${s.enrollment_number}', '${s.opted_for_placement || 'No'}')">
                              ${escHtml(s.opted_for_placement || 'No')}
                         </button>
-                    </td>
-                    <td>
-                        <div class="status-pill ${s.placement_status === 'Yes' ? 'placed' : 'not-placed'}">
-                            ${escHtml(s.placement_status === 'Yes' ? 'Placed' : 'Not Placed')}
-                        </div>
                     </td>
                     <td style="border-right: none;">
                         <div style="display:flex; gap:6px; justify-content:center; align-items:center;">

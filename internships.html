@@ -108,16 +108,13 @@
                                 <th>SR.</th>
                                 <th class="no-wrap">Enrolment</th>
                                 <th>Year</th>
+                                <th>Batch</th>
                                 <th>Prog.</th>
                                 <th>Student Name</th>
                                 <th>Gender</th>
-                                <th>Role</th>
-                                <th>P1</th>
-                                <th>D1</th>
-                                <th>C1</th>
-                                <th>P2</th>
-                                <th>D2</th>
-                                <th>C2</th>
+                                <th>Place</th>
+                                <th>Duration</th>
+                                <th>City</th>
                                 <th>Org Type</th>
                                 <th>Actions</th>
                             </tr>
@@ -214,47 +211,35 @@
                 </div>
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Salary (CTC)</label>
-                        <input type="text" id="mi-salary" class="form-input" placeholder="e.g. ₹ 25,000">
+                        <label class="form-label">Programme</label>
+                        <input type="text" id="mi-programme" class="form-input" required>
                     </div>
+                    <div class="form-group">
+                        <label class="form-label">Batch</label>
+                        <input type="text" id="mi-batch" class="form-input" required placeholder="e.g. Batch-1">
+                    </div>
+                </div>
+                <div class="form-group-row">
                     <div class="form-group">
                         <label class="form-label">Internship Place</label>
-                        <input type="text" id="mi-place" class="form-input" placeholder="Organization name" required>
+                        <input type="text" id="mi-place" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration</label>
+                        <input type="text" id="mi-duration" class="form-input">
                     </div>
                 </div>
                 <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Duration 01</label>
-                        <input type="text" id="mi-duration" class="form-input" placeholder="e.g. 15 Days">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">City 01</label>
-                        <input type="text" id="mi-city" class="form-input" placeholder="e.g. Puducherry">
-                    </div>
-                </div>
-                <div class="section-title">Second Internship (Optional)</div>
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label class="form-label">Internship Place 02</label>
-                        <input type="text" id="mi-place-02" class="form-input" placeholder="Organization name">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Duration 02</label>
-                        <input type="text" id="mi-duration-02" class="form-input" placeholder="e.g. 1 Week">
-                    </div>
-                </div>
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label class="form-label">City 02</label>
-                        <input type="text" id="mi-city-02" class="form-input" placeholder="e.g. Chennai">
+                        <label class="form-label">City</label>
+                        <input type="text" id="mi-city" class="form-input">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Org Type</label>
                         <select id="mi-org-type" class="form-select">
                             <option value="Govt.">Govt.</option>
                             <option value="Govt./Pvt">Govt./Pvt</option>
-                            <option value="Private">Private</option>
-                            <option value="NGO">NGO</option>
+                            <option value="Pvt.">Pvt.</option>
                         </select>
                     </div>
                 </div>
@@ -294,67 +279,44 @@
                         <input type="text" id="ei-programme" class="form-input" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Name of Student</label>
-                        <input type="text" id="ei-name" class="form-input" required>
+                        <label class="form-label">Batch</label>
+                        <input type="text" id="ei-batch" class="form-input" required>
                     </div>
                 </div>
                 <div class="form-group-row">
+                    <div class="form-group">
+                        <label class="form-label">Name of Student</label>
+                        <input type="text" id="ei-name" class="form-input" required>
+                    </div>
                     <div class="form-group">
                         <label class="form-label">Gender</label>
                         <select id="ei-gender" class="form-select" required>
                             <option value="Male">Male</option>
                             <option value="Female">Female</option>
-                            <option value="Other">Other</option>
                         </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Role</label>
-                        <input type="text" id="ei-role" class="form-input">
                     </div>
                 </div>
                 <div class="form-group-row">
-                    <div class="form-group">
-                        <label class="form-label">Salary (CTC)</label>
-                        <input type="text" id="ei-salary" class="form-input">
-                    </div>
                     <div class="form-group">
                         <label class="form-label">Internship Place</label>
                         <input type="text" id="ei-place" class="form-input" required>
                     </div>
-                </div>
-                <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">Duration 01</label>
+                        <label class="form-label">Duration</label>
                         <input type="text" id="ei-duration" class="form-input">
                     </div>
+                </div>
+                <div class="form-group-row">
                     <div class="form-group">
-                        <label class="form-label">City 01</label>
+                        <label class="form-label">City</label>
                         <input type="text" id="ei-city" class="form-input">
-                    </div>
-                </div>
-                <div class="section-title">Second Internship (Optional)</div>
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label class="form-label">Internship Place 02</label>
-                        <input type="text" id="ei-place-02" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Duration 02</label>
-                        <input type="text" id="ei-duration-02" class="form-input">
-                    </div>
-                </div>
-                <div class="form-group-row">
-                    <div class="form-group">
-                        <label class="form-label">City 02</label>
-                        <input type="text" id="ei-city-02" class="form-input">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Org Type</label>
                         <select id="ei-org-type" class="form-select">
                             <option value="Govt.">Govt.</option>
                             <option value="Govt./Pvt">Govt./Pvt</option>
-                            <option value="Private">Private</option>
-                            <option value="NGO">NGO</option>
+                            <option value="Pvt.">Pvt.</option>
                         </select>
                     </div>
                 </div>
@@ -462,16 +424,13 @@
                         <td style="text-align:center;">${start + i + 1}</td>
                         <td class="no-wrap" style="font-family:monospace; color:#a78bfa;">${esc(item.enrollment_number || '-')}</td>
                         <td>${esc(item.year)}</td>
+                        <td>${esc(item.batch || '-')}</td>
                         <td>${esc(item.programme)}</td>
                         <td style="font-weight:600;">${esc(item.student_name || item.name_of_student)}</td>
                         <td>${esc(item.gender)}</td>
-                        <td style="color:#bbb;">${esc(item.role || 'Intern')}</td>
-                        <td>${esc(item.internship_place_01)}</td>
-                        <td>${esc(item.duration_of_intership_01)}</td>
-                        <td>${esc(item.city_of_intership_01)}</td>
-                        <td>${esc(item.internship_place_02)}</td>
-                        <td>${esc(item.duration_of_intership_02)}</td>
-                        <td>${esc(item.city_of_intership_02)}</td>
+                        <td>${esc(item.internship_place || item.internship_place_01)}</td>
+                        <td>${esc(item.duration_of_intership || item.duration_of_intership_01)}</td>
+                        <td>${esc(item.city_of_intership || item.city_of_intership_01)}</td>
                         <td>${esc(item.type_of_organization)}</td>
                         <td>
                             <div style="display:flex;gap:8px;justify-content:center;">
@@ -496,16 +455,12 @@
                         document.getElementById('ei-year').value = item.year || '';
                         document.getElementById('ei-enrolment').value = item.enrollment_number || '';
                         document.getElementById('ei-programme').value = item.programme || '';
-                        document.getElementById('ei-name').value = item.name_of_student || '';
+                        document.getElementById('ei-batch').value = item.batch || '';
+                        document.getElementById('ei-name').value = item.student_name || item.name_of_student || '';
                         document.getElementById('ei-gender').value = item.gender || 'Male';
-                        document.getElementById('ei-role').value = item.role || '';
-                        document.getElementById('ei-salary').value = item.salary || '';
-                        document.getElementById('ei-place').value = item.internship_place_01 || '';
-                        document.getElementById('ei-duration').value = item.duration_of_intership_01 || '';
-                        document.getElementById('ei-city').value = item.city_of_intership_01 || '';
-                        document.getElementById('ei-place-02').value = item.internship_place_02 || '';
-                        document.getElementById('ei-duration-02').value = item.duration_of_intership_02 || '';
-                        document.getElementById('ei-city-02').value = item.city_of_intership_02 || '';
+                        document.getElementById('ei-place').value = item.internship_place || item.internship_place_01 || '';
+                        document.getElementById('ei-duration').value = item.duration_of_intership || item.duration_of_intership_01 || '';
+                        document.getElementById('ei-city').value = item.city_of_intership || item.city_of_intership_01 || '';
                         document.getElementById('ei-org-type').value = item.type_of_organization || 'Govt.';
                         document.getElementById('editInternshipModal').style.display = 'flex';
                     });

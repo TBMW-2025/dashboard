@@ -646,18 +646,14 @@ async function parseExcelFile(file, type) {
                         return {
                             enrollment_number: col(nr, 'Enrollment_No', 'Enrolment No.', 'Enrollment No', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
                             year: col(nr, 'Year', 'year'),
+                            batch: col(nr, 'Batch', 'batch'),
                             programme: col(nr, 'Programme', 'Program', 'programme'),
                             student_name: col(nr, 'Name of Student', 'Student Name', 'Name', 'student_name'),
                             gender: col(nr, 'Gender', 'gender'),
-                            role: col(nr, 'Remarks', 'Role', 'role'),
-                            salary: col(nr, 'CTC', 'Salary', 'salary', 'stipend'),
-                            internship_place_01: col(nr, 'Internship Place', 'internship_place', 'Internship Place 01', 'organization'),
-                            duration_of_intership_01: col(nr, 'Duration', 'duration', 'Duration 01'),
-                            city_of_intership_01: col(nr, 'City', 'Internship City', 'city', 'City 01'),
-                            internship_place_02: col(nr, 'Internship Place 02', 'Internship Place 2', 'internship_place_02'),
-                            duration_of_intership_02: col(nr, 'Duration 02', 'duration_02'),
-                            city_of_intership_02: col(nr, 'City 02', 'city_02', 'Internship City 02'),
-                            type_of_organization: col(nr, 'Type of Organization', 'Organization Type', 'organization_type')
+                            internship_place: col(nr, 'Internship Place', 'internship_place', 'Internship Place 01', 'organization'),
+                            duration_of_intership: col(nr, 'Duration', 'duration', 'duration_of_intership', 'Duration 01'),
+                            city_of_intership: col(nr, 'City', 'Internship City', 'city', 'city_of_intership', 'City 01'),
+                            type_of_organization: col(nr, 'Type of Organization', 'Organization Type', 'organization_type', 'type_of_organization')
                         };
                     }).filter(r => r.enrollment_number || r.student_name);
                 } else if (type === 'field_visits') {
