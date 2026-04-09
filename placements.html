@@ -7,7 +7,7 @@
         content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://d3js.org https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' https: data:; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; frame-ancestors 'none';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Placements - Placement Monitor Dashboard</title>
-    <link rel="stylesheet" href="styles.css?v=fresh_final">
+    <link rel="stylesheet" href="styles.css?v=303">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -102,18 +102,48 @@
             </div>
 
             <div class="widget-panel">
-                <div class="table-header placements-header" id="tableHeader">
-                    <div class="dropdown-header sno">S. No <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Course <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Name <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Role <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Company <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">City <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Salary <span class="dropdown-icon">▼</span></div>
-                    <div class="dropdown-header">Actions</div>
+                <div class="table-container data-table-container">
+                    <table class="premium-table">
+                        <colgroup>
+                            <col style="width: 30px;">  <!-- S.No -->
+                            <col style="width: 100px;"> <!-- Enrollment -->
+                            <col style="width: 80px;">  <!-- Course -->
+                            <col style="width: 140px;"> <!-- Name -->
+                            <col style="width: 150px;"> <!-- Role -->
+                            <col style="width: 150px;"> <!-- Company -->
+                            <col style="width: 100px;"> <!-- City -->
+                            <col style="width: 80px;">  <!-- Salary -->
+                            <col style="width: 60px;">  <!-- Actions -->
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>S. NO</th>
+                                <th>ENROLLMENT</th>
+                                <th>COURSE</th>
+                                <th>NAME</th>
+                                <th>ROLE / REMARKS</th>
+                                <th>COMPANY</th>
+                                <th>CITY</th>
+                                <th>SALARY</th>
+                                <th>ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="placementsTableBody">
+                            <tr><td colspan="9" style="text-align:center;padding:40px;opacity:0.5;">Loading placements...</td></tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="table-body" id="placementsTableBody">
-                    <div style="padding:24px;text-align:center;opacity:0.5;">Loading placements…</div>
+
+                <!-- PAGINATION CONTROLS -->
+                <div class="pagination-controls" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
+                    <div class="pagination-info" style="font-size: 13px; opacity: 0.6;">
+                        Showing <span id="startIndex">0</span> - <span id="endIndex">0</span> of <span id="totalItems">0</span> placements
+                    </div>
+                    <div class="pagination-btns" style="display: flex; gap: 10px;">
+                        <button id="prevPage" class="select-unified" style="padding: 5px 15px; width: auto;"><i class="bi bi-chevron-left"></i> Prev</button>
+                        <span id="currentPageIndicator" style="display: flex; align-items: center; font-size: 13px; font-weight: 600; min-width: 60px; justify-content: center;">Page 1</span>
+                        <button id="nextPage" class="select-unified" style="padding: 5px 15px; width: auto;">Next <i class="bi bi-chevron-right"></i></button>
+                    </div>
                 </div>
             </div>
             
@@ -147,6 +177,7 @@
                 <button class="close-modal" id="closePlacementModal">&times;</button>
             </div>
             <form class="modal-form" id="addPlacementForm">
+                <div class="form-group"><input type="text" id="mp-enrollment" placeholder=" " required><label>Enrollment Number</label></div>
                 <div class="form-group"><input type="text" id="mp-course" placeholder=" " required><label>Course</label>
                 </div>
                 <div class="form-group"><input type="text" id="mp-name" placeholder=" " required><label>Student
@@ -173,6 +204,7 @@
             </div>
             <form class="modal-form" id="editPlacementForm">
                 <input type="hidden" id="ep-id">
+                <div class="form-group"><input type="text" id="ep-enrollment" placeholder=" " required><label>Enrollment Number</label></div>
                 <div class="form-group"><input type="text" id="ep-course" placeholder=" " required><label>Course</label>
                 </div>
                 <div class="form-group"><input type="text" id="ep-name" placeholder=" " required><label>Student
@@ -253,27 +285,58 @@
             'Awaiting for offer letter': 'pending'
         };
 
-        function renderPlacements(list) {
-            if (!list.length) {
-                tbody.innerHTML = '<div style="padding:24px;text-align:center;opacity:0.5;">No placements found.</div>';
-                return;
-            }
-            tbody.innerHTML = list.map((p, i) => {
-                return `
-                <div class="table-row placements-row" data-id="${p.id}">
-                    <div class="sno">${i + 1}</div>
-                    <div style="color:#a78bfa;font-weight:500;">${escHtml(p.course || '—')}</div>
-                    <div class="student-name">${escHtml(p.name || '—')}</div>
-                    <div style="color:#94a3b8;font-style:italic;">${escHtml(p.remarks || '—')}</div>
-                    <div class="company-name">${escHtml(p.company || '—')}</div>
-                    <div>${escHtml(p.city || '—')}</div>
-                    <div class="salary">${escHtml(p.ctc || '—')}</div>
-                    <div style="display:flex;gap:6px;align-items:center;">
-                        <button class="action-btn btn-edit-placement" data-id="${p.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                        <button class="action-btn btn-del-placement" data-id="${p.id}" title="Delete"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>`;
-            }).join('');
+            let currentPage = 1;
+            const pageSize = 20;
+
+            function renderPlacements(list) {
+                if (!tbody) return;
+                
+                const totalItems = list.length;
+                const totalPages = Math.ceil(totalItems / pageSize);
+                if (currentPage > totalPages) currentPage = totalPages || 1;
+                if (currentPage < 1) currentPage = 1;
+
+                const start = (currentPage - 1) * pageSize;
+                const end = start + pageSize;
+                const paginatedItems = list.slice(start, end);
+
+                // Update pagination info
+                document.getElementById('totalItems').textContent = totalItems;
+                document.getElementById('startIndex').textContent = totalItems === 0 ? 0 : start + 1;
+                document.getElementById('endIndex').textContent = Math.min(end, totalItems);
+                document.getElementById('currentPageIndicator').textContent = `Page ${currentPage} / ${totalPages || 1}`;
+                
+                document.getElementById('prevPage').disabled = (currentPage === 1);
+                document.getElementById('nextPage').disabled = (currentPage === totalPages || totalPages === 0);
+
+                if (!totalItems) {
+                    tbody.innerHTML = '<tr><td colspan="9" style="padding:40px;text-align:center;opacity:0.5;">No placements found.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = paginatedItems.map((p, i) => {
+                    return `
+                    <tr data-id="${p.enrollment_number || p.id}">
+                        <td style="text-align:center;">${start + i + 1}</td>
+                        <td style="font-family:monospace;">${escHtml(p.enrollment_number || '—')}</td>
+                        <td style="color:#a78bfa;font-weight:600;">${escHtml(p.course || '—')}</td>
+                        <td style="font-weight:600;">${escHtml(p.name || '—')}</td>
+                        <td style="color:#94a3b8;font-style:italic;">${escHtml(p.remarks || '—')}</td>
+                        <td style="font-weight:600;">${escHtml(p.company || '—')}</td>
+                        <td>${escHtml(p.city || '—')}</td>
+                        <td style="color:#22c55e;">${escHtml(p.ctc || '—')}</td>
+                        <td>
+                            <div style="display:flex;gap:8px;justify-content:center;">
+                                <button class="action-icon btn-edit-placement" data-id="${p.enrollment_number || p.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                                <button class="action-icon btn-del-placement" data-id="${p.enrollment_number || p.id}" title="Delete"><i class="bi bi-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>`;
+                }).join('');
+
+                // Pagination listeners
+                document.getElementById('prevPage').onclick = () => { if(currentPage > 1) { currentPage--; renderPlacements(list); }};
+                document.getElementById('nextPage').onclick = () => { if(currentPage < totalPages) { currentPage++; renderPlacements(list); }};
 
             tbody.querySelectorAll('.btn-del-placement').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
@@ -305,15 +368,18 @@
             // Populate dropdowns for the modal
             try {
                 const students = await getStudents();
-                const companies = await getCompanies();
-                const stuSelect = document.getElementById('mp-student');
-                const compSelect = document.getElementById('mp-company');
+                const studentDataList = document.createElement('datalist');
+                studentDataList.id = 'studentList';
+                document.body.appendChild(studentDataList);
+                
+                studentDataList.innerHTML = (students || []).map(s => 
+                    `<option value="${s.enrollment_number}">${escHtml(s.student_name)}</option>`
+                ).join('');
+                
+                // Attach datalist to the enrollment inputs
+                document.getElementById('mp-enrollment').setAttribute('list', 'studentList');
+                document.getElementById('ep-enrollment').setAttribute('list', 'studentList');
 
-                stuSelect.innerHTML = '<option value="">Select Student...</option>' +
-                    (students || []).map(s => `<option value="${s.enrollment_number}">${escHtml(s.student_name)}</option>`).join('');
-
-                compSelect.innerHTML = '<option value="">Select Company...</option>' +
-                    (companies || []).map(c => `<option value="${c.company_name}">${escHtml(c.company_name)}</option>`).join('');
             } catch (e) { console.warn("Could not load dropdowns:", e); }
         });
 
@@ -331,6 +397,7 @@
             btn.disabled = true; btn.textContent = 'Adding…';
             try {
                 await createPlacement({
+                    enrollment_number: document.getElementById('mp-enrollment').value,
                     course: document.getElementById('mp-course').value,
                     name: document.getElementById('mp-name').value,
                     remarks: document.getElementById('mp-remarks').value || '',
@@ -350,9 +417,10 @@
             const btn = e.target.closest('.btn-edit-placement');
             if (btn) {
                 const id = btn.dataset.id;
-                const p = placementsData.find(item => item.id == id);
+                const p = placementsData.find(item => (item.enrollment_number == id || item.id == id));
                 if (!p) return;
-                document.getElementById('ep-id').value = p.id;
+                document.getElementById('ep-id').value = p.id || '';
+                document.getElementById('ep-enrollment').value = p.enrollment_number || '';
                 document.getElementById('ep-course').value = p.course || '';
                 document.getElementById('ep-name').value = p.name || '';
                 document.getElementById('ep-remarks').value = p.remarks || '';
@@ -374,6 +442,7 @@
             btn.disabled = true; btn.textContent = 'Saving...';
             try {
                 await updatePlacement(id, {
+                    enrollment_number: document.getElementById('ep-enrollment').value,
                     course: document.getElementById('ep-course').value,
                     name: document.getElementById('ep-name').value,
                     remarks: document.getElementById('ep-remarks').value || '',

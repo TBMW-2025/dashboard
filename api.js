@@ -177,7 +177,7 @@ async function importCompanies(fileOrFormData) {
 // ─── PLACEMENTS ───────────────────────────────────────────────────────────────
 async function getPlacements(course = '') {
     let query = _sb.from('placements').select('*').order('created_at', { ascending: false });
-    if (course) query = query.eq('course', course);
+    if (course) query = query.ilike('course', `%${course.trim()}%`);
     const { data, error } = await query;
     sbCheck(error, 'getPlacements');
     return data || [];
@@ -229,7 +229,7 @@ async function importPlacements(fileOrFormData) {
 // ─── INTERNSHIPS ──────────────────────────────────────────────────────────────
 async function getInternships(programme = '') {
     let query = _sb.from('internships').select('*').order('created_at', { ascending: false });
-    if (programme) query = query.eq('programme', programme);
+    if (programme) query = query.ilike('programme', `%${programme.trim()}%`);
     const { data, error } = await query;
     sbCheck(error, 'getInternships');
     return data || [];
@@ -273,7 +273,7 @@ async function importInternships(fileOrFormData) {
 // ─── FIELD VISITS ─────────────────────────────────────────────────────────────
 async function getFieldVisits(program = '') {
     let query = _sb.from('field_visits').select('*').order('created_at', { ascending: false });
-    if (program) query = query.eq('program_name', program);
+    if (program) query = query.ilike('program_name', `%${program.trim()}%`);
     const { data, error } = await query;
     sbCheck(error, 'getFieldVisits');
     return data || [];
@@ -312,20 +312,20 @@ async function importFieldVisits(fileOrFormData) {
 
 // ─── REPORTS (computed client-side from raw data) ─────────────────────────────
 async function getStats(programme = '') {
-    // Fetch all stats in parallel
+    // Helper to build filtered count query
+    const buildCount = (table, col = 'programme') => {
+        let q = _sb.from(table).select('*', { count: 'exact', head: true });
+        if (programme) q = q.ilike(col, `%${programme.trim()}%`);
+        return q.then(r => r.count || 0);
+    };
+
     const results = await Promise.allSettled([
-        _sb.from('students').select('*', { count: 'exact', head: true }).then(r => {
-            if (r.count > 0) return r.count;
-            return _sb.from('student').select('*', { count: 'exact', head: true }).then(c => c.count || 0);
-        }),
-        _sb.from('placements').select('*', { count: 'exact', head: true }).then(r => r.count || 0),
-        _sb.from('companies').select('*', { count: 'exact', head: true }).then(r => {
-            if (r.count > 0) return r.count;
-            return _sb.from('company').select('*', { count: 'exact', head: true }).then(c => c.count || 0);
-        }),
-        _sb.from('internships').select('*', { count: 'exact', head: true }).then(r => r.count || 0),
-        _sb.from('field_visits').select('*', { count: 'exact', head: true }).then(r => r.count || 0),
-        _sb.from('jobs').select('*', { count: 'exact', head: true }).then(r => r.count || 0)
+        buildCount('students', 'programme'),
+        buildCount('placements', 'course'),
+        buildCount('companies', 'company_name'), // (Usually not filtered by program)
+        buildCount('internships', 'programme'),
+        buildCount('field_visits', 'program_name'),
+        buildCount('jobs', 'title') // (OSINT)
     ]);
 
     const getValue = (idx) => results[idx].status === 'fulfilled' ? results[idx].value : 0;
@@ -601,13 +601,17 @@ async function parseExcelFile(file, type) {
                     rows = raw.map(r => {
                         const nr = normalizeRow(r);
                         return {
-                            enrollment_number: col(nr, 'Enrollment Number', 'Enrolment Number', 'Enrollment No.', 'Enrolment No.', 'Enrollment', 'enrollment_number', 'sr no.', 'sr no'),
-                            student_name: col(nr, 'Student Name', 'Name', 'student_name'),
-                            student_email_id: col(nr, 'Email ID', 'Email Id', 'Email', 'student_email_id'),
-                            mobile_number: col(nr, 'Mobile Number', 'Mobile', 'Phone', 'mobile_number'),
-                            programme: col(nr, 'Programme', 'Program', 'programme'),
-                            higher_education_plan: col(nr, 'Higher Education Plan', 'Higher Education', 'higher_education_plan') || 'No',
-                            placement_status: col(nr, 'Placement Status', 'placement_status') || 'No',
+                            admitted_year: col(nr, 'Admitted_Year', 'Admitted Year', 'admitted_year'),
+                            student_name: col(nr, 'Name_of_the_Student', 'Student_Name', 'Student Name', 'Name', 'student_name'),
+                            enrollment_number: col(nr, 'Enrollment_No', 'Enrollment No', 'Enrollment Number', 'Enrolment Number', 'enrollment_number'),
+                            programme: col(nr, 'Program', 'Programme', 'programme'),
+                            batch: col(nr, 'Batch', 'batch'),
+                            student_email_id: col(nr, 'RRU_Email_id', 'Email ID', 'Email Id', 'Email', 'student_email_id'),
+                            personal_email_id: col(nr, 'Personal_email_id', 'personal_email_id'),
+                            mobile_number: col(nr, 'Phone_number', 'Mobile Number', 'Mobile', 'Phone', 'mobile_number'),
+                            remark: col(nr, 'Remark', 'remark'),
+                            opted_for_placement: col(nr, 'Opted for Placement', 'OPTED FOR PLACEMENT?', 'opted_for_placement') || 'No',
+                            placement_status: col(nr, 'Placement Status', 'PLACEMENT STATUS', 'placement_status') || 'No',
                         };
                     }).filter(r => r.enrollment_number && r.student_name);
 
@@ -626,6 +630,7 @@ async function parseExcelFile(file, type) {
                     rows = raw.map(r => {
                         const nr = normalizeRow(r);
                         return {
+                            enrollment_number: col(nr, 'Enrollment_No', 'Enrollment No', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
                             course: col(nr, 'Course', 'programme', 'course'),
                             name: col(nr, 'Name', 'Student Name', 'name'),
                             remarks: col(nr, 'Remarks', 'remarks'),
@@ -639,18 +644,20 @@ async function parseExcelFile(file, type) {
                     rows = raw.map(r => {
                         const nr = normalizeRow(r);
                         return {
-                            enrollment_number: col(nr, 'Enrolment No.', 'Enrollment No.', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
-                            student_name: col(nr, 'Name of Student', 'Student Name', 'Name', 'student_name'),
+                            enrollment_number: col(nr, 'Enrollment_No', 'Enrolment No.', 'Enrollment No.', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
                             year: col(nr, 'Year', 'year'),
                             programme: col(nr, 'Programme', 'Program', 'programme'),
+                            name_of_student: col(nr, 'Name of Student', 'Student Name', 'Name', 'student_name'),
                             gender: col(nr, 'Gender', 'gender'),
-                            internship_place: col(nr, 'Internship Place', 'internship_place'),
-                            internship_place_02: col(nr, 'Internship Place 02', 'Internship Place 2', 'internship_place_02'),
-                            duration: col(nr, 'Duration', 'duration'),
-                            city: col(nr, 'City', 'Internship City', 'city'),
-                            organization_type: col(nr, 'Type of Organization', 'Organization Type', 'organization_type'),
                             role: col(nr, 'Remarks', 'Role', 'role'),
-                            salary: col(nr, 'CTC', 'Salary', 'salary')
+                            salary: col(nr, 'CTC', 'Salary', 'salary'),
+                            internship_place_01: col(nr, 'Internship Place', 'internship_place', 'Internship Place 01'),
+                            duration_of_intership_01: col(nr, 'Duration', 'duration', 'Duration 01'),
+                            city_of_intership_01: col(nr, 'City', 'Internship City', 'city', 'City 01'),
+                            internship_place_02: col(nr, 'Internship Place 02', 'Internship Place 2', 'internship_place_02'),
+                            duration_of_intership_02: col(nr, 'Duration 02', 'duration_02'),
+                            city_of_intership_02: col(nr, 'City 02', 'city_02', 'Internship City 02'),
+                            type_of_organization: col(nr, 'Type of Organization', 'Organization Type', 'organization_type')
                         };
                     }).filter(r => r.enrollment_number);
                 } else if (type === 'field_visits') {

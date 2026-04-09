@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Students List</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=fresh_5">
+    <link rel="stylesheet" href="styles.css?v=303">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 
@@ -101,25 +101,57 @@
 
             <div class="widget-panel">
 
-                <div class="table-container">
-
-
-                    <div class="table-header students-header" id="tableHeader">
-                        <div class="dropdown-header sno">SNo <span class="dropdown-icon">▼</span></div>
-                        <div class="dropdown-header">Enrollment No <span class="dropdown-icon">▼</span></div>
-                        <div class="dropdown-header">Student Name <span class="dropdown-icon">▼</span></div>
-                        <div class="dropdown-header">Mobile Number <span class="dropdown-icon">▼</span></div>
-                        <div class="dropdown-header">Programme <span class="dropdown-icon">▼</span></div>
-                        <div class="dropdown-header">Higher Education Plan? <span class="dropdown-icon">▼</span></div>
-                        <div class="dropdown-header">Placement Status <span class="dropdown-icon">▼</span></div>
-                        <div class="dropdown-header">Action <span class="dropdown-icon">▼</span></div>
+                    <div class="table-container data-table-container">
+                                <table class="premium-table">
+                                    <colgroup>
+                                        <col style="width: 30px;"> <!-- SNo -->
+                                        <col style="width: 50px;"> <!-- Year -->
+                                        <col style="width: 100px;"> <!-- Enrollment -->
+                                        <col style="width: 150px;"> <!-- Name -->
+                                        <col style="width: 80px;"> <!-- Prog -->
+                                        <col style="width: 60px;"> <!-- Batch -->
+                                        <col style="width: 140px;"> <!-- RRU Mail -->
+                                        <col style="width: 140px;"> <!-- Pers Mail -->
+                                        <col style="width: 90px;"> <!-- Mobile -->
+                                        <col style="width: 120px;"> <!-- Remark -->
+                                        <col style="width: 60px;"> <!-- Opted -->
+                                        <col style="width: 60px;"> <!-- Higher -->
+                                        <col style="width: 80px;"> <!-- Status -->
+                                        <col style="width: 70px;"> <!-- Action -->
+                                    </colgroup>
+                                    <thead>
+                                        <tr>
+                                            <th>SNo</th>
+                                            <th>Year</th>
+                                            <th>Student Name</th>
+                                            <th>Enrollment</th>
+                                            <th>Programme</th>
+                                            <th>Batch</th>
+                                            <th>RRU Email</th>
+                                            <th>Personal Email</th>
+                                            <th>Mobile</th>
+                                            <th>Remark</th>
+                                            <th>Opted?</th>
+                                            <th>Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                            <tbody id="studentsTableBody">
+                                <tr><td colspan="14" style="text-align:center;padding:40px;opacity:0.5;">Loading students...</td></tr>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div class="table-body" id="studentsTableBody">
-                        <div style="padding:24px;text-align:center;opacity:0.5;">Loading students…</div>
+                <!-- PAGINATION CONTROLS (Standardized) -->
+                <div class="pagination-controls" style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; padding: 0 10px;">
+                    <div class="pagination-info" style="font-size: 13px; opacity: 0.6;">
+                        Showing <span id="startIndex">0</span> - <span id="endIndex">0</span> of <span id="totalItems">0</span> students
+                    </div>
+                    <div class="pagination-btns" style="display: flex; gap: 10px;">
+                        <button id="prevPage" class="select-unified" style="padding: 5px 15px; width: auto;"><i class="bi bi-chevron-left"></i> Prev</button>
+                        <span id="currentPageIndicator" style="display: flex; align-items: center; font-size: 13px; font-weight: 600; min-width: 60px; justify-content: center;">Page 1</span>
+                        <button id="nextPage" class="select-unified" style="padding: 5px 15px; width: auto;">Next <i class="bi bi-chevron-right"></i></button>
                     </div>
                 </div>
-                <div id="pagination" class="pagination-container"></div>
             </div>
             <!-- FOOTER -->
             <footer class="app-footer"
@@ -175,22 +207,40 @@
                         <label>Mobile Number</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="ms-programme" placeholder=" ">
-                        <label>Programme</label>
+                        <input type="text" id="ms-batch" placeholder=" ">
+                        <label>Batch</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="ms-year" placeholder=" ">
+                        <label>Admitted Year</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="ms-personal-email" placeholder=" ">
+                        <label>Personal Email ID</label>
+                    </div>
+                    <div class="form-group">
+                        <select id="ms-opted">
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                        <label>Opted for Placement?</label>
                     </div>
                     <div class="form-group">
                         <select id="ms-higher-ed">
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
-                        <label>Planning for Higher Education?</label>
+                        <label>Higher Education?</label>
                     </div>
                     <div class="form-group">
                         <select id="ms-placed">
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
-                        <label class="static-label">Placed or Not</label>
+                        <label class="static-label">Placement Status</label>
+                    </div>
+                    <div class="form-group" style="grid-column: span 3;">
+                        <textarea id="ms-remark" placeholder="Remark..." style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 6px; padding: 10px;"></textarea>
                     </div>
                     <div class="modal-buttons">
                         <button type="submit" class="add-btn" id="addStudentSubmitBtn">Add Student</button>
@@ -226,22 +276,40 @@
                         <label>Mobile Number</label>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="es-programme" placeholder=" ">
-                        <label>Programme</label>
+                        <input type="text" id="es-batch" placeholder=" ">
+                        <label>Batch</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="es-year" placeholder=" ">
+                        <label>Admitted Year</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="es-personal-email" placeholder=" ">
+                        <label>Personal Email ID</label>
+                    </div>
+                    <div class="form-group">
+                        <select id="es-opted">
+                            <option value="No">No</option>
+                            <option value="Yes">Yes</option>
+                        </select>
+                        <label>Opted for Placement?</label>
                     </div>
                     <div class="form-group">
                         <select id="es-higher-ed">
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
-                        <label>Planning for Higher Education?</label>
+                        <label>Higher Education?</label>
                     </div>
                     <div class="form-group">
                         <select id="es-placed">
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
-                        <label class="static-label">Placed or Not</label>
+                        <label class="static-label">Placement Status</label>
+                    </div>
+                    <div class="form-group" style="grid-column: span 3;">
+                        <textarea id="es-remark" placeholder="Remark..." style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 6px; padding: 10px;"></textarea>
                     </div>
                     <div class="modal-buttons">
                         <button type="submit" class="add-btn" id="editStudentSubmitBtn">Save Changes</button>
@@ -330,17 +398,17 @@
 
         </main>
     </div>
-    <script src="auth-guard.js?v=3"></script>
+    <script src="auth-guard.js?v=101"></script>
     <!-- CDN: Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- CDN: SheetJS for Excel import/export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- Supabase config (change only this file when moving to a new host) -->
-    <script src="supabase-client.js"></script>
-    <script src="api.js?v=17"></script>
-    <script src="security.js?v=17"></script>
+    <script src="supabase-client.js?v=101"></script>
+    <script src="api.js?v=101"></script>
+    <script src="security.js?v=101"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="script.js?v=17"></script>
+    <script src="script.js?v=101"></script>
     <script>
         // ─── Students Page Logic ──────────────────────────────────────────────────
         const tbody = document.getElementById('studentsTableBody');
@@ -378,23 +446,35 @@
             const paginatedItems = list.slice(start, end);
 
             tbody.innerHTML = paginatedItems.map((s, i) => `
-                <div class="table-row students-row" data-id="${s.enrollment_number}">
-                    <div class="sno" style="color: white;">${start + i + 1}</div>
-                    <div style="font-family:monospace; font-size:12px;">${escHtml(s.enrollment_number)}</div>
-                    <div class="student-name">${escHtml(s.student_name)}</div>
-                    <div class="student-phone">${escHtml(s.mobile_number || '')}</div>
-                    <div class="programme" style="color:#ddd">${escHtml(s.programme || '')}</div>
-                    <div class="higher-ed">${escHtml(s.higher_education_plan || 'No')}</div>
-                    <div class="status-cell">
-                        <div class="status ${s.placement_status === 'Yes' ? 'placed' : 'not-placed'}">
+                <tr data-id="${s.enrollment_number}">
+                    <td style="text-align:center;">${start + i + 1}</td>
+                    <td>${escHtml(s.admitted_year || '-')}</td>
+                    <td style="font-weight:600;">${escHtml(s.student_name)}</td>
+                    <td style="font-family:monospace;">${escHtml(s.enrollment_number)}</td>
+                    <td>${escHtml(s.programme || '-')}</td>
+                    <td>${escHtml(s.batch || '-')}</td>
+                    <td>${escHtml(s.student_email_id || '-')}</td>
+                    <td>${escHtml(s.personal_email_id || '-')}</td>
+                    <td>${escHtml(s.mobile_number || '-')}</td>
+                    <td>${escHtml(s.remark || '-')}</td>
+                    <td style="text-align:center;">
+                        <button class="toggle-btn ${s.opted_for_placement === 'Yes' ? 'opted-yes' : 'opted-no'}" 
+                                onclick="toggleOptedStatus('${s.enrollment_number}', '${s.opted_for_placement || 'No'}')">
+                             ${escHtml(s.opted_for_placement || 'No')}
+                        </button>
+                    </td>
+                    <td>
+                        <div class="status-pill ${s.placement_status === 'Yes' ? 'placed' : 'not-placed'}">
                             ${escHtml(s.placement_status === 'Yes' ? 'Placed' : 'Not Placed')}
                         </div>
-                    </div>
-                    <div style="display:flex;gap:5px;">
-                        <button class="action-btn btn-edit" data-id="${s.enrollment_number}" title="Edit"><i class="bi bi-pencil-square"></i></button>
-                        <button class="action-btn btn-remove" data-id="${s.enrollment_number}" title="Delete"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>
+                    </td>
+                    <td style="border-right: none;">
+                        <div style="display:flex; gap:6px; justify-content:center; align-items:center;">
+                            <button class="action-icon btn-edit" data-id="${s.enrollment_number}" title="Edit"><i class="bi bi-pencil-square"></i></button>
+                            <button class="action-icon btn-remove" data-id="${s.enrollment_number}" title="Delete"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </td>
+                </tr>
             `).join('');
 
             renderPagination(list.length);
@@ -407,42 +487,42 @@
 
         function renderPagination(totalItems) {
             const totalPages = Math.ceil(totalItems / pageSize);
-            if (totalPages <= 1) {
-                paginationEl.innerHTML = '';
-                return;
-            }
+            const start = (currentPage - 1) * pageSize;
+            const end = start + pageSize;
 
-            let html = `
-                <button class="pagination-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="changePage(${currentPage - 1})">
-                    <i class="bi bi-chevron-left"></i>
-                </button>
-            `;
+            // Update pagination info
+            document.getElementById('totalItems').textContent = totalItems;
+            document.getElementById('startIndex').textContent = totalItems === 0 ? 0 : start + 1;
+            document.getElementById('endIndex').textContent = Math.min(end, totalItems);
+            document.getElementById('currentPageIndicator').textContent = `Page ${currentPage} / ${totalPages || 1}`;
+            
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
 
-            const maxVisible = 5;
-            let startPage = Math.max(1, currentPage - 2);
-            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+            prevBtn.disabled = (currentPage === 1);
+            nextBtn.disabled = (currentPage === totalPages || totalPages === 0);
 
-            if (endPage - startPage < maxVisible - 1) {
-                startPage = Math.max(1, endPage - maxVisible + 1);
-            }
-
-            for (let i = startPage; i <= endPage; i++) {
-                html += `
-                    <button class="pagination-btn ${i === currentPage ? 'active' : ''}" onclick="changePage(${i})">
-                        ${i}
-                    </button>
-                `;
-            }
-
-            html += `
-                <button class="pagination-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="changePage(${currentPage + 1})">
-                    <i class="bi bi-chevron-right"></i>
-                </button>
-                <div class="pagination-info">Page ${currentPage} of ${totalPages}</div>
-            `;
-
-            paginationEl.innerHTML = html;
+            prevBtn.onclick = () => { if(currentPage > 1) { currentPage--; renderStudents(getFilteredData()); }};
+            nextBtn.onclick = () => { if(currentPage < totalPages) { currentPage++; renderStudents(getFilteredData()); }};
         }
+
+        window.toggleOptedStatus = async (id, currentVal) => {
+            const newVal = currentVal === 'Yes' ? 'No' : 'Yes';
+            try {
+                const btn = document.querySelector(`tr[data-id="${id}"] .toggle-btn`);
+                if (btn) {
+                    btn.disabled = true;
+                    btn.textContent = '...';
+                }
+                await updateStudent(id, { opted_for_placement: newVal });
+                // Update local data and re-render only the row for speed
+                const student = studentsData.find(x => x.enrollment_number === id);
+                if (student) student.opted_for_placement = newVal;
+                renderStudents(getFilteredData());
+            } catch (err) {
+                alert('Update failed: ' + err.message);
+            }
+        };
 
         window.changePage = (page) => {
             currentPage = page;
@@ -486,8 +566,12 @@
                         document.getElementById('es-student-email').value = s.student_email_id || '';
                         document.getElementById('es-phone').value = s.mobile_number || '';
                         document.getElementById('es-programme').value = s.programme || '';
-                        document.getElementById('es-higher-ed').value = s.higher_education_plan || 'No';
+                        document.getElementById('es-batch').value = s.batch || '';
+                        document.getElementById('es-year').value = s.admitted_year || '';
+                        document.getElementById('es-personal-email').value = s.personal_email_id || '';
+                        document.getElementById('es-remark').value = s.remark || '';
                         document.getElementById('es-placed').value = s.placement_status || 'No';
+                        document.getElementById('es-opted').value = s.opted_for_placement || 'No';
                         document.getElementById('editStudentModal').style.display = 'flex';
                     }
                 });
@@ -564,8 +648,13 @@
                 fd.append('student_email_id', document.getElementById('ms-student-email').value.trim());
                 fd.append('mobile_number', document.getElementById('ms-phone').value.trim());
                 fd.append('programme', document.getElementById('ms-programme').value.trim());
+                fd.append('batch', document.getElementById('ms-batch').value.trim());
+                fd.append('admitted_year', document.getElementById('ms-year').value.trim());
+                fd.append('personal_email_id', document.getElementById('ms-personal-email').value.trim());
+                fd.append('remark', document.getElementById('ms-remark').value.trim());
                 fd.append('higher_education_plan', document.getElementById('ms-higher-ed').value);
                 fd.append('placement_status', document.getElementById('ms-placed').value);
+                fd.append('opted_for_placement', document.getElementById('ms-opted').value);
 
                 await createStudent(fd);
 
@@ -598,8 +687,13 @@
                 fd.append('student_email_id', document.getElementById('es-student-email').value.trim());
                 fd.append('mobile_number', document.getElementById('es-phone').value.trim());
                 fd.append('programme', document.getElementById('es-programme').value.trim());
+                fd.append('batch', document.getElementById('es-batch').value.trim());
+                fd.append('admitted_year', document.getElementById('es-year').value.trim());
+                fd.append('personal_email_id', document.getElementById('es-personal-email').value.trim());
+                fd.append('remark', document.getElementById('es-remark').value.trim());
                 fd.append('higher_education_plan', document.getElementById('es-higher-ed').value);
                 fd.append('placement_status', document.getElementById('es-placed').value);
+                fd.append('opted_for_placement', document.getElementById('es-opted').value);
 
                 await updateStudent(id, fd);
 

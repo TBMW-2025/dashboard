@@ -6,8 +6,8 @@
     --accent-orange: #f59e0b;
     --accent-purple: #8b5cf6;
     --text-main: #ffffff;
-    --text-dim: #ffffff;
-    --text-muted: #ffffff;
+    --text-dim: #8b949e;
+    --text-muted: #6e7681;
     --accent-dark: #11142b;
     --sidebar-bg: #000000;
     --sidebar-active: rgba(59, 130, 246, 0.1);
@@ -460,11 +460,12 @@ body {
 
 /* Table Styles */
 .table-container {
-    background-color: #1a1f3a;
+    background: #111f33;
     border-radius: 8px;
-    overflow-x: auto;
+    overflow-x: auto !important; /* Enable horizontal scrolling */
     overflow-y: hidden;
-    border: 1px solid #2a2f4a;
+    position: relative;
+    width: 100%;
 }
 
 .table-header {
@@ -559,7 +560,7 @@ body {
     color: #ffffff;
 }
 
-.action-btn {
+.action-btn-legacy {
     background: none;
     border: none;
     color: #888;
@@ -568,7 +569,7 @@ body {
     transition: color 0.3s;
 }
 
-.action-btn:hover {
+.action-btn-legacy:hover {
     color: #ff6b35;
 }
 
@@ -675,34 +676,119 @@ body {
 }
 
 /* Students Page Grid */
-.students-header {
-    display: grid !important;
-    grid-template-columns: 50px 160px 1.5fr 1.2fr 1.5fr 120px 110px 100px !important;
-    min-width: unset !important;
-    font-size: 13px !important;
+/* Premium Native Table Styling - Absolute Alignment Guaranteed */
+.premium-table {
+    width: 100% !important;
+    border-collapse: collapse;
+    background: #0f172a;
+    color: #e2e8f0;
+    font-size: 8px !important; /* Increased for better visibility */
+    table-layout: fixed !important; 
+    word-break: break-all;
+    letter-spacing: -0.1px;
+}
+
+.premium-table thead th {
+    background: linear-gradient(135deg, #a94cf8 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 2px;
+    text-align: left;
     font-weight: 600;
-    align-items: center;
+    text-transform: uppercase;
+    letter-spacing: 0.1px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.students-row {
-    display: grid !important;
-    grid-template-columns: 50px 160px 1.5fr 1.2fr 1.5fr 120px 110px 100px !important;
-    min-width: unset !important;
-    font-size: 10.5px !important;
-    align-items: center;
+.premium-table tbody tr {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: background 0.2s;
 }
 
-/* Ensure headers can wrap and align well */
-.students-header .dropdown-header {
-    white-space: normal !important;
-    line-height: 1.1 !important;
-    height: auto !important;
-    display: flex;
+.premium-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.premium-table td {
+    padding: 2px 2px;
+    vertical-align: middle;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.premium-table thead th {
+    padding: 5px 2px;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+.status-pill {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 600;
+    text-align: center;
+    display: inline-block;
+}
+
+.status-pill.placed { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.2); }
+.status-pill.not-placed { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+
+.action-icon {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    text-align: center;
-    padding: 5px 2px !important;
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    padding: 0;
 }
+
+.action-icon:hover { 
+    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--accent-blue);
+    color: var(--accent-blue);
+}
+
+.action-icon.btn-remove:hover {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* Toggle Button */
+.toggle-btn {
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: none;
+    font-size: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    min-width: 45px;
+}
+.opted-yes { background: #10b981; color: white; box-shadow: 0 0 5px rgba(16, 185, 129, 0.3); }
+.opted-no { background: #6b7280; color: white; opacity: 0.8; }
+.toggle-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+.toggle-btn:active { transform: scale(0.95); }
+
+.badge {
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+}
+.bg-success { background: #10b981; color: white; }
+.bg-secondary { background: #4b5563; color: white; }
 
 .internships-header {
     background: linear-gradient(135deg, #a94cf8 0%, #764ba2 100%);
@@ -2036,18 +2122,7 @@ body {
 
 
 
-/* Students Page Grid Re-injection */
-.students-header {
-    grid-template-columns: 50px repeat(7, 1fr) 100px;
-    min-width: unset;
-    font-size: 11px;
-}
-
-.students-row {
-    grid-template-columns: 50px repeat(7, 1fr) 100px;
-    min-width: unset;
-    font-size: 10px;
-}
+/* Consolidated Students Page Layout at the top */
 
 /* Ultimate Sidebar Overrides based on Screenshot */
 /* Sidebar - Fixed 100px Width, Non-Scrollable */

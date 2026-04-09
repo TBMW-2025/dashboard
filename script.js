@@ -73,7 +73,14 @@ function autoFitTables() {
         
         const parentWidth = container.parentElement.clientWidth - 40;
         
-        // 16-column tables need more room than standard tables
+        // 14+ column tables should scroll, not scale, to maintain legibility
+        if (container.querySelector('.students-header') || container.querySelector('.internships-header')) {
+            container.style.transform = 'none';
+            container.style.width = 'max-content'; 
+            container.style.marginBottom = '0px';
+            return;
+        }
+
         let minOptimalWidth = 1150; 
         if (container.querySelector('.internships-header')) minOptimalWidth = 1600;
         
