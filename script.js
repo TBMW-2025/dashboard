@@ -323,7 +323,7 @@ async function initializeCharts() {
             const maxYear = admittedYears.length ? Math.max(...admittedYears) : new Date().getFullYear();
             
             document.getElementById('rpt-companies').textContent = totalCompanies;
-            document.getElementById('rpt-placed-pct').textContent = `Up to ${maxYear} admitted Year of the student`;
+            document.getElementById('rpt-placed-pct').textContent = `Up to ${maxYear}`;
             document.getElementById('rpt-pending').textContent = `Pending: ${pendingCount}`;
             document.getElementById('rpt-internships').textContent = `Internships: Available via API`;
         }
