@@ -117,9 +117,9 @@
 
                 <div class="stat-card-new">
                     <div class="card-icon" style="color: var(--accent-green);">💼</div>
-                    <div class="card-label">Total Placements</div>
-                    <div class="card-value" id="rpt-placed">0</div>
-                    <div class="card-label" id="rpt-pending" style="text-transform: none; font-size: 10px;">Pending: 0
+                    <div class="card-label">Placement Percentage</div>
+                    <div class="card-value" id="rpt-placed-pct-main">0%</div>
+                    <div class="card-label" id="rpt-placed-count" style="text-transform: none; font-size: 10px;">0 Total Placed
                     </div>
                     <div class="accent-line" style="background: var(--accent-green);"></div>
                 </div>
@@ -319,8 +319,9 @@
                     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
                     set('rpt-total', totalStudents);
-                    set('rpt-placed', placedStudents);
+                    set('rpt-placed-count', placedStudents + ' Total Placed');
                     set('rpt-placed-pct', placementRate + '% Placed');
+                    set('rpt-placed-pct-main', placementRate + '%');
                     set('rpt-companies', stats.total_companies || new Set(placements.map(p => p.company)).size);
                     set('rpt-field-visits', fieldVisits.length);
                     set('rpt-industrial-visits', (industrialVisits || []).length);
