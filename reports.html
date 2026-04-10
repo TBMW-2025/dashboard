@@ -305,12 +305,11 @@
                         totalStudents = uniqueIds.size || studentsRaw.length || 0;
                     }
 
-                    const placedStudents = placements.length || stats.placed_students || 0;
+                    const placedStudents = new Set(placements.map(p => String(p.enrollment_number).trim())).size;
 
-                    let optedForPlacement = studentsRaw.filter(s => String(s.opted_for_placement || '').toLowerCase().includes('yes')).length;
-                    if (optedForPlacement === 0 && placedStudents > 0) optedForPlacement = totalStudents; // Fallback to avoid dropping to 0% if boolean flag unimplemented
-
-                    const placementRate = optedForPlacement ? Math.round((placedStudents / optedForPlacement) * 100) : 0;
+                    // Formula: placed ÷ opted_for_placement × 100
+                    const optedForPlacement = studentsRaw.filter(s => String(s.opted_for_placement || '').toLowerCase() === 'yes').length;
+                    const placementRate = optedForPlacement > 0 ? Math.round((placedStudents / optedForPlacement) * 100) : 0;
 
                     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 

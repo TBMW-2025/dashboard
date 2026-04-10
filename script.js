@@ -311,8 +311,10 @@ async function initializeCharts() {
         // Count pending
         const pendingCount = placements.filter(p => (p.status || '').toLowerCase() === 'pending').length;
         
+        // Placement % = placed ÷ opted_for_placement × 100
+        const optedCount = students.filter(s => String(s.opted_for_placement || '').toLowerCase() === 'yes').length;
         let placementRate = 0;
-        if (totalStudents > 0) placementRate = ((placedStudents / totalStudents) * 100).toFixed(1);
+        if (optedCount > 0) placementRate = ((placedStudents / optedCount) * 100).toFixed(1);
 
         const rTotal = document.getElementById('rpt-total');
         if (rTotal) {
