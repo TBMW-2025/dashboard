@@ -449,6 +449,7 @@ async function getDeptStats(programme = '') {
         ]);
 
         const deptMap = {};
+        const activePlacements = new Set(placements.map(p => String(p.enrollment_number).trim()));
 
         // 1. Map from Students
         students.forEach(s => {
@@ -456,23 +457,23 @@ async function getDeptStats(programme = '') {
             if (programme && d !== programme) return;
             if (!deptMap[d]) deptMap[d] = { total: 0, placed: 0 };
             deptMap[d].total++;
-            if (s.placement_status === 'Yes') deptMap[d].placed++;
+            if (s.placement_status === 'Yes' || activePlacements.has(String(s.enrollment_number).trim())) {
+                deptMap[d].placed++;
+            }
         });
 
         // 2. Fallback: If we have placements for a course not in students table
         placements.forEach(p => {
-            const d = p.course || 'Other';
+            const d = p.programme || p.course || 'Other';
             if (programme && d !== programme) return;
-            if (!deptMap[d]) {
-                deptMap[d] = { total: 1, placed: 1 };
-            } else if (deptMap[d].placed === 0) {
-                // If it existed in students but we found a placement, ensure it has at least as many total
-                deptMap[d].placed++;
-                if (deptMap[d].total < deptMap[d].placed) deptMap[d].total = deptMap[d].placed;
-            } else {
-                // Already has placements, we can't easily count distinct without joining, 
-                // but we ensure it stays visible.
-            }
+            
+            // If we already counted this student in step 1, skip.
+            const isCounted = students.find(s => String(s.enrollment_number).trim() === String(p.enrollment_number).trim());
+            if (isCounted) return;
+
+            if (!deptMap[d]) deptMap[d] = { total: 0, placed: 0 };
+            deptMap[d].placed++;
+            if (deptMap[d].total < deptMap[d].placed) deptMap[d].total = deptMap[d].placed;
         });
 
         return Object.entries(deptMap).map(([dept, v]) => ({
@@ -507,8 +508,13 @@ async function getYearlyTrend(course = '') {
 }
 
 async function getStudentsYearly() {
-    const students = await getStudents();
+    const [students, placements] = await Promise.all([
+        getStudents().catch(() => []),
+        getPlacements().catch(() => [])
+    ]);
+    const activePlacements = new Set(placements.map(p => String(p.enrollment_number).trim()));
     const yearMap = {};
+    
     students.forEach(s => {
         // Safe year extraction
         const dateStr = s.created_at || '';
@@ -517,7 +523,9 @@ async function getStudentsYearly() {
 
         if (!yearMap[y]) yearMap[y] = { total: 0, placed: 0 };
         yearMap[y].total++;
-        if (s.placement_status === 'Yes') yearMap[y].placed++;
+        if (s.placement_status === 'Yes' || activePlacements.has(String(s.enrollment_number).trim())) {
+            yearMap[y].placed++;
+        }
     });
 
     const entries = Object.entries(yearMap).sort(([a], [b]) => a.localeCompare(b));
