@@ -310,7 +310,11 @@
                     }
 
                     const placedStudents = placements.length || stats.placed_students || 0;
-                    const placementRate = totalStudents ? Math.round((placedStudents / totalStudents) * 100) : 0;
+                    
+                    let optedForPlacement = studentsRaw.filter(s => String(s.opted_for_placement || '').toLowerCase().includes('yes')).length;
+                    if (optedForPlacement === 0 && placedStudents > 0) optedForPlacement = totalStudents; // Fallback to avoid dropping to 0% if boolean flag unimplemented
+                    
+                    const placementRate = optedForPlacement ? Math.round((placedStudents / optedForPlacement) * 100) : 0;
 
                     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
