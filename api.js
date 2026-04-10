@@ -410,7 +410,7 @@ async function getStats(programme = '') {
         buildCount('internships', 'programme'),
         buildCount('field_visits', 'program_name'),
         buildCount('industrial_visits', 'program_name'),
-        buildCount('jobs', 'title') 
+        buildCount('jobs', 'title')
     ]);
 
     const getValue = (idx) => results[idx].status === 'fulfilled' ? results[idx].value : 0;
@@ -470,13 +470,13 @@ async function getDeptStats(programme = '') {
                 deptMap[d].placed++;
                 if (deptMap[d].total < deptMap[d].placed) deptMap[d].total = deptMap[d].placed;
             } else {
-                 // Already has placements, we can't easily count distinct without joining, 
-                 // but we ensure it stays visible.
+                // Already has placements, we can't easily count distinct without joining, 
+                // but we ensure it stays visible.
             }
         });
 
         return Object.entries(deptMap).map(([dept, v]) => ({
-            programme: dept, 
+            programme: dept,
             total: v.total,
             placed: v.placed
         }));
@@ -514,7 +514,7 @@ async function getStudentsYearly() {
         const dateStr = s.created_at || '';
         const yMatch = dateStr.match(/\b(20\d{2})\b/);
         const y = yMatch ? yMatch[1] : (dateStr.split('-')[0] || 'Unknown');
-        
+
         if (!yearMap[y]) yearMap[y] = { total: 0, placed: 0 };
         yearMap[y].total++;
         if (s.placement_status === 'Yes') yearMap[y].placed++;
