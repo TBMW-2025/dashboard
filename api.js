@@ -243,13 +243,7 @@ async function importPlacements(fileOrFormData) {
 
     const { data, error } = await _sb.from('placements').insert(rows).select();
     sbCheck(error, 'importPlacements');
-    // Update student placement_status
-    for (const p of data || []) {
-        if (p.enrollment_number) {
-            await _sb.from('students').update({ placement_status: 'Yes' })
-                .eq('enrollment_number', p.enrollment_number);
-        }
-    }
+    // Successfully imported. No longer updating local student placements_status flag.
     return { imported: (data || []).length, message: `Successfully imported ${(data || []).length} placement records.` };
 }
 
@@ -457,7 +451,7 @@ async function getDeptStats(programme = '') {
             if (programme && d !== programme) return;
             if (!deptMap[d]) deptMap[d] = { total: 0, placed: 0 };
             deptMap[d].total++;
-            if (s.placement_status === 'Yes' || activePlacements.has(String(s.enrollment_number).trim())) {
+            if (activePlacements.has(String(s.enrollment_number).trim())) {
                 deptMap[d].placed++;
             }
         });
@@ -523,7 +517,7 @@ async function getStudentsYearly() {
 
         if (!yearMap[y]) yearMap[y] = { total: 0, placed: 0 };
         yearMap[y].total++;
-        if (s.placement_status === 'Yes' || activePlacements.has(String(s.enrollment_number).trim())) {
+        if (activePlacements.has(String(s.enrollment_number).trim())) {
             yearMap[y].placed++;
         }
     });
@@ -706,7 +700,7 @@ async function parseExcelFile(file, type) {
                             mobile_number: col(nr, 'Phone_number', 'Mobile Number', 'Mobile', 'Phone', 'mobile_number'),
                             remark: col(nr, 'Remark', 'remark'),
                             opted_for_placement: col(nr, 'Opted for Placement', 'OPTED FOR PLACEMENT?', 'opted_for_placement') || 'No',
-                            placement_status: col(nr, 'Placement Status', 'PLACEMENT STATUS', 'placement_status') || 'No',
+
                         };
                     }).filter(r => r.enrollment_number && r.student_name);
 

@@ -304,7 +304,8 @@ async function initializeCharts() {
 
         // --- 1. Top Metrics ---
         const totalStudents = students.length;
-        const placedStudents = students.filter(s => s.placement_status === 'Yes').length;
+        const activePlacements = new Set(placements.map(p => String(p.enrollment_number).trim()));
+        const placedStudents = students.filter(s => activePlacements.has(String(s.enrollment_number).trim())).length;
         const totalCompanies = companies.length;
         
         // Count pending
@@ -350,7 +351,7 @@ async function initializeCharts() {
                 const dep = s.programme || 'Unknown';
                 if (!deptStats[dep]) deptStats[dep] = { total: 0, placed: 0 };
                 deptStats[dep].total++;
-                if (s.placement_status === 'Yes') deptStats[dep].placed++;
+                if (activePlacements.has(String(s.enrollment_number).trim())) deptStats[dep].placed++;
             });
 
             const deptLabels = Object.keys(deptStats);

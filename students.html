@@ -228,13 +228,7 @@
                         </select>
                         <label>Higher Education?</label>
                     </div>
-                    <div class="form-group">
-                        <select id="ms-placed">
-                            <option value="No">No</option>
-                            <option value="Yes">Yes</option>
-                        </select>
-                        <label class="static-label">Placement Status</label>
-                    </div>
+
                     <div class="form-group" style="grid-column: span 3;">
                         <textarea id="ms-remark" placeholder="Remark..."
                             style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 6px; padding: 10px;"></textarea>
@@ -298,13 +292,7 @@
                         </select>
                         <label>Higher Education?</label>
                     </div>
-                    <div class="form-group">
-                        <select id="es-placed">
-                            <option value="No">No</option>
-                            <option value="Yes">Yes</option>
-                        </select>
-                        <label class="static-label">Placement Status</label>
-                    </div>
+
                     <div class="form-group" style="grid-column: span 3;">
                         <textarea id="es-remark" placeholder="Remark..."
                             style="width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: white; border-radius: 6px; padding: 10px;"></textarea>
@@ -563,7 +551,7 @@
                         document.getElementById('es-year').value = s.admitted_year || '';
                         document.getElementById('es-personal-email').value = s.personal_email_id || '';
                         document.getElementById('es-remark').value = s.remark || '';
-                        document.getElementById('es-placed').value = s.placement_status || 'No';
+
                         document.getElementById('es-opted').value = s.opted_for_placement || 'No';
                         document.getElementById('editStudentModal').style.display = 'flex';
                     }
@@ -646,7 +634,7 @@
                 fd.append('personal_email_id', document.getElementById('ms-personal-email').value.trim());
                 fd.append('remark', document.getElementById('ms-remark').value.trim());
                 fd.append('higher_education_plan', document.getElementById('ms-higher-ed').value);
-                fd.append('placement_status', document.getElementById('ms-placed').value);
+
                 fd.append('opted_for_placement', document.getElementById('ms-opted').value);
 
                 await createStudent(fd);
@@ -685,7 +673,7 @@
                 fd.append('personal_email_id', document.getElementById('es-personal-email').value.trim());
                 fd.append('remark', document.getElementById('es-remark').value.trim());
                 fd.append('higher_education_plan', document.getElementById('es-higher-ed').value);
-                fd.append('placement_status', document.getElementById('es-placed').value);
+
                 fd.append('opted_for_placement', document.getElementById('es-opted').value);
 
                 await updateStudent(id, fd);

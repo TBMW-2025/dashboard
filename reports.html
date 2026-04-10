@@ -353,6 +353,7 @@
                     const { placements, internships, fieldVisits, industrialVisits, studentsRaw } = reportData;
                     try {
                         const destroy = (id) => { if (window[id]) window[id].destroy(); };
+                        const activePlacements = new Set(placements.map(p => String(p.enrollment_number).trim()));
 
                         // 1. Placement Status
                         const ctx1 = document.getElementById('placementStatusChart');
@@ -398,8 +399,7 @@
 
                                 if (!deptStats[p]) deptStats[p] = { total: 0, placed: 0 };
                                 deptStats[p].total++;
-                                const isPlaced = String(s.placement_status || '').toLowerCase();
-                                if (isPlaced === 'yes' || isPlaced === 'placed') deptStats[p].placed++;
+                                if (activePlacements.has(String(s.enrollment_number).trim())) deptStats[p].placed++;
                             });
 
                             const barsEl = document.getElementById('deptBars');
@@ -506,8 +506,8 @@
                                 data: {
                                     labels: labels,
                                     datasets: [
-                                        { label: 'Placed', data: labels.map(l => studentsRaw.filter(s => getLabel(s) === l && s.placement_status === 'Yes').length), backgroundColor: '#22c55e' },
-                                        { label: 'Unplaced', data: labels.map(l => studentsRaw.filter(s => getLabel(s) === l && s.placement_status !== 'Yes').length), backgroundColor: '#ef4444' }
+                                        { label: 'Placed', data: labels.map(l => studentsRaw.filter(s => getLabel(s) === l && activePlacements.has(String(s.enrollment_number).trim())).length), backgroundColor: '#22c55e' },
+                                        { label: 'Unplaced', data: labels.map(l => studentsRaw.filter(s => getLabel(s) === l && !activePlacements.has(String(s.enrollment_number).trim())).length), backgroundColor: '#ef4444' }
                                     ]
                                 },
                                 options: { responsive: true, maintainAspectRatio: false }
