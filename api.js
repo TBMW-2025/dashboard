@@ -719,11 +719,12 @@ async function parseExcelFile(file, type) {
                         return {
                             enrollment_number: col(nr, 'Enrollment_No', 'Enrollment No', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
                             course: col(nr, 'Course', 'programme', 'course', 'program'),
+                            batch: col(nr, 'Batch', 'batch'),
                             name: col(nr, 'Name', 'Student Name', 'name', 'student_name'),
-                            remarks: col(nr, 'Remarks', 'remarks', 'role'),
+                            role: col(nr, 'Role', 'remarks', 'role'),
                             company: col(nr, 'Company', 'company', 'organization_name'),
                             city: col(nr, 'City', 'city'),
-                            ctc: col(nr, 'CTC', 'ctc', 'package', 'salary')
+                            salary: col(nr, 'Salary', 'ctc', 'package', 'salary')
                         };
                     }).filter(r => r.enrollment_number);
 
