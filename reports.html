@@ -160,17 +160,19 @@
                         </div>
                     </div>
 
-                    <div class="chart-card">
-                        <div class="chart-title">Programme-wise Student Count</div>
-                        <div class="chart-container">
-                            <canvas id="studentProgrammeChart"></canvas>
+                    <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="chart-card">
+                            <div class="chart-title">Programme-wise Student Count</div>
+                            <div class="chart-container">
+                                <canvas id="studentProgrammeChart"></canvas>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="chart-card">
-                        <div class="chart-title">Programme-wise Internship Count</div>
-                        <div class="chart-container">
-                            <canvas id="internshipProgrammeChart"></canvas>
+                        <div class="chart-card">
+                            <div class="chart-title">Programme-wise Internship Count</div>
+                            <div class="chart-container">
+                                <canvas id="internshipProgrammeChart"></canvas>
+                            </div>
                         </div>
                     </div>
 
@@ -318,9 +320,12 @@
 
                     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
+                    const admittedYears = studentsRaw.map(s => parseInt(String(s.admitted_year || '').trim())).filter(y => !isNaN(y));
+                    const maxYear = admittedYears.length ? Math.max(...admittedYears) : new Date().getFullYear();
+
                     set('rpt-total', totalStudents);
                     set('rpt-placed-count', placedStudents + ' Total Placed');
-                    set('rpt-placed-pct', placementRate + '% Placed');
+                    set('rpt-placed-pct', `Up to ${maxYear} admitted Year of the student`);
                     set('rpt-placed-pct-main', placementRate + '%');
                     set('rpt-companies', stats.total_companies || new Set(placements.map(p => p.company)).size);
                     set('rpt-field-visits', fieldVisits.length);

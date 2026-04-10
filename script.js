@@ -319,8 +319,11 @@ async function initializeCharts() {
             rTotal.textContent = totalStudents;
             document.getElementById('rpt-placed').textContent = placedStudents;
             document.getElementById('rpt-rate').textContent = placementRate + '%';
+            const admittedYears = students.map(s => parseInt(String(s.admitted_year || '').trim())).filter(y => !isNaN(y));
+            const maxYear = admittedYears.length ? Math.max(...admittedYears) : new Date().getFullYear();
+            
             document.getElementById('rpt-companies').textContent = totalCompanies;
-            document.getElementById('rpt-placed-pct').textContent = `Placement rate: ${placementRate}%`;
+            document.getElementById('rpt-placed-pct').textContent = `Up to ${maxYear} admitted Year of the student`;
             document.getElementById('rpt-pending').textContent = `Pending: ${pendingCount}`;
             document.getElementById('rpt-internships').textContent = `Internships: Available via API`;
         }
