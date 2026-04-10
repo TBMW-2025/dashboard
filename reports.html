@@ -151,15 +151,17 @@
 
             <!-- Charts Section -->
             <div class="widget-panel">
-                <div class="charts-section">
+                <div class="charts-section" style="grid-template-columns: 1fr 1fr;">
 
-                    <div class="chart-card">
+                    <!-- Field Visits by Program: full width -->
+                    <div class="chart-card" style="grid-column: span 2;">
                         <div class="chart-title">Field Visits by Program</div>
                         <div class="chart-container">
                             <canvas id="fieldVisitChart"></canvas>
                         </div>
                     </div>
 
+                    <!-- Pie + Doughnut: side by side -->
                     <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                         <div class="chart-card">
                             <div class="chart-title">Programme-wise Student Count</div>
@@ -176,21 +178,24 @@
                         </div>
                     </div>
 
-                    <div class="chart-card">
+                    <!-- Government vs Private: full width -->
+                    <div class="chart-card" style="grid-column: span 2;">
                         <div class="chart-title">Government vs Private Visits</div>
                         <div class="chart-container">
                             <canvas id="fieldVisitAreaChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="chart-card">
+                    <!-- Placed vs Non-Placed: full width -->
+                    <div class="chart-card" style="grid-column: span 2;">
                         <div class="chart-title">Placed vs Non-Placed by Programme</div>
                         <div class="chart-container">
                             <canvas id="placedNonProgrammeChart"></canvas>
                         </div>
                     </div>
 
-                    <div class="metrics-card">
+                    <!-- Programme Distribution: full width -->
+                    <div class="metrics-card" style="grid-column: span 2;">
                         <div class="metrics-title">Programme Distribution</div>
                         <div id="deptBars">
                             <div style="padding:12px;opacity:0.5;">Loading </div>
