@@ -311,10 +311,26 @@ async function initializeCharts() {
         // Count pending
         const pendingCount = placements.filter(p => (p.status || '').toLowerCase() === 'pending').length;
         
-        // Placement % = placed ÷ opted_for_placement × 100
-        const optedCount = students.filter(s => String(s.opted_for_placement || '').toLowerCase() === 'yes').length;
+        // Identify passed-out students (admitted_year < current year = course complete)
+        const currentYear = new Date().getFullYear();
+        const passedOutStudents = students.filter(s => {
+            const yr = parseInt(String(s.admitted_year || '').trim());
+            return !isNaN(yr) && yr < currentYear;
+        });
+
+        // Passed-out who opted for placement
+        const passedOutOpted = passedOutStudents.filter(s =>
+            String(s.opted_for_placement || '').toLowerCase() === 'yes'
+        );
+
+        // Passed-out who have a placement record
+        const placedPassedOut = passedOutStudents.filter(s =>
+            activePlacements.has(String(s.enrollment_number).trim())
+        ).length;
+
+        // Formula: placed passouts ÷ opted passouts × 100
         let placementRate = 0;
-        if (optedCount > 0) placementRate = ((placedStudents / optedCount) * 100).toFixed(1);
+        if (passedOutOpted.length > 0) placementRate = ((placedPassedOut / passedOutOpted.length) * 100).toFixed(1);
 
         const rTotal = document.getElementById('rpt-total');
         if (rTotal) {

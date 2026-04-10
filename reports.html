@@ -305,11 +305,28 @@
                         totalStudents = uniqueIds.size || studentsRaw.length || 0;
                     }
 
-                    const placedStudents = new Set(placements.map(p => String(p.enrollment_number).trim())).size;
+                    // Identify passed-out students (admitted_year < current calendar year)
+                    const currentYear = new Date().getFullYear();
+                    const passedOutStudents = studentsRaw.filter(s => {
+                        const yr = parseInt(String(s.admitted_year || '').trim());
+                        return !isNaN(yr) && yr < currentYear;
+                    });
 
-                    // Formula: placed ÷ opted_for_placement × 100
-                    const optedForPlacement = studentsRaw.filter(s => String(s.opted_for_placement || '').toLowerCase() === 'yes').length;
-                    const placementRate = optedForPlacement > 0 ? Math.round((placedStudents / optedForPlacement) * 100) : 0;
+                    // Passed-out students who enrolled for placement
+                    const passedOutOpted = passedOutStudents.filter(s =>
+                        String(s.opted_for_placement || '').toLowerCase() === 'yes'
+                    );
+
+                    // Passed-out students who actually have a placement record
+                    const placementEnrollments = new Set(placements.map(p => String(p.enrollment_number).trim()));
+                    const placedStudents = passedOutStudents.filter(s =>
+                        placementEnrollments.has(String(s.enrollment_number).trim())
+                    ).length;
+
+                    // Formula: placed passouts ÷ opted passouts × 100
+                    const placementRate = passedOutOpted.length > 0
+                        ? Math.round((placedStudents / passedOutOpted.length) * 100)
+                        : 0;
 
                     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
 
