@@ -715,6 +715,9 @@
                                 }
                             }
                         }
+                    } catch (e) {
+                        console.error('Chart render error:', e);
+                    }
                 }
 
                 document.addEventListener('DOMContentLoaded', () => {
