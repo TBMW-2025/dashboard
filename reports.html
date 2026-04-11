@@ -284,7 +284,10 @@
 
                         reportData = { stats, studentsRaw, placements, internships, fieldVisits, industrialVisits };
 
-                        // ── Academic-year placement rate card ────────────────
+                        await updateStats();
+                        await renderCharts();
+
+                        // ── Academic-year placement rate card (runs LAST so it is not overwritten) ──
                         const rateEl   = document.getElementById('rpt-placed-pct-main');
                         const batchEl  = document.getElementById('rpt-batch-label');
                         const detailEl = document.getElementById('rpt-placed-count');
@@ -298,9 +301,6 @@
                             if (rateEl)   rateEl.textContent   = 'N/A';
                             if (detailEl) detailEl.textContent = 'Data unavailable';
                         }
-
-                        await updateStats();
-                        await renderCharts();
 
                     } catch (e) {
                         console.error('Reports load failed:', e);
@@ -348,9 +348,8 @@
                     const maxYear = admittedYears.length ? Math.max(...admittedYears) : new Date().getFullYear();
 
                     set('rpt-total', totalStudents);
-                    set('rpt-placed-count', placedStudents + ' Total Placed');
-                    set('rpt-placed-pct', `Up to ${maxYear}`);
-                    set('rpt-placed-pct-main', placementRate + '%');
+                    // NOTE: rpt-placed-pct-main and rpt-placed-count are owned by
+                    // getAcademicYearPlacementRate() — do NOT set them here.
                     set('rpt-companies', stats.total_companies || new Set(placements.map(p => p.company)).size);
                     set('rpt-field-visits', fieldVisits.length);
                     set('rpt-industrial-visits', (industrialVisits || []).length);
