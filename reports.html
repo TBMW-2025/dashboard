@@ -16,12 +16,7 @@
     <script src="supabase-client.js"></script>
     <script src="api.js?v=400"></script>
     <script src="security.js?v=400"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- amCharts 5 (for True 3D Pie Chart) -->
-    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+    <!-- Using Chart.js for consistent charting -->
     <link rel="stylesheet" href="styles.css?v=400">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
@@ -210,9 +205,9 @@
                     <div class="chart-card" style="grid-column: span 2;">
                         <div class="chart-title">Organisation Type Breakdown &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships</small></div>
                         <div style="display: flex; align-items: center; gap: 40px; padding: 10px;">
-                            <!-- Left: The 3D Chart -->
+                            <!-- Left: Chart -->
                             <div class="chart-container" style="flex: 1.2; height:320px; overflow:visible; display:flex; align-items:center; justify-content:center;">
-                                <div id="orgTypePieChart" style="width:100%;height:100%;"></div>
+                                <canvas id="orgTypePieChart" style="width:100%;height:100%;"></canvas>
                             </div>
                             <!-- Right: The Detailed Legend -->
                             <div id="orgTypeLegendPanel" style="flex: 1; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.03);">
@@ -640,7 +635,7 @@
                             }
                         }
 
-                        // 8. 3D-raised Org-Type Pie (internships) - UPGRADED TO amCharts 5
+                        // 8. Org-Type Pie (internships) - Reverted to Chart.js
                         const ctxOT = document.getElementById('orgTypePieChart');
                         if (ctxOT) {
                             const map = {};
@@ -654,59 +649,53 @@
                             const COLORS = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#f97316'];
 
                             if (!otLabels.length) {
-                                ctxOT.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:13px;">No internship data</div>';
+                                const parent = ctxOT.parentElement;
+                                ctxOT.style.display = 'none';
+                                if (!parent.querySelector('.no-data-msg')) {
+                                    const msg = document.createElement('div');
+                                    msg.className = 'no-data-msg';
+                                    msg.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:13px;';
+                                    msg.textContent = 'No internship data available';
+                                    parent.appendChild(msg);
+                                }
                             } else {
-                                // Cleanup existing amCharts root
-                                if (window._otRoot) { window._otRoot.dispose(); }
+                                ctxOT.style.display = '';
+                                const old = ctxOT.parentElement.querySelector('.no-data-msg');
+                                if (old) old.remove();
 
-                                // Initialize amCharts 5
-                                const root = am5.Root.new("orgTypePieChart");
-                                window._otRoot = root;
-
-                                root.setThemes([ am5themes_Animated.new(root), am5themes_Dark.new(root) ]);
-
-                                const chart = root.container.children.push(am5percent.PieChart.new(root, {
-                                    layout: root.verticalLayout,
-                                    innerRadius: am5.percent(30)
-                                }));
-
-                                const series = chart.series.push(am5percent.PieSeries.new(root, {
-                                    name: "Organization Type",
-                                    valueField: "value",
-                                    categoryField: "category",
-                                    calculateAggregates: true,
-                                    pie3D: true, // TRUE 3D
-                                    depth: 25,   // Physical extrusion
-                                    angle: 40    // Tilt angle
-                                }));
-
-                                // Match theme colors
-                                series.get("colors").set("colors", COLORS.map(c => am5.color(c)));
-
-                                series.labels.template.set("forceHidden", true);
-                                series.ticks.template.set("forceHidden", true);
-
-                                // Hover effects
-                                series.slices.template.setAll({
-                                    strokeOpacity: 0,
-                                    templateField: "settings",
-                                    tooltipText: "{category}: {value} ({valuePercentTotal.formatNumber('0.0')}%)\nClick to expand"
-                                });
-
-                                // Slice click behavior
-                                series.slices.template.events.on("click", function(ev) {
-                                    series.slices.each(function(slice) {
-                                        if (slice != ev.target) {
-                                            slice.set("active", false);
+                                destroy('_otChart');
+                                window._otChart = new Chart(ctxOT, {
+                                    type: 'doughnut',
+                                    data: {
+                                        labels: otLabels,
+                                        datasets: [{ 
+                                            data: otValues, 
+                                            backgroundColor: COLORS,
+                                            borderWidth: 0,
+                                            hoverOffset: 4
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        cutout: '50%',
+                                        plugins: {
+                                            legend: { display: false },
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: function(context) {
+                                                        const label = context.label || '';
+                                                        const value = context.raw || 0;
+                                                        const pct = Math.round((value / total) * 100);
+                                                        return `${label}: ${value} (${pct}%)`;
+                                                    }
+                                                }
+                                            }
                                         }
-                                    });
+                                    }
                                 });
 
-                                const dataSet = otLabels.map((l, i) => ({ category: l, value: otValues[i] }));
-                                series.data.setAll(dataSet);
-                                series.appear(1000, 100);
-
-                                // Custom legend panel (stays the same or slight tweaks)
+                                // Custom legend panel
                                 const panel = document.getElementById('orgTypeLegendPanel');
                                 if (panel) {
                                     panel.innerHTML = `
