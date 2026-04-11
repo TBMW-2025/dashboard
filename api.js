@@ -194,10 +194,10 @@ async function importCompanies(fileOrFormData) {
 }
 
 // ─── PLACEMENTS ───────────────────────────────────────────────────────────────
-async function getPlacements(course = '') {
+async function getPlacements(prog = '') {
     try {
         let query = _sb.from('placements').select('*');
-        if (course) query = query.ilike('course', `%${course.trim()}%`);
+        if (prog) query = query.ilike('programme', `%${prog.trim()}%`);
         const { data, error } = await query;
         if (error) throw error;
         return data || [];
@@ -205,8 +205,8 @@ async function getPlacements(course = '') {
         console.warn('[api] getPlacements filtered failed, fallback:', e);
         const { data, error } = await _sb.from('placements').select('*');
         if (error) { sbCheck(error, 'getPlacements'); return []; }
-        if (!course) return data || [];
-        return (data || []).filter(p => (p.course || p.programme || '').toLowerCase().includes(course.toLowerCase()));
+        if (!prog) return data || [];
+        return (data || []).filter(p => (p.programme || '').toLowerCase().includes(prog.toLowerCase()));
     }
 }
 
@@ -226,6 +226,99 @@ async function deletePlacement(id) {
     const { error } = await _sb.from('placements').delete().eq('id', id);
     sbCheck(error, 'deletePlacement');
     return { success: true };
+}
+
+/**
+ * getAcademicYearPlacementRate()
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Academic year runs July → June.
+ * Cutoff rule:
+ *   • Before September of the current year  → compute rate for the PREVIOUS
+ *     academic year's batch (e.g. Apr 2026 → 2024-25 batch).
+ *   • September or later                     → compute rate for the CURRENT
+ *     academic year's batch (e.g. Oct 2026 → 2025-26 batch).
+ *
+ * Formula: (students from that batch who are placed / students from that batch
+ *           who opted for placement) × 100
+ *
+ * Returns: { rate, placed, opted, batchLabel }
+ */
+async function getAcademicYearPlacementRate() {
+    try {
+        const now   = new Date();
+        const month = now.getMonth() + 1; // 1-12
+        const year  = now.getFullYear();
+
+        // Determine the target academic year start/end
+        let startYear, endYear;
+        if (month < 9) {
+            // Jan–Aug: previous academic year (passed out June of last year)
+            startYear = year - 2;
+            endYear   = year - 1;
+        } else {
+            // Sep–Dec: batch that just passed out in June of current year
+            startYear = year - 1;
+            endYear   = year;
+        }
+
+        const shortEnd   = String(endYear).slice(-2);         // "25"
+        const batchLabel = `${startYear}-${shortEnd}`;        // "2024-25"
+
+        // ── Fetch all students for efficiency ──────────────────────────────
+        const { data: students, error: sErr } = await _sb
+            .from('students')
+            .select('enrollment_number, batch, admitted_year, opted_for_placement');
+        if (sErr) { console.warn('[api] getAcademicYearPlacementRate - students fetch:', sErr); return null; }
+
+        // Match students whose batch belongs to the target academic year.
+        // Accepts formats: "2024-25", "24-25", "2025", "2024", "25", etc.
+        const targetStudents = (students || []).filter(s => {
+            const b = String(s.batch || s.admitted_year || '').trim();
+            if (!b) return false;
+            const bLow = b.toLowerCase();
+            // Exact label match ("2024-25" / "24-25")
+            if (bLow === batchLabel.toLowerCase()) return true;
+            if (bLow === `${String(startYear).slice(-2)}-${shortEnd}`) return true;
+            // Single-year graduation year match ("2025")
+            if (b === String(endYear)) return true;
+            // Single-year start year match ("2024")
+            if (b === String(startYear)) return true;
+            // Hyphenated match that contains the start year ("2024-...")
+            if (b.startsWith(String(startYear) + '-')) return true;
+            return false;
+        });
+
+        // Filter by opted_for_placement = Yes
+        const optedStudents = targetStudents.filter(s => {
+            const v = String(s.opted_for_placement || '').toLowerCase().trim();
+            return v === 'yes' || v === '1' || v === 'true';
+        });
+
+        if (!optedStudents.length) {
+            return { rate: 0, placed: 0, opted: 0, batchLabel };
+        }
+
+        // ── Fetch all placements (enrollment numbers only) ─────────────────
+        const { data: placements, error: pErr } = await _sb
+            .from('placements')
+            .select('enrollment_number');
+        if (pErr) { console.warn('[api] getAcademicYearPlacementRate - placements fetch:', pErr); return null; }
+
+        const placedSet = new Set(
+            (placements || []).map(p => String(p.enrollment_number).trim())
+        );
+
+        const placedCount = optedStudents.filter(
+            s => placedSet.has(String(s.enrollment_number).trim())
+        ).length;
+
+        const rate = Math.round((placedCount / optedStudents.length) * 100);
+        return { rate, placed: placedCount, opted: optedStudents.length, batchLabel };
+
+    } catch (err) {
+        console.error('[api] getAcademicYearPlacementRate error:', err);
+        return null;
+    }
 }
 
 async function importPlacements(fileOrFormData) {
@@ -383,9 +476,8 @@ async function getStats(programme = '') {
     const buildCount = (table, colHint = 'programme') => {
         let q = _sb.from(table).select('*', { count: 'exact', head: true });
         if (programme) {
-            // If filtering fails (e.g. column doesn't exist), we return the unfiltered count 
-            // as a last resort to avoid 0s on the UI, or 0 if truly empty.
-            if (table === 'placements') q = q.ilike('course', `%${programme.trim()}%`);
+            // Filter by the correct column name per table
+            if (table === 'placements') q = q.ilike('programme', `%${programme.trim()}%`);
             else if (table === 'internships') q = q.ilike('programme', `%${programme.trim()}%`);
             else if (table === 'field_visits' || table === 'industrial_visits') q = q.ilike('program_name', `%${programme.trim()}%`);
             else q = q.ilike(colHint, `%${programme.trim()}%`);
@@ -481,8 +573,8 @@ async function getDeptStats(programme = '') {
     }
 }
 
-async function getYearlyTrend(course = '') {
-    const placements = await getPlacements(course);
+async function getYearlyTrend(prog = '') {
+    const placements = await getPlacements(prog);
     const yearMap = {};
     placements.forEach(p => {
         // Attempt to extract year from various date fields
@@ -720,7 +812,7 @@ async function parseExcelFile(file, type) {
                         const nr = normalizeRow(r);
                         return {
                             enrollment_number: col(nr, 'Enrollment_No', 'Enrollment No', 'Enrollment Number', 'Enrolment Number', 'enrollment_number', 'Enrollement No.'),
-                            course: col(nr, 'Course', 'programme', 'course', 'program'),
+                            programme: col(nr, 'Programme', 'Course', 'programme', 'course', 'program'),
                             batch: col(nr, 'Batch', 'batch'),
                             name: col(nr, 'Name', 'Student Name', 'name', 'student_name'),
                             role: col(nr, 'Role', 'remarks', 'role'),

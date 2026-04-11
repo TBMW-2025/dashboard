@@ -113,7 +113,7 @@
                                 <th>ID</th>
                                 <th>NAME</th>
                                 <th class="no-wrap">ENROLLMENT NUMBER</th>
-                                <th>COURSE</th>
+                                <th>PROGRAMME</th>
                                 <th>BATCH</th>
                                 <th>ROLE</th>
                                 <th>COMPANY</th>
@@ -187,7 +187,7 @@
             <form class="modal-form" id="addPlacementForm">
                 <div class="form-group"><input type="text" id="mp-enrollment" placeholder=" " required><label>Enrollment
                         Number</label></div>
-                <div class="form-group"><input type="text" id="mp-course" placeholder=" " required><label>Course</label>
+                <div class="form-group"><input type="text" id="mp-programme" placeholder=" " required><label>Programme</label>
                 </div>
                 <div class="form-group"><input type="text" id="mp-batch" placeholder=" " required><label>Batch</label>
                 </div>
@@ -217,7 +217,7 @@
                 <input type="hidden" id="ep-id">
                 <div class="form-group"><input type="text" id="ep-enrollment" placeholder=" " required><label>Enrollment
                         Number</label></div>
-                <div class="form-group"><input type="text" id="ep-course" placeholder=" " required><label>Course</label>
+                <div class="form-group"><input type="text" id="ep-programme" placeholder=" " required><label>Programme</label>
                 </div>
                 <div class="form-group"><input type="text" id="ep-batch" placeholder=" " required><label>Batch</label>
                 </div>
@@ -247,7 +247,7 @@
             <div style="padding: 20px;">
                 <p style="margin-bottom: 15px; opacity: 0.8; font-size: 14px;">Upload an Excel file (.xlsx or .xls) with
                     the following headers:<br>
-                    <strong>ID, Name, Enrollment Number, Course, Batch, Role, Company, City, Salary</strong>
+                    <strong>ID, Name, Enrollment Number, Programme, Batch, Role, Company, City, Salary</strong>
                 </p>
                 <form id="importPlacementForm">
                     <div id="importError" style="color:#f87171;font-size:13px;margin-bottom:10px;display:none;"></div>
@@ -334,7 +334,7 @@
                         <td style="text-align:center;">${escHtml(p.id || start + i + 1)}</td>
                         <td style="font-weight:600;">${escHtml(p.name || p.student_name || '—')}</td>
                         <td class="no-wrap" style="font-family:monospace; white-space:nowrap;">${escHtml(p.enrollment_number || '—')}</td>
-                        <td style="color:#a78bfa;font-weight:600;">${escHtml(p.course || p.programme || '—')}</td>
+                        <td style="color:#a78bfa;font-weight:600;">${escHtml(p.programme || '—')}</td>
                         <td>${escHtml(p.batch || '—')}</td>
                         <td style="color:#94a3b8;font-style:italic;">${escHtml(p.role || p.remarks || '—')}</td>
                         <td style="font-weight:600;">${escHtml(p.company || '—')}</td>
@@ -372,7 +372,7 @@
             const q = e.target.value.toLowerCase();
             renderPlacements(placementsData.filter(p =>
                 (p.student_name || p.name || '').toLowerCase().includes(q) ||
-                (p.programme || p.course || '').toLowerCase().includes(q) ||
+                (p.programme || '').toLowerCase().includes(q) ||
                 (p.company || '').toLowerCase().includes(q)
             ));
         });
@@ -413,7 +413,7 @@
             try {
                 await createPlacement({
                     enrollment_number: document.getElementById('mp-enrollment').value,
-                    course: document.getElementById('mp-course').value,
+                    programme: document.getElementById('mp-programme').value,
                     batch: document.getElementById('mp-batch').value,
                     name: document.getElementById('mp-name').value,
                     role: document.getElementById('mp-role').value || '',
@@ -437,7 +437,7 @@
                 if (!p) return;
                 document.getElementById('ep-id').value = p.id || '';
                 document.getElementById('ep-enrollment').value = p.enrollment_number || '';
-                document.getElementById('ep-course').value = p.course || p.programme || '';
+                document.getElementById('ep-programme').value = p.programme || '';
                 document.getElementById('ep-batch').value = p.batch || '';
                 document.getElementById('ep-name').value = p.name || p.student_name || '';
                 document.getElementById('ep-role').value = p.role || p.remarks || '';
@@ -460,7 +460,7 @@
             try {
                 await updatePlacement(id, {
                     enrollment_number: document.getElementById('ep-enrollment').value,
-                    course: document.getElementById('ep-course').value,
+                    programme: document.getElementById('ep-programme').value,
                     batch: document.getElementById('ep-batch').value,
                     name: document.getElementById('ep-name').value,
                     role: document.getElementById('ep-role').value || '',

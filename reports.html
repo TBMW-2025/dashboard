@@ -116,12 +116,10 @@
                 </div>
 
                 <div class="stat-card-new">
-                    <div class="card-icon" style="color: var(--accent-green);">💼</div>
-                    <div class="card-label">Placement Percentage</div>
-                    <div class="card-value" id="rpt-placed-pct-main">0%</div>
-                    <div class="card-label" id="rpt-placed-count" style="text-transform: none; font-size: 10px;">0 Total
-                        Placed
-                    </div>
+                    <div class="card-icon" style="color: var(--accent-green);"><i class="bi bi-graph-up-arrow" style="color: var(--accent-green);"></i></div>
+                    <div class="card-label">Placement Rate <span id="rpt-batch-label" style="font-size:10px;opacity:0.6;">(—)</span></div>
+                    <div class="card-value" id="rpt-placed-pct-main" style="color: var(--accent-green);">0%</div>
+                    <div id="rpt-placed-count" style="font-size:11px;color:#8b949e;margin-top:2px;">0 placed / 0 opted</div>
                     <div class="accent-line" style="background: var(--accent-green);"></div>
                 </div>
 
@@ -274,16 +272,32 @@
 
                 async function load() {
                     try {
-                        const [stats, studentsRaw, placements, internships, fieldVisits, industrialVisits] = await Promise.all([
+                        const [stats, studentsRaw, placements, internships, fieldVisits, industrialVisits, acYearRate] = await Promise.all([
                             getStats().catch(() => ({ total_students: 0, placed_students: 0, total_companies: 0, total_internships: 0 })),
                             getStudents().catch(() => []),
                             getPlacements().catch(() => []),
                             getInternships().catch(() => []),
                             getFieldVisits().catch(() => []),
-                            getIndustrialVisits().catch(() => [])
+                            getIndustrialVisits().catch(() => []),
+                            getAcademicYearPlacementRate().catch(() => null)
                         ]);
 
                         reportData = { stats, studentsRaw, placements, internships, fieldVisits, industrialVisits };
+
+                        // ── Academic-year placement rate card ────────────────
+                        const rateEl   = document.getElementById('rpt-placed-pct-main');
+                        const batchEl  = document.getElementById('rpt-batch-label');
+                        const detailEl = document.getElementById('rpt-placed-count');
+                        if (acYearRate) {
+                            if (rateEl)   rateEl.textContent   = acYearRate.opted > 0 ? `${acYearRate.rate}%` : 'N/A';
+                            if (batchEl)  batchEl.textContent  = `(${acYearRate.batchLabel})`;
+                            if (detailEl) detailEl.textContent = acYearRate.opted > 0
+                                ? `${acYearRate.placed} placed / ${acYearRate.opted} opted`
+                                : `No opted students for ${acYearRate.batchLabel}`;
+                        } else {
+                            if (rateEl)   rateEl.textContent   = 'N/A';
+                            if (detailEl) detailEl.textContent = 'Data unavailable';
+                        }
 
                         await updateStats();
                         await renderCharts();
