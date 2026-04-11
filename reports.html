@@ -17,7 +17,9 @@
     <script src="api.js?v=400"></script>
     <script src="security.js?v=400"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Using Chart.js for consistent charting -->
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@11/highcharts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/highcharts@11/highcharts-3d.js"></script>
+    <!-- Using Chart.js for consistent charting & Highcharts 3D for Org breakdown -->
     <link rel="stylesheet" href="styles.css?v=400">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
@@ -208,7 +210,7 @@
                         <div style="display: flex; align-items: center; gap: 40px; padding: 10px;">
                             <!-- Left: Chart -->
                             <div class="chart-container" style="flex: 1.2; height:320px; overflow:visible; display:flex; align-items:center; justify-content:center;">
-                                <canvas id="orgTypePieChart" style="width:100%;height:100%;"></canvas>
+                                <div id="orgTypePieChart" style="width:100%;height:100%;"></div>
                             </div>
                             <!-- Right: The Detailed Legend -->
                             <div id="orgTypeLegendPanel" style="flex: 1; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.03);">
@@ -636,7 +638,7 @@
                             }
                         }
 
-                        // 8. Org-Type Pie (internships) - Reverted to Chart.js
+                        // 8. Org-Type Pie (internships) - Highcharts 3D
                         const ctxOT = document.getElementById('orgTypePieChart');
                         if (ctxOT) {
                             const map = {};
@@ -664,36 +666,50 @@
                                 const old = ctxOT.parentElement.querySelector('.no-data-msg');
                                 if (old) old.remove();
 
-                                destroy('_otChart');
-                                window._otChart = new Chart(ctxOT, {
-                                    type: 'doughnut',
-                                    data: {
-                                        labels: otLabels,
-                                        datasets: [{ 
-                                            data: otValues, 
-                                            backgroundColor: COLORS,
-                                            borderWidth: 0,
-                                            hoverOffset: 4
-                                        }]
+                                // Highcharts 3D initialization
+                                Highcharts.chart('orgTypePieChart', {
+                                    chart: {
+                                        type: 'pie',
+                                        backgroundColor: 'transparent',
+                                        options3d: {
+                                            enabled: true,
+                                            alpha: 45
+                                        }
                                     },
-                                    options: {
-                                        responsive: true,
-                                        maintainAspectRatio: false,
-                                        cutout: '50%',
-                                        plugins: {
-                                            legend: { display: false },
-                                            tooltip: {
-                                                callbacks: {
-                                                    label: function(context) {
-                                                        const label = context.label || '';
-                                                        const value = context.raw || 0;
-                                                        const pct = Math.round((value / total) * 100);
-                                                        return `${label}: ${value} (${pct}%)`;
-                                                    }
-                                                }
+                                    title: { text: null },
+                                    tooltip: {
+                                        backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                                        style: { color: '#fff' },
+                                        borderWidth: 0,
+                                        pointFormat: '{series.name}: <b>{point.y}</b> ({point.percentage:.1f}%)'
+                                    },
+                                    plotOptions: {
+                                        pie: {
+                                            innerSize: '50%',
+                                            depth: 45,
+                                            dataLabels: { enabled: false }, // Hide default labels since we have a legend
+                                            colors: COLORS,
+                                            borderWidth: 0,
+                                            allowPointSelect: true,
+                                            cursor: 'pointer',
+                                            states: {
+                                                hover: { brightness: 0.1 }
                                             }
                                         }
-                                    }
+                                    },
+                                    series: [{
+                                        name: 'Internships',
+                                        data: otLabels.map((l, i) => {
+                                            // Make the first slice initially popped out (sliced) like the user's reference image
+                                            return {
+                                                name: l,
+                                                y: otValues[i],
+                                                sliced: i === 0,
+                                                selected: i === 0
+                                            };
+                                        })
+                                    }],
+                                    credits: { enabled: false }
                                 });
 
                                 // Custom legend panel
