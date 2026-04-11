@@ -193,6 +193,30 @@
                         </div>
                     </div>
 
+                    <!-- Yearly Activity Trend: full width -->
+                    <div class="chart-card" style="grid-column: span 2;">
+                        <div class="chart-title">Yearly Activity Count &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships · Field Visits · Industrial Visits</small></div>
+                        <div class="chart-container" style="height:280px;">
+                            <canvas id="yearlyActivityChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- 3D Org-Type Pie + spacer: side by side -->
+                    <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="chart-card">
+                            <div class="chart-title">Organisation Type &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships</small></div>
+                            <div class="chart-container" style="height:300px; overflow:visible; display:flex; align-items:center; justify-content:center;">
+                                <div id="orgType3dWrap" style="width:100%;height:100%;">
+                                    <canvas id="orgTypePieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- placeholder for future chart -->
+                        <div class="chart-card" style="display:flex;align-items:center;justify-content:center;">
+                            <div id="orgTypeLegendPanel" style="width:100%;padding:16px;"></div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -569,7 +593,128 @@
                             });
                         }
 
-                    } catch (e) { console.error('Chart render error:', e); }
+                        // 7. Yearly Activity Grouped Bar
+                        const ctxYA = document.getElementById('yearlyActivityChart');
+                        if (ctxYA) {
+                            const getYear = d => {
+                                if (!d) return null;
+                                const s = String(d).trim();
+                                const p = s.split(/[-\/\.]/);
+                                if (p[0].length === 4) return p[0];
+                                if (p.length >= 3 && p[2].length === 4) return p[2];
+                                return null;
+                            };
+                            const iYears  = internships.map(i => i.year || getYear(i.created_at)).filter(Boolean);
+                            const fvYears = fieldVisits.map(v => getYear(v.visited_date || v.visit_date || v.date)).filter(Boolean);
+                            const ivYears = industrialVisits.map(v => getYear(v.visited_date || v.visit_date || v.date)).filter(Boolean);
+                            const allYears = [...new Set([...iYears, ...fvYears, ...ivYears])].sort();
+
+                            if (!allYears.length) {
+                                ctxYA.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:13px;">No yearly data available</div>';
+                            } else {
+                                const cnt = arr => allYears.map(y => arr.filter(x => x === y).length);
+                                destroy('_yaChart');
+                                window._yaChart = new Chart(ctxYA, {
+                                    type: 'bar',
+                                    data: {
+                                        labels: allYears,
+                                        datasets: [
+                                            { label: 'Internships',       data: cnt(iYears),  backgroundColor: 'rgba(59,130,246,0.85)',  borderRadius: 6 },
+                                            { label: 'Field Visits',      data: cnt(fvYears), backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 6 },
+                                            { label: 'Industrial Visits', data: cnt(ivYears), backgroundColor: 'rgba(139,92,246,0.85)', borderRadius: 6 }
+                                        ]
+                                    },
+                                    options: {
+                                        responsive: true, maintainAspectRatio: false,
+                                        plugins: { legend: { position: 'top', labels: { color: '#8b949e', padding: 16 } } },
+                                        scales: {
+                                            x: { ticks: { color: '#8b949e' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                                            y: { beginAtZero: true, ticks: { color: '#8b949e', stepSize: 1 }, grid: { color: 'rgba(255,255,255,0.04)' } }
+                                        }
+                                    }
+                                });
+                            }
+                        }
+
+                        // 8. 3D-raised Org-Type Pie (internships)
+                        const ctxOT = document.getElementById('orgTypePieChart');
+                        if (ctxOT) {
+                            const map = {};
+                            internships.forEach(i => {
+                                const t = (i.type_of_organization || 'Unknown').trim();
+                                map[t] = (map[t] || 0) + 1;
+                            });
+                            const otLabels = Object.keys(map);
+                            const otValues = Object.values(map);
+                            const total = otValues.reduce((a, b) => a + b, 0);
+                            const COLORS = ['#3b82f6','#22c55e','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#f97316'];
+
+                            if (!otLabels.length) {
+                                const wrap = document.getElementById('orgType3dWrap');
+                                if (wrap) wrap.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:13px;">No internship data</div>';
+                            } else {
+                                // Apply CSS 3D perspective to the wrapper
+                                const wrap = document.getElementById('orgType3dWrap');
+                                if (wrap) {
+                                    wrap.style.cssText = [
+                                        'transform: perspective(700px) rotateX(28deg) scaleX(0.92)',
+                                        'transform-origin: center 70%',
+                                        'filter: drop-shadow(0 28px 24px rgba(0,0,0,0.55))',
+                                        'transition: transform 0.4s ease'
+                                    ].join(';');
+                                    wrap.onmouseenter = () => wrap.style.transform = 'perspective(700px) rotateX(14deg) scaleX(0.95)';
+                                    wrap.onmouseleave = () => wrap.style.transform = 'perspective(700px) rotateX(28deg) scaleX(0.92)';
+                                }
+                                destroy('_otChart');
+                                window._otChart = new Chart(ctxOT, {
+                                    type: 'pie',
+                                    data: {
+                                        labels: otLabels,
+                                        datasets: [{
+                                            data: otValues,
+                                            backgroundColor: COLORS.slice(0, otLabels.length),
+                                            borderWidth: 2,
+                                            borderColor: '#0d1b2e',
+                                            hoverOffset: 18
+                                        }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        plugins: {
+                                            legend: { display: false },
+                                            tooltip: {
+                                                callbacks: {
+                                                    label: ctx => {
+                                                        const pct = Math.round(ctx.raw / total * 100);
+                                                        return ` ${ctx.label}: ${ctx.raw} (${pct}%)`;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                });
+
+                                // Custom legend panel
+                                const panel = document.getElementById('orgTypeLegendPanel');
+                                if (panel) {
+                                    panel.innerHTML = `
+                                        <div style="color:#8b949e;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Organisation Type</div>
+                                        ${otLabels.map((l, i) => `
+                                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                                                <div style="display:flex;align-items:center;gap:10px;">
+                                                    <div style="width:12px;height:12px;border-radius:50%;background:${COLORS[i % COLORS.length]};flex-shrink:0;"></div>
+                                                    <span style="color:#cbd5e1;font-size:13px;">${l}</span>
+                                                </div>
+                                                <div style="text-align:right;">
+                                                    <span style="color:#fff;font-weight:700;font-size:14px;">${otValues[i]}</span>
+                                                    <span style="color:#555;font-size:11px;margin-left:4px;">${Math.round(otValues[i]/total*100)}%</span>
+                                                </div>
+                                            </div>`).join('')}
+                                    `;
+                                }
+                            }
+                        }
                 }
 
                 document.addEventListener('DOMContentLoaded', () => {
