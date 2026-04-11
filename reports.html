@@ -700,12 +700,11 @@
                                     series: [{
                                         name: 'Internships',
                                         data: otLabels.map((l, i) => {
-                                            // Make the first slice initially popped out (sliced) like the user's reference image
+                                            // Make the first slice initially popped out (sliced)
                                             return {
                                                 name: l,
                                                 y: otValues[i],
-                                                sliced: i === 0,
-                                                selected: i === 0
+                                                sliced: i === 0
                                             };
                                         })
                                     }],
