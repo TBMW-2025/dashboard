@@ -207,13 +207,13 @@
                     <!-- 3D Org-Type Pie and Legend: Combined into one Card -->
                     <div class="chart-card" style="grid-column: span 2;">
                         <div class="chart-title">Organisation Type Breakdown &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships</small></div>
-                        <div style="display: flex; align-items: center; gap: 40px; padding: 10px;">
-                            <!-- Left: Chart -->
-                            <div class="chart-container" style="flex: 1.2; height:320px; overflow:visible; display:flex; align-items:center; justify-content:center;">
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 10px;">
+                            <!-- Top: Chart -->
+                            <div class="chart-container" style="width: 100%; height:320px; overflow:visible; display:flex; align-items:center; justify-content:center;">
                                 <div id="orgTypePieChart" style="width:100%;height:100%;"></div>
                             </div>
-                            <!-- Right: The Detailed Legend -->
-                            <div id="orgTypeLegendPanel" style="flex: 1; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.03);">
+                            <!-- Bottom: The Horizontal Legend -->
+                            <div id="orgTypeLegendPanel" style="width: 100%; padding: 10px 0;">
                                 <!-- Legend content populated by JS -->
                             </div>
                         </div>
@@ -715,18 +715,13 @@
                                 const panel = document.getElementById('orgTypeLegendPanel');
                                 if (panel) {
                                     panel.innerHTML = `
-                                        <div style="color:#8b949e;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px;">Organisation Type</div>
+                                        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 24px;">
                                         ${otLabels.map((l, i) => `
-                                            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-                                                <div style="display:flex;align-items:center;gap:10px;">
-                                                    <div style="width:12px;height:12px;border-radius:50%;background:${COLORS[i % COLORS.length]};flex-shrink:0;"></div>
-                                                    <span style="color:#cbd5e1;font-size:13px;">${l}</span>
-                                                </div>
-                                                <div style="text-align:right;">
-                                                    <span style="color:#fff;font-weight:700;font-size:14px;">${otValues[i]}</span>
-                                                    <span style="color:#555;font-size:11px;margin-left:4px;">${Math.round(otValues[i]/total*100)}%</span>
-                                                </div>
+                                            <div style="display:flex;align-items:center;gap:8px;">
+                                                <div style="width:14px;height:14px;border-radius:50%;background:${COLORS[i % COLORS.length]};flex-shrink:0;"></div>
+                                                <span style="color:#cbd5e1;font-size:14px;font-weight:500;">${l}</span>
                                             </div>`).join('')}
+                                        </div>
                                     `;
                                 }
                             }
