@@ -459,16 +459,43 @@
                         const ctx4 = document.getElementById('internshipProgrammeChart');
                         if (ctx4) {
                             const map = {};
-                            internships.forEach(i => { const p = i.programme || i.course || 'Other'; map[p] = (map[p] || 0) + 1; });
-                            destroy('_ipChart');
-                            window._ipChart = new Chart(ctx4, {
-                                type: 'doughnut',
-                                data: {
-                                    labels: Object.keys(map),
-                                    datasets: [{ data: Object.values(map), backgroundColor: ['#ec4899', '#f97316', '#eab308', '#22c55e', '#3b82f6'] }]
-                                },
-                                options: { responsive: true, maintainAspectRatio: false, cutout: '60%' }
+                            internships.forEach(i => {
+                                const p = i.programme || i.course || i.program_name || 'Other';
+                                if (p) map[p] = (map[p] || 0) + 1;
                             });
+                            const labels = Object.keys(map);
+                            const values = Object.values(map);
+
+                            if (!labels.length) {
+                                // Show "no data" placeholder inside the card
+                                const parent = ctx4.parentElement;
+                                ctx4.style.display = 'none';
+                                if (!parent.querySelector('.no-data-msg')) {
+                                    const msg = document.createElement('div');
+                                    msg.className = 'no-data-msg';
+                                    msg.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100%;color:#555;font-size:13px;';
+                                    msg.textContent = 'No internship data available';
+                                    parent.appendChild(msg);
+                                }
+                            } else {
+                                ctx4.style.display = '';
+                                const old = ctx4.parentElement.querySelector('.no-data-msg');
+                                if (old) old.remove();
+                                destroy('_ipChart');
+                                window._ipChart = new Chart(ctx4, {
+                                    type: 'doughnut',
+                                    data: {
+                                        labels,
+                                        datasets: [{ data: values, backgroundColor: ['#ec4899', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#8b5cf6'] }]
+                                    },
+                                    options: {
+                                        responsive: true,
+                                        maintainAspectRatio: false,
+                                        cutout: '60%',
+                                        plugins: { legend: { position: 'bottom', labels: { color: '#8b949e', padding: 12, font: { size: 11 } } } }
+                                    }
+                                });
+                            }
                         }
 
                         // Field Visits by Program

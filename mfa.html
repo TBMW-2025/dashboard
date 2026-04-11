@@ -192,11 +192,7 @@
                 <div id="errorMsg" class="error-msg"></div>
 
                 <div class="input-box">
-                    <input type="text" id="emailOtp" placeholder="Email OTP" required
-                           autocomplete="off" maxlength="6" inputmode="numeric">
-                </div>
-                <div class="input-box">
-                    <input type="text" id="mobileOtp" placeholder="Mobile OTP" required
+                    <input type="text" id="emailOtp" placeholder="Enter OTP / Access Code" required
                            autocomplete="off" maxlength="6" inputmode="numeric">
                 </div>
 
@@ -279,22 +275,21 @@
             otpHint.innerHTML = `OTPs sent to:<br><span>${parts.join(' &nbsp;|&nbsp; ')}</span>`;
         }
 
-        // ── Check user_id exists ──────────────────────────────────────────────
-        const userId = localStorage.getItem('mfa_user_id');
-        if (!userId) {
+        // ── Check pending MFA session exists ─────────────────────────────────
+        const pending = localStorage.getItem('mfa_pending_user');
+        if (!pending) {
+            // No pending 2FA session — send back to login
             window.location.href = 'index.html';
         }
 
-        // ── Verify form submit ────────────────────────────────────────────────
         document.getElementById('mfaForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const emailOtp  = document.getElementById('emailOtp').value.trim();
-            const mobileOtp = document.getElementById('mobileOtp').value.trim();
+            const otp = document.getElementById('emailOtp').value.trim();
 
             errorMsg.classList.remove('show');
 
-            if (!emailOtp || !mobileOtp) {
-                errorMsg.textContent = 'Please enter both OTPs.';
+            if (!otp) {
+                errorMsg.textContent = 'Please enter the OTP.';
                 errorMsg.classList.add('show');
                 return;
             }
@@ -303,24 +298,11 @@
             verifyBtn.textContent = 'Verifying...';
 
             try {
-                const res = await fetch('/api/auth/verify-otp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: userId, email_otp: emailOtp, mobile_otp: mobileOtp })
-                });
-
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Verification failed');
-
+                await apiVerifyOtp(null, otp);
                 clearInterval(countdownInterval);
-                localStorage.setItem('pd_token', data.token);
-                localStorage.setItem('pd_user', JSON.stringify(data.user));
-                localStorage.removeItem('mfa_user_id');
-                localStorage.removeItem('mfa_email_hint');
-                localStorage.removeItem('mfa_mobile_hint');
                 window.location.href = 'dashboard.html';
             } catch (err) {
-                errorMsg.textContent = err.message || 'Verification failed.';
+                errorMsg.textContent = err.message || 'Verification failed. Try again.';
                 errorMsg.classList.add('show');
                 verifyBtn.disabled = remaining <= 0;
                 verifyBtn.textContent = 'Verify & Login';
