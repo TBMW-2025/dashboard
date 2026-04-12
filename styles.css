@@ -928,6 +928,13 @@ body {
     margin-bottom: 40px;
 }
 
+.charts-section .widget-panel {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
 .chart-card {
     background: linear-gradient(135deg, #1a1f3a 0%, #252b4a 100%);
     border: 1px solid #2a2f4a;
