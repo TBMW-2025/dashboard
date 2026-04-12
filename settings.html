@@ -12,69 +12,40 @@
 </head>
 
 <body>
-    <!-- Sidebar Toggle Button -->
-    <button id="sidebarToggle" class="sidebar-toggle">☰</button>
-
-    <!-- Sidebar Overlay (for mobile) -->
-    <div class="sidebar-overlay"></div>
-
-    <div class="container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="sidebar-top">
-                <img src="https://upload.wikimedia.org/wikipedia/en/b/bc/Rashtriya_Raksha_University_logo.png"
-                    alt="Logo" class="sidebar-img-logo">
-                <nav class="sidebar-nav">
-                    <a href="dashboard.html" class="nav-item ">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <a href="students.html" class="nav-item ">
-                        <i class="bi bi-people-fill"></i>
-                        <span>Students</span>
-                    </a>
-                    <a href="internships.html" class="nav-item ">
-                        <i class="bi bi-person-workspace"></i>
-                        <span>Internships</span>
-                    </a>
-                    <a href="field-visits.html" class="nav-item ">
-                        <i class="bi bi-pin-map-fill"></i>
-                        <span>Field Visits</span>
-                    </a>
-                    <a href="industrial-visits.html" class="nav-item ">
-                        <i class="bi bi-buildings-fill"></i>
-                        <span>Industrial Visits</span>
-                    </a>
-                    <a href="placements.html" class="nav-item ">
-                        <i class="bi bi-briefcase-fill"></i>
-                        <span>Placements</span>
-                    </a>
-                    <a href="reports.html" class="nav-item ">
-                        <i class="bi bi-bar-chart-fill"></i>
-                        <span>Reports</span>
-                    </a>
-                    <a href="settings.html" class="nav-item active">
-                        <i class="bi bi-gear"></i>
-                        <span>Settings</span>
-                    </a>
-                </nav>
-            </div>
-
-            <div class="sidebar-bottom">
-                <div class="bottom-icons">
-                    <a href="mailto:pulse-r24@rru.ac.in" class="icon-btn" title="Contact Us"><i
-                            class="bi bi-chat-left-text"></i></a>
+    <nav class="topbar">
+        <div class="topbar-inner">
+            <a href="dashboard.html" class="topbar-brand">
+                <img src="https://upload.wikimedia.org/wikipedia/en/b/bc/Rashtriya_Raksha_University_logo.png" alt="RRU Logo" class="topbar-logo">
+                <div class="topbar-brand-text">
+                    <span class="topbar-brand-name">PULSE-R</span>
+                    <span class="topbar-brand-sub">Placement Monitor</span>
                 </div>
-                <div class="user-profile">
-                    <div class="avatar">A</div>
-                    <div>
-                        <div class="user-name">Arsh.G</div>
-                        <div class="user-role">Admin</div>
+            </a>
+            <div class="topbar-nav">
+                <a href="dashboard.html" class="topbar-link"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+                <a href="students.html" class="topbar-link"><i class="bi bi-people-fill"></i><span>Students</span></a>
+                <a href="internships.html" class="topbar-link"><i class="bi bi-person-workspace"></i><span>Internships</span></a>
+                <a href="field-visits.html" class="topbar-link"><i class="bi bi-pin-map-fill"></i><span>Field Visits</span></a>
+                <a href="industrial-visits.html" class="topbar-link"><i class="bi bi-buildings-fill"></i><span>Industrial Visits</span></a>
+                <a href="placements.html" class="topbar-link"><i class="bi bi-briefcase-fill"></i><span>Placements</span></a>
+                <a href="external-jobs.html" class="topbar-link"><i class="bi bi-globe"></i><span>Ext. Jobs</span></a>
+                <a href="reports.html" class="topbar-link"><i class="bi bi-bar-chart-fill"></i><span>Reports</span></a>
+                <a href="settings.html" class="topbar-link active"><i class="bi bi-gear"></i><span>Settings</span></a>
+            </div>
+            <div class="topbar-right">
+                <a href="mailto:pulse-r24@rru.ac.in" class="topbar-icon-btn" title="Contact Us"><i class="bi bi-chat-left-text"></i></a>
+                <div class="topbar-user">
+                    <div class="topbar-avatar">A</div>
+                    <div class="topbar-user-info">
+                        <div class="topbar-user-name">Arsh.G</div>
+                        <div class="topbar-user-role">Admin</div>
                     </div>
                 </div>
             </div>
         </div>
+    </nav>
 
+    <div class="container">
         <!-- Main Content -->
         <div class="main-content dashboard-layout-container">
             <!-- TOP HEADER ROW -->
@@ -412,32 +383,29 @@
                     </div>
                 </div>
                 <!-- FOOTER -->
-                <footer class="app-footer"
-                    style="padding: 40px 0; border-top: 1px solid rgba(255,255,255,0.05); margin-top: 30px;">
-                    <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
-                        <div>
-                            <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha
-                                University</h3>
-                            <p style="font-size: 12px; color: #8b949e; line-height: 1.8;">Puducherry Campus,
-                                Pondicherry
-                                Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To
-                                Mahalakshmi Nagar,
-                                Murungapakkam, Puducherry – 605004</p>
-                        </div>
-                        <div>
-                            <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Contact</h3>
-                            <p style="font-size: 12px; color: #8b949e;">Email: pulse-r24@rru.ac.in</p>
-                            <p style="font-size: 12px; color: #8b949e;">Phone: +91 79 XXXXXXXX</p>
-                        </div>
-                        <div>
-                            <h3 style="color: white; font-size: 14px; margin-bottom: 15px;">Follow</h3>
-                            <p style="font-size: 12px; color: #8b949e;"><a href="#"
-                                    style="color: inherit; text-decoration: none;">Instagram</a></p>
-                            <p style="font-size: 12px; color: #8b949e;"><a href="#"
-                                    style="color: inherit; text-decoration: none;">LinkedIn</a></p>
-                        </div>
+                            <footer class="app-footer"
+                style="padding: 40px 0; border-top: 1px solid var(--border); margin-top: 30px;">
+                <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;">
+                    <div>
+                        <h3 style="color: var(--navy); font-size: 14px; margin-bottom: 15px;">Rashtriya Raksha University</h3>
+                        <p style="font-size: 12px; color: var(--text-muted); line-height: 1.8;">Puducherry Campus, Pondicherry
+                            Institute of Hotel Management & Catering Technology [PIHMCT]<br>Opp To Mahalakshmi Nagar,
+                            Murungapakkam, Puducherry – 605004</p>
                     </div>
-                </footer>
+                    <div>
+                        <h3 style="color: var(--navy); font-size: 14px; margin-bottom: 15px;">Contact</h3>
+                        <p style="font-size: 12px; color: var(--text-muted);">Email: pulse-r24@rru.ac.in</p>
+                        <p style="font-size: 12px; color: var(--text-muted);">Phone: +91 79 XXXXXXXX</p>
+                    </div>
+                    <div>
+                        <h3 style="color: var(--navy); font-size: 14px; margin-bottom: 15px;">Follow</h3>
+                        <p style="font-size: 12px; color: var(--text-muted);"><a href="#"
+                                style="color: inherit; text-decoration: none;">Instagram</a></p>
+                        <p style="font-size: 12px; color: var(--text-muted);"><a href="#"
+                                style="color: inherit; text-decoration: none;">LinkedIn</a></p>
+                    </div>
+                </div>
+            </footer>
         </div><!-- /.main-content -->
     </div><!-- /.container -->
 
