@@ -111,14 +111,14 @@
                         <thead>
                             <tr>
                                 <th>SR. NO</th>
-                                <th>ORGANIZATION VISITED</th>
-                                <th>VISIT DATE</th>
+                                <th class="no-wrap">ORGANIZATION VISITED</th>
+                                <th class="no-wrap">VISIT DATE</th>
                                 <th>STUDENTS</th>
                                 <th>PROGRAM</th>
                                 <th>STAFF COUNT</th>
                                 <th>LEAD STAFF</th>
                                 <th class="no-wrap">TYPE</th>
-                                <th>CITY</th>
+                                <th class="no-wrap">CITY</th>
                                 <th>ACTIONS</th>
                             </tr>
                         </thead>
@@ -369,14 +369,14 @@
                 tbody.innerHTML = paginatedItems.map((v, i) => `
                 <tr data-id="${v.id}">
                     <td style="text-align:center;">${start + i + 1}</td>
-                    <td style="color:#a78bfa;font-weight:600;">${esc(v.field_visited || '—')}</td>
-                    <td>${esc(v.visited_date || '—')}</td>
+                    <td class="no-wrap" style="color:#a78bfa;font-weight:600;">${esc(v.field_visited || '—')}</td>
+                    <td class="no-wrap">${esc(v.visited_date || '—')}</td>
                     <td>${esc(v.no_of_student_visited || '0')}</td>
                     <td style="color:#94a3b8;">${esc(v.program_name || '—')}</td>
                     <td>${esc(v.no_of_staff_visited || '0')}</td>
-                    <td style="font-weight:600;">${esc(v.staff_name || '—')}</td>
-                    <td><span class="status-pill ${String(v.visit_type || '').toLowerCase() === 'private' ? 'not-placed' : 'placed'}" style="font-size:10px; padding: 2px 8px;">${esc(v.visit_type || 'Government')}</span></td>
-                    <td>${esc(v.city || '—')}</td>
+                    <td style="font-weight:600; max-width: 200px;">${esc(v.staff_name || '—')}</td>
+                    <td class="no-wrap"><span class="status-pill ${String(v.visit_type || '').toLowerCase() === 'private' ? 'not-placed' : 'placed'}" style="font-size:10px; padding: 2px 8px;">${esc(v.visit_type || 'Government')}</span></td>
+                    <td class="no-wrap">${esc(v.city || '—')}</td>
                     <td>
                         <div style="display:flex;gap:6px;justify-content:center; align-items:center;">
                             <button class="action-icon btn-edit" data-id="${v.id}" title="Edit"><i class="bi bi-pencil-square"></i></button>

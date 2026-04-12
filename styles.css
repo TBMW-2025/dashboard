@@ -470,7 +470,7 @@ body {
 }
 
 .table-header {
-    background: linear-gradient(90deg, #112F45 0%, #174A6A 50%, #15628A 100%) !important;
+    background: linear-gradient(90deg, #1A7FB0 0%, #2596D7 50%, #29A2E3 100%) !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.5) !important;
     padding: 15px 10px;
     font-weight: 600;
@@ -698,9 +698,13 @@ body {
     overflow: hidden;
 }
 
-.premium-table thead th {
-    background: linear-gradient(90deg, #112F45 0%, #174A6A 50%, #15628A 100%) !important;
+.premium-table thead tr {
+    background: linear-gradient(90deg, #1A7FB0 0%, #2596D7 50%, #29A2E3 100%) !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.premium-table thead th {
+    background: transparent !important;
     color: white;
     padding: 12px 10px;
     text-align: left;
@@ -826,7 +830,7 @@ body {
 .bg-secondary { background: #4b5563; color: white; }
 
 .internships-header {
-    background: linear-gradient(90deg, #112F45 0%, #174A6A 50%, #15628A 100%) !important;
+    background: linear-gradient(90deg, #1A7FB0 0%, #2596D7 50%, #29A2E3 100%) !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.5) !important;
     padding: 15px 10px;
     font-weight: 600;
@@ -1891,9 +1895,13 @@ body {
     min-width: 1200px;
 }
 
-.data-table th {
-    background: linear-gradient(90deg, #112F45 0%, #174A6A 50%, #15628A 100%) !important;
+.data-table thead tr {
+    background: linear-gradient(90deg, #1A7FB0 0%, #2596D7 50%, #29A2E3 100%) !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.5) !important;
+}
+
+.data-table th {
+    background: transparent !important;
     color: white;
     text-align: left;
     padding: 14px 16px;
@@ -2001,24 +2009,7 @@ body {
     color: var(--text-primary);
 }
 
-.btn-remove {
-    background-color: transparent;
-    color: #ef4444;
-    /* red */
-    border: 1px solid #ef4444;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
 
-.btn-remove:hover {
-    background-color: #ef4444;
-    color: white;
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-}
 
 .left {
     display: flex;

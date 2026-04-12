@@ -152,107 +152,103 @@
             </div>
 
             <!-- Charts Section -->
-            <div class="widget-panel">
-                <div class="charts-section" style="grid-template-columns: 1fr 1fr;">
+            <div class="charts-section" style="grid-template-columns: 1fr 1fr;">
 
-                    <!-- Field Visits by Program: full width -->
-                    <div class="chart-card" style="grid-column: span 2;">
-                        <div class="chart-title">Field Visits by Program</div>
-                        <div class="chart-container">
-                            <canvas id="fieldVisitChart"></canvas>
-                        </div>
+                <!-- Field Visits by Program: full width -->
+                <div class="widget-panel" style="grid-column: span 2;">
+                    <h3>Field Visits by Program</h3>
+                    <div class="chart-container">
+                        <canvas id="fieldVisitChart"></canvas>
                     </div>
-
-                    <!-- Pie + Doughnut: side by side -->
-                    <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="chart-card">
-                            <div class="chart-title">Programme-wise Student Count</div>
-                            <div class="chart-container">
-                                <canvas id="studentProgrammeChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="chart-card">
-                            <div class="chart-title">Programme-wise Internship Count</div>
-                            <div class="chart-container">
-                                <canvas id="internshipProgrammeChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Government vs Private: full width -->
-                    <div class="chart-card" style="grid-column: span 2;">
-                        <div class="chart-title">Government vs Private Visits</div>
-                        <div class="chart-container">
-                            <canvas id="fieldVisitAreaChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Placed vs Non-Placed: full width -->
-                    <div class="chart-card" style="grid-column: span 2;">
-                        <div class="chart-title">Placed vs Non-Placed by Programme</div>
-                        <div class="chart-container">
-                            <canvas id="placedNonProgrammeChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Yearly Activity Trend: full width -->
-                    <div class="chart-card" style="grid-column: span 2;">
-                        <div class="chart-title">Yearly Activity Count &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships · Field Visits · Industrial Visits</small></div>
-                        <div class="chart-container" style="height:280px;">
-                            <canvas id="yearlyActivityChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- 3D Org-Type Pie and Legend: Combined into one Card -->
-                    <div class="chart-card" style="grid-column: span 2;">
-                        <div class="chart-title">Organisation Type Breakdown &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships</small></div>
-                        <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 10px;">
-                            <!-- Top: Chart -->
-                            <div class="chart-container" style="width: 100%; height:320px; overflow:visible; display:flex; align-items:center; justify-content:center;">
-                                <div id="orgTypePieChart" style="width:100%;height:100%;"></div>
-                            </div>
-                            <!-- Bottom: The Horizontal Legend -->
-                            <div id="orgTypeLegendPanel" style="width: 100%; padding: 10px 0;">
-                                <!-- Legend content populated by JS -->
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
+
+                <!-- Pie + Doughnut: side by side -->
+                <div style="grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="widget-panel" style="margin-bottom: 0;">
+                        <h3>Programme-wise Student Count</h3>
+                        <div class="chart-container">
+                            <canvas id="studentProgrammeChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="widget-panel" style="margin-bottom: 0;">
+                        <h3>Programme-wise Internship Count</h3>
+                        <div class="chart-container">
+                            <canvas id="internshipProgrammeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Government vs Private: full width -->
+                <div class="widget-panel" style="grid-column: span 2;">
+                    <h3>Government vs Private Visits</h3>
+                    <div class="chart-container">
+                        <canvas id="fieldVisitAreaChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Placed vs Non-Placed: full width -->
+                <div class="widget-panel" style="grid-column: span 2;">
+                    <h3>Placed vs Non-Placed by Programme</h3>
+                    <div class="chart-container">
+                        <canvas id="placedNonProgrammeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Yearly Activity Trend: full width -->
+                <div class="widget-panel" style="grid-column: span 2;">
+                    <h3>Yearly Activity Count &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships · Field Visits · Industrial Visits</small></h3>
+                    <div class="chart-container" style="height:280px;">
+                        <canvas id="yearlyActivityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 3D Org-Type Pie and Legend: Combined into one Card -->
+                <div class="widget-panel" style="grid-column: span 2;">
+                    <h3>Organisation Type Breakdown &nbsp;<small style="font-size:11px;color:#555;font-weight:400;">Internships</small></h3>
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 10px;">
+                        <!-- Top: Chart -->
+                        <div class="chart-container" style="width: 100%; height:320px; overflow:visible; display:flex; align-items:center; justify-content:center;">
+                            <div id="orgTypePieChart" style="width:100%;height:100%;"></div>
+                        </div>
+                        <!-- Bottom: The Horizontal Legend -->
+                        <div id="orgTypeLegendPanel" style="width: 100%; padding: 10px 0;">
+                            <!-- Legend content populated by JS -->
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <!-- Metrics Section -->
-            <div class="widget-panel">
-                <div class="metrics-section">
-                    <div class="metrics-card">
-                        <div class="metrics-title">Key Metrics</div>
-
-                        <div class="metric-row">
-                            <span class="metric-label">Highest Package</span>
-                            <span class="metric-value success" id="km-highest"> </span>
-                        </div>
-
-                        <div class="metric-row">
-                            <span class="metric-label">Average Package</span>
-                            <span class="metric-value" id="km-avg"> </span>
-                        </div>
-
-                        <div class="metric-row">
-                            <span class="metric-label">Lowest Package</span>
-                            <span class="metric-value" id="km-lowest"> </span>
-                        </div>
-
-                        <div class="metric-row">
-                            <span class="metric-label">Total Internships</span>
-                            <span class="metric-value success" id="km-internships"> </span>
-                        </div>
-
-                        <div class="metric-row">
-                            <span class="metric-label">Active Companies</span>
-                            <span class="metric-value" id="km-companies"> </span>
-                        </div>
+            <div class="widget-panel" style="margin-top: -16px;">
+                <h3>Key Metrics</h3>
+                <div class="metrics-section" style="margin-top: 20px;">
+                    <div class="metric-row">
+                        <span class="metric-label">Highest Package</span>
+                        <span class="metric-value success" id="km-highest"> </span>
                     </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Average Package</span>
+                        <span class="metric-value" id="km-avg"> </span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Lowest Package</span>
+                        <span class="metric-value" id="km-lowest"> </span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Total Internships</span>
+                        <span class="metric-value success" id="km-internships"> </span>
+                    </div>
+
+                    <div class="metric-row">
+                        <span class="metric-label">Active Companies</span>
+                        <span class="metric-value" id="km-companies"> </span>
+                    </div>
+                </div>
 
 
                 </div>
